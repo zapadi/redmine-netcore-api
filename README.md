@@ -1,5 +1,5 @@
 ![](https://github.com/zapadi/redmine-net-api/blob/master/logo.png)
-# redmine-net-api  
+# redmine-netcore-api  
 
 redmine-netcore-api is a library for communicating with a Redmine project management application.
 
