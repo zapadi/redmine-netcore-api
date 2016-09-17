@@ -22,19 +22,30 @@ namespace Redmine.Net.Api.Types
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class PaginatedObjects<T>
+    public class PaginatedResult<T>
     {
+        public PaginatedResult()
+        {
+            
+        }
+
+        public PaginatedResult(List<T> items, int total, int offset)
+        {
+            Items = items;
+            Total = total;
+            Offset = offset;
+        }
         /// <summary>
         /// 
         /// </summary>
-        public List<T> Objects { get; set; }
+        public List<T> Items { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        public int TotalCount { get; set; }
+        public int Total { get; private set; }
         /// <summary>
         /// 
         /// </summary>
-        public int Offset { get; set; }
+        public int Offset { get; private set; }
     }
 }

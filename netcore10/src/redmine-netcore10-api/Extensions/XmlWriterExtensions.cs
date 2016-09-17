@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Serialization;
-using Redmine.Net.Api.Internals;
 using Redmine.Net.Api.Types;
 
 namespace Redmine.Net.Api.Extensions
@@ -55,6 +54,7 @@ namespace Redmine.Net.Api.Extensions
 
             foreach (var item in collection)
             {
+                //TODO refactor: dictionary
                 new XmlSerializer(item.GetType()).Serialize(writer, item);
             }
 
@@ -75,9 +75,11 @@ namespace Redmine.Net.Api.Extensions
             writer.WriteStartElement(elementName);
             writer.WriteAttributeString("type", "array");
 
+            var serializer = new XmlSerializer(type);
+
             foreach (var item in collection)
             {
-                new XmlSerializer(type).Serialize(writer, f.Invoke(item));
+                serializer.Serialize(writer, f.Invoke(item));
             }
 
             writer.WriteEndElement();
@@ -98,10 +100,14 @@ namespace Redmine.Net.Api.Extensions
             writer.WriteStartElement(elementName);
             writer.WriteAttributeString("type", "array");
 
+            var extraTypes = new Type[] { };
+            var rootAttribute = new XmlRootAttribute(root);
+            var attributeOverrides = new XmlAttributeOverrides();
+            var serializer = new XmlSerializer(type, attributeOverrides, extraTypes, rootAttribute, defaultNamespace);
+
             foreach (var item in collection)
             {
-                new XmlSerializer(type, new XmlAttributeOverrides(), new Type[] { }, new XmlRootAttribute(root),
-                    defaultNamespace).Serialize(writer, item);
+                serializer.Serialize(writer, item);
             }
 
             writer.WriteEndElement();

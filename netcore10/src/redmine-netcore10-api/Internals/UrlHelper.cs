@@ -25,39 +25,39 @@ namespace Redmine.Net.Api.Internals
 {
     /// <summary>
     /// </summary>
-    internal static class UrlHelper
+    internal static class UrlBuilder
     {
         /// <summary>
         /// </summary>
-         const string REQUEST_FORMAT = "{0}/{1}/{2}.{3}";
+        private const string REQUEST_URL_FORMAT = "{0}/{1}/{2}.{3}";
 
         /// <summary>
         /// </summary>
-         const string FORMAT = "{0}/{1}.{2}";
+        private const string URL_FORMAT = "{0}/{1}.{2}";
 
         /// <summary>
         /// </summary>
-         const string WIKI_INDEX_FORMAT = "{0}/projects/{1}/wiki/index.{2}";
+        private const string WIKI_INDEX_URL_FORMAT = "{0}/projects/{1}/wiki/index.{2}";
 
         /// <summary>
         /// </summary>
-         const string WIKI_PAGE_FORMAT = "{0}/projects/{1}/wiki/{2}.{3}";
+        private const string WIKI_PAGE_URL_FORMAT = "{0}/projects/{1}/wiki/{2}.{3}";
 
         /// <summary>
         /// </summary>
-         const string WIKI_VERSION_FORMAT = "{0}/projects/{1}/wiki/{2}/{3}.{4}";
+        private const string WIKI_VERSION_URL_FORMAT = "{0}/projects/{1}/wiki/{2}/{3}.{4}";
 
         /// <summary>
         /// </summary>
-         const string ENTITY_WITH_PARENT_FORMAT = "{0}/{1}/{2}/{3}.{4}";
+        private const string ENTITY_WITH_PARENT_URL_FORMAT = "{0}/{1}/{2}/{3}.{4}";
 
         /// <summary>
         /// </summary>
-         const string ATTACHMENT_UPDATE_FORMAT = "{0}/attachments/issues/{1}.{2}";
+        private const string ATTACHMENT_UPDATE_URL_FORMAT = "{0}/attachments/issues/{1}.{2}";
 
         /// <summary>
         /// </summary>
-         const string CURRENT_USER_URI = "current";
+        private const string CURRENT_USER_URI = "current";
         /// <summary>
         ///     Gets the upload URL.
         /// </summary>
@@ -68,15 +68,15 @@ namespace Redmine.Net.Api.Internals
         /// <param name="projectId">The project identifier.</param>
         /// <returns></returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException"></exception>
-        public static string GetUploadUrl<T>(RedmineManager redmineManager, string id, T obj, string projectId = null)
+        public static string UploadUrl<T>(RedmineManager redmineManager, string id, T obj, string projectId = null)
             where T : class, new()
         {
             var type = typeof(T);
 
             if (!RedmineManager.TypePath.ContainsKey(type)) throw new KeyNotFoundException(type.Name);
 
-            return string.Format(REQUEST_FORMAT, redmineManager.Host, RedmineManager.TypePath[type], id,
-                redmineManager.MimeType.ToString().ToLower());
+            return string.Format(REQUEST_URL_FORMAT, redmineManager.Host, RedmineManager.TypePath[type], id,
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Redmine.Net.Api.Internals
         ///     or
         ///     The owner id(issue id) is mandatory!
         /// </exception>
-        public static string GetCreateUrl<T>(RedmineManager redmineManager, string ownerId) where T : class, new()
+        public static string CreateUrl<T>(RedmineManager redmineManager, string ownerId) where T : class, new()
         {
             var type = typeof(T);
 
@@ -101,18 +101,18 @@ namespace Redmine.Net.Api.Internals
             if (type == typeof(Version) || type == typeof(IssueCategory) || type == typeof(ProjectMembership))
             {
                 if (string.IsNullOrEmpty(ownerId)) throw new RedmineException("The owner id(project id) is mandatory!");
-                return string.Format(ENTITY_WITH_PARENT_FORMAT, redmineManager.Host, RedmineKeys.PROJECTS,
-                    ownerId, RedmineManager.TypePath[type], redmineManager.MimeType.ToString().ToLower());
+                return string.Format(ENTITY_WITH_PARENT_URL_FORMAT, redmineManager.Host, RedmineKeys.PROJECTS,
+                    ownerId, RedmineManager.TypePath[type], RedmineManager.MimeRepresentation[redmineManager.MimeType]);
             }
             if (type == typeof(IssueRelation))
             {
                 if (string.IsNullOrEmpty(ownerId)) throw new RedmineException("The owner id(issue id) is mandatory!");
-                return string.Format(ENTITY_WITH_PARENT_FORMAT, redmineManager.Host, RedmineKeys.ISSUES,
-                    ownerId, RedmineManager.TypePath[type], redmineManager.MimeType.ToString().ToLower());
+                return string.Format(ENTITY_WITH_PARENT_URL_FORMAT, redmineManager.Host, RedmineKeys.ISSUES,
+                    ownerId, RedmineManager.TypePath[type], RedmineManager.MimeRepresentation[redmineManager.MimeType]);
             }
 
-            return string.Format(FORMAT, redmineManager.Host, RedmineManager.TypePath[type],
-                redmineManager.MimeType.ToString().ToLower());
+            return string.Format(URL_FORMAT, redmineManager.Host, RedmineManager.TypePath[type],
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -124,14 +124,14 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException"></exception>
-        public static string GetDeleteUrl<T>(RedmineManager redmineManager, string id) where T : class, new()
+        public static string DeleteUrl<T>(RedmineManager redmineManager, string id) where T : class, new()
         {
             var type = typeof(T);
 
             if (!RedmineManager.TypePath.ContainsKey(type)) throw new KeyNotFoundException(type.Name);
 
-            return string.Format(REQUEST_FORMAT, redmineManager.Host, RedmineManager.TypePath[type], id,
-                redmineManager.MimeType.ToString().ToLower());
+            return string.Format(REQUEST_URL_FORMAT, redmineManager.Host, RedmineManager.TypePath[type], id,
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -142,13 +142,13 @@ namespace Redmine.Net.Api.Internals
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException"></exception>
-        public static string GetGetUrl<T>(RedmineManager redmineManager, string id) where T : class, new()
+        public static string GetUrl<T>(RedmineManager redmineManager, string id) where T : class, new()
         {
             var type = typeof(T);
 
             if (!RedmineManager.TypePath.ContainsKey(type)) throw new KeyNotFoundException(type.Name);
 
-            return string.Format(REQUEST_FORMAT, redmineManager.Host, RedmineManager.TypePath[type], id,
+            return string.Format(REQUEST_URL_FORMAT, redmineManager.Host, RedmineManager.TypePath[type], id,
                 RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
@@ -165,7 +165,7 @@ namespace Redmine.Net.Api.Internals
         /// or
         /// The issue id is mandatory! \nCheck if you have included the parameter issue_id to parameters
         /// </exception>
-        public static string GetListUrl<T>(RedmineManager redmineManager, NameValueCollection parameters)
+        public static string ItemsUrl<T>(RedmineManager redmineManager, NameValueCollection parameters)
             where T : class, new()
         {
             var type = typeof(T);
@@ -178,8 +178,8 @@ namespace Redmine.Net.Api.Internals
                 if (string.IsNullOrEmpty(projectId))
                     throw new RedmineException("The project id is mandatory! \nCheck if you have included the parameter project_id to parameters.");
 
-                return string.Format(ENTITY_WITH_PARENT_FORMAT, redmineManager.Host, RedmineKeys.PROJECTS,
-                    projectId, RedmineManager.TypePath[type], redmineManager.MimeType.ToString().ToLower());
+                return string.Format(ENTITY_WITH_PARENT_URL_FORMAT, redmineManager.Host, RedmineKeys.PROJECTS,
+                    projectId, RedmineManager.TypePath[type], RedmineManager.MimeRepresentation[redmineManager.MimeType]);
             }
             if (type == typeof(IssueRelation))
             {
@@ -187,11 +187,11 @@ namespace Redmine.Net.Api.Internals
                 if (string.IsNullOrEmpty(issueId))
                     throw new RedmineException("The issue id is mandatory! \nCheck if you have included the parameter issue_id to parameters");
 
-                return string.Format(ENTITY_WITH_PARENT_FORMAT, redmineManager.Host, RedmineKeys.ISSUES,
-                    issueId, RedmineManager.TypePath[type], redmineManager.MimeType.ToString().ToLower());
+                return string.Format(ENTITY_WITH_PARENT_URL_FORMAT, redmineManager.Host, RedmineKeys.ISSUES,
+                    issueId, RedmineManager.TypePath[type], RedmineManager.MimeRepresentation[redmineManager.MimeType]);
             }
-            return string.Format(FORMAT, redmineManager.Host, RedmineManager.TypePath[type],
-                redmineManager.MimeType.ToString().ToLower());
+            return string.Format(URL_FORMAT, redmineManager.Host, RedmineManager.TypePath[type],
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -200,10 +200,10 @@ namespace Redmine.Net.Api.Internals
         /// <param name="redmineManager">The redmine manager.</param>
         /// <param name="projectId">The project identifier.</param>
         /// <returns></returns>
-        public static string GetWikisUrl(RedmineManager redmineManager, string projectId)
+        public static string WikisUrl(RedmineManager redmineManager, string projectId)
         {
-            return string.Format(WIKI_INDEX_FORMAT, redmineManager.Host, projectId,
-                redmineManager.MimeType.ToString().ToLower());
+            return string.Format(WIKI_INDEX_URL_FORMAT, redmineManager.Host, projectId,
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -215,15 +215,15 @@ namespace Redmine.Net.Api.Internals
         /// <param name="pageName">Name of the page.</param>
         /// <param name="version">The version.</param>
         /// <returns></returns>
-        public static string GetWikiPageUrl(RedmineManager redmineManager, string projectId,
+        public static string WikiPageUrl(RedmineManager redmineManager, string projectId,
             NameValueCollection parameters, string pageName, uint version = 0)
         {
-            var uri = version == 0
-                ? string.Format(WIKI_PAGE_FORMAT, redmineManager.Host, projectId, pageName,
-                    redmineManager.MimeType.ToString().ToLower())
-                : string.Format(WIKI_VERSION_FORMAT, redmineManager.Host, projectId, pageName, version,
-                    redmineManager.MimeType.ToString().ToLower());
-            return uri;
+            var url = version == 0
+                ? string.Format(WIKI_PAGE_URL_FORMAT, redmineManager.Host, projectId, pageName,
+                    RedmineManager.MimeRepresentation[redmineManager.MimeType])
+                : string.Format(WIKI_VERSION_URL_FORMAT, redmineManager.Host, projectId, pageName, version,
+                    RedmineManager.MimeRepresentation[redmineManager.MimeType]);
+            return url;
         }
 
         /// <summary>
@@ -232,11 +232,11 @@ namespace Redmine.Net.Api.Internals
         /// <param name="redmineManager">The redmine manager.</param>
         /// <param name="groupId">The group identifier.</param>
         /// <returns></returns>
-        public static string GetAddUserToGroupUrl(RedmineManager redmineManager, int groupId)
+        public static string AddUserToGroupUrl(RedmineManager redmineManager, int groupId)
         {
-            return string.Format(REQUEST_FORMAT, redmineManager.Host,
+            return string.Format(REQUEST_URL_FORMAT, redmineManager.Host,
                 RedmineManager.TypePath[typeof(Group)],
-                groupId + "/users", redmineManager.MimeType.ToString().ToLower());
+                $"{groupId}/users", RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -246,11 +246,11 @@ namespace Redmine.Net.Api.Internals
         /// <param name="groupId">The group identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns></returns>
-        public static string GetRemoveUserFromGroupUrl(RedmineManager redmineManager, int groupId, int userId)
+        public static string RemoveUserFromGroupUrl(RedmineManager redmineManager, int groupId, int userId)
         {
-            return string.Format(REQUEST_FORMAT, redmineManager.Host,
+            return string.Format(REQUEST_URL_FORMAT, redmineManager.Host,
                 RedmineManager.TypePath[typeof(Group)],
-                groupId + "/users/" + userId, redmineManager.MimeType.ToString().ToLower());
+                $"{groupId}/users/{userId}", RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -258,10 +258,10 @@ namespace Redmine.Net.Api.Internals
         /// </summary>
         /// <param name="redmineManager">The redmine manager.</param>
         /// <returns></returns>
-        public static string GetUploadFileUrl(RedmineManager redmineManager)
+        public static string UploadFileUrl(RedmineManager redmineManager)
         {
-            return string.Format(FORMAT, redmineManager.Host, RedmineKeys.UPLOADS,
-                redmineManager.MimeType.ToString().ToLower());
+            return string.Format(URL_FORMAT, redmineManager.Host, RedmineKeys.UPLOADS,
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -269,11 +269,11 @@ namespace Redmine.Net.Api.Internals
         /// </summary>
         /// <param name="redmineManager">The redmine manager.</param>
         /// <returns></returns>
-        public static string GetCurrentUserUrl(RedmineManager redmineManager)
+        public static string CurrentUserUrl(RedmineManager redmineManager)
         {
-            return string.Format(REQUEST_FORMAT, redmineManager.Host,
+            return string.Format(REQUEST_URL_FORMAT, redmineManager.Host,
                 RedmineManager.TypePath[typeof(User)], CURRENT_USER_URI,
-                redmineManager.MimeType.ToString().ToLower());
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -283,10 +283,10 @@ namespace Redmine.Net.Api.Internals
         /// <param name="projectId">The project identifier.</param>
         /// <param name="pageName">Name of the page.</param>
         /// <returns></returns>
-        public static string GetWikiCreateOrUpdaterUrl(RedmineManager redmineManager, string projectId, string pageName)
+        public static string WikiCreateOrUpdaterUrl(RedmineManager redmineManager, string projectId, string pageName)
         {
-            return string.Format(WIKI_PAGE_FORMAT, redmineManager.Host, projectId, pageName,
-                redmineManager.MimeType.ToString().ToLower());
+            return string.Format(WIKI_PAGE_URL_FORMAT, redmineManager.Host, projectId, pageName,
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -296,10 +296,10 @@ namespace Redmine.Net.Api.Internals
         /// <param name="projectId">The project identifier.</param>
         /// <param name="pageName">Name of the page.</param>
         /// <returns></returns>
-        public static string GetDeleteWikirUrl(RedmineManager redmineManager, string projectId, string pageName)
+        public static string DeleteWikirUrl(RedmineManager redmineManager, string projectId, string pageName)
         {
-            return string.Format(WIKI_PAGE_FORMAT, redmineManager.Host, projectId, pageName,
-                redmineManager.MimeType.ToString().ToLower());
+            return string.Format(WIKI_PAGE_URL_FORMAT, redmineManager.Host, projectId, pageName,
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -309,11 +309,11 @@ namespace Redmine.Net.Api.Internals
         /// <param name="issueId">The issue identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns></returns>
-        public static string GetAddWatcherUrl(RedmineManager redmineManager, int issueId, int userId)
+        public static string AddWatcherToIssueUrl(RedmineManager redmineManager, int issueId, int userId)
         {
-            return string.Format(REQUEST_FORMAT, redmineManager.Host,
-                RedmineManager.TypePath[typeof(Issue)], issueId + "/watchers",
-                redmineManager.MimeType.ToString().ToLower());
+            return string.Format(REQUEST_URL_FORMAT, redmineManager.Host,
+                RedmineManager.TypePath[typeof(Issue)], $"{issueId}/watchers",
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -323,11 +323,11 @@ namespace Redmine.Net.Api.Internals
         /// <param name="issueId">The issue identifier.</param>
         /// <param name="userId">The user identifier.</param>
         /// <returns></returns>
-        public static string GetRemoveWatcherUrl(RedmineManager redmineManager, int issueId, int userId)
+        public static string RemoveWatcherFromIssueUrl(RedmineManager redmineManager, int issueId, int userId)
         {
-            return string.Format(REQUEST_FORMAT, redmineManager.Host,
-                RedmineManager.TypePath[typeof(Issue)], issueId + "/watchers/" + userId,
-                redmineManager.MimeType.ToString().ToLower());
+            return string.Format(REQUEST_URL_FORMAT, redmineManager.Host,
+                RedmineManager.TypePath[typeof(Issue)], $"{issueId}/watchers/{userId}",
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
 
         /// <summary>
@@ -336,10 +336,10 @@ namespace Redmine.Net.Api.Internals
         /// <param name="redmineManager">The redmine manager.</param>
         /// <param name="issueId">The issue identifier.</param>
         /// <returns></returns>
-        public static string GetAttachmentUpdateUrl(RedmineManager redmineManager, int issueId)
+        public static string AttachmentUpdateUrl(RedmineManager redmineManager, int issueId)
         {
-            return string.Format(ATTACHMENT_UPDATE_FORMAT, redmineManager.Host, issueId,
-                redmineManager.MimeType.ToString().ToLower());
+            return string.Format(ATTACHMENT_UPDATE_URL_FORMAT, redmineManager.Host, issueId,
+                RedmineManager.MimeRepresentation[redmineManager.MimeType]);
         }
     }
 }

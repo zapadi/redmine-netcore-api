@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.Specialized;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Redmine.Net.Api;
 using Redmine.Net.Api.Internals;
 using Redmine.Net.Api.Types;
+using Group = Redmine.Net.Api.Types.Group;
 
 namespace ClassLibrary
 {
@@ -16,18 +20,17 @@ namespace ClassLibrary
             [MimeType.Xml] = MimeType.Xml.ToString().ToLowerInvariant()
         };
 
-
         public MimeType MimeType { get; }
         public string Host { get; }
-        public static IImmutableDictionary<Type,string> TypePath => typePath.ToImmutableDictionary();
-        public static IImmutableDictionary<MimeType, string> MimeRepresentation => mimeRepresentation.ToImmutableDictionary();
-
         internal string ApiKey { get; }
+
+        public static IImmutableDictionary<Type, string> TypePath => typePath.ToImmutableDictionary();
+        public static IImmutableDictionary<MimeType, string> MimeRepresentation => mimeRepresentation.ToImmutableDictionary();
 
         internal static Dictionary<Type, string> typePath = new Dictionary<Type, string>
         {
-            [typeof(Issue)]= "issues",
-            [typeof(Project)]= "projects",
+            [typeof(Issue)] = "issues",
+            [typeof(Project)] = "projects",
             [typeof(User)] = "users",
             [typeof(News)] = "news",
             [typeof(Query)] = "queries",
@@ -48,7 +51,7 @@ namespace ClassLibrary
             [typeof(CustomField)] = "custom_fields"
         };
 
-        public RedmineManager(string host, string apiKey, MimeType mimeType = MimeType.Json)
+        public RedmineManager(string host, string apiKey, MimeType mimeType = MimeType.Xml)
         {
             Extensions.CheckIfHostIsValid(host);
             Host = host;
@@ -56,43 +59,86 @@ namespace ClassLibrary
             MimeType = mimeType;
         }
 
-
-
-        //public async Task<bool> Method1()
-        //{
-        //    try
-        //    {
-        //        var uri = $"{Host}/projects/92.{mimeRepresentation[MimeType]}?apiKey={ApiKey}";
-        //        await RedmineHttp.Get<Project>(new Uri(uri));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return false;
-        //    }
-        //    return true;
-        //}
-
-        public async Task<T> Create<T>()
+        ~RedmineManager()
         {
-            throw new NotImplementedException($"{nameof(Create)}");
+            Close();
         }
 
-        public async Task<T> Get<T>(string id, NameValueCollection parameters) where T : class, new()
+        public void Close()
         {
-            var uri = $"{UrlHelper.GetGetUrl<T>(this, id)}?apiKey={ApiKey}";
-            var response = await RedmineHttp.Get<T>(new Uri(uri), MimeType);
+            RedmineHttp.Dispose();
+        }
+
+        public async Task<TData> Create<TData>(TData data)
+            where TData : class, new()
+        {
+            return await Create(null, data);
+        }
+
+        public async Task<TData> Create<TData>(string ownerId, TData data) 
+            where TData : class, new()
+        {
+            var uri = $"{UrlBuilder.CreateUrl<TData>(this, ownerId)}?key={ApiKey}";
+            var response = await RedmineHttp.Post(new Uri(uri), data, MimeType);
 
             return response;
         }
 
-        public async Task<T> Update<T>()
+        public async Task<TData> Get<TData>(string id, NameValueCollection parameters) 
+            where TData : class, new()
         {
-            throw new NotImplementedException($"{nameof(Update)}");
+            var uri = $"{UrlBuilder.GetUrl<TData>(this, id)}?key={ApiKey}";
+            var response = await RedmineHttp.Get<TData>(new Uri(uri), MimeType);
+
+            return response;
         }
 
-        public async Task<T> Delete<T>()
+        public async Task<TData> Get<TData>(string url)
+           where TData : class, new()
         {
-            throw new NotImplementedException($"{nameof(Delete)}");
+            var uri = $"{url}?key={ApiKey}";
+            var response = await RedmineHttp.Get<TData>(new Uri(uri), MimeType);
+
+            return response;
+        }
+
+        public async Task<List<TData>> List<TData>(int limit, int offset, params string[] include) 
+            where TData : class, new()
+        {
+            throw new NotImplementedException("Get list");
+        }
+
+        public async Task<PaginatedResult<TData>> List<TData>(NameValueCollection parameters) 
+            where TData : class, new()
+        {
+            throw new NotImplementedException("Get list");
+        }
+
+        public async Task<TData> Update<TData>(string id, TData data) where TData : class, new()
+        {
+            return await Update(id, data, null);
+        }
+
+        public async Task<TData> Update<TData>(string id, TData data, string projectId) where TData : class, new()
+        {
+            var uri = $"{UrlBuilder.UploadUrl<TData>(this, id, data)}?key={ApiKey}";
+            
+            var response = await RedmineHttp.Put<TData>(new Uri(uri), data, MimeType).ConfigureAwait(false);
+
+            return response;
+        }
+
+        public async Task<HttpStatusCode> Delete<T>(string id) where T : class, new()
+        {
+            return await Delete<T>(id, null);
+        }
+
+        public async Task<HttpStatusCode> Delete<T>(string id, string reasignedId) where T : class, new()
+        {
+            var uri = $"{UrlBuilder.DeleteUrl<T>(this, id)}?key={ApiKey}";
+            var response = await RedmineHttp.Delete(new Uri(uri), MimeType).ConfigureAwait(false);
+
+            return response;
         }
     }
 }
