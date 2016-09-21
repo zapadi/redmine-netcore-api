@@ -84,7 +84,7 @@ namespace Redmine.Net.Api.Internals
                 if (mimeFormat == MimeType.Json)
                 {
                     var type = typeof(T);
-                    string jsonRoot = jsonRootPath.ContainsKey(type) ? jsonRootPath[type] : RedmineManager.TypePath[type];
+                  //  string jsonRoot = jsonRootPath.ContainsKey(type) ? jsonRootPath[type] : RedmineManager.TypePath[type];
                     //return JsonDeserialize<T>(response, jsonRoot);
                 }
 
@@ -139,7 +139,7 @@ namespace Redmine.Net.Api.Internals
         {
             int totalItems = 0, offset = 0;
             var type = typeof(T);
-            var jsonRoot = jsonRootPath.ContainsKey(type) ? jsonRootPath[type] : RedmineManager.TypePath[type];
+          //  var jsonRoot = jsonRootPath.ContainsKey(type) ? jsonRootPath[type] : RedmineManager.TypePath[type];
 
             //TODO: json deserialization
             //  var result = JsonDeserializeToList<T>(response, jsonRoot, out totalItems, out offset);
@@ -159,8 +159,6 @@ namespace Redmine.Net.Api.Internals
             {
                 using (var xmlReader = XmlReader.Create(stringReader))
                 {
-                   // xmlReader.Settings.IgnoreComments = true;
-
                     xmlReader.Read();
                     xmlReader.Read();
 

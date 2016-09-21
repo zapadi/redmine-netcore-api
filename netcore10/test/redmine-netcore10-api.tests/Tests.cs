@@ -146,12 +146,12 @@ namespace Tests
             //    "Project is_public not equal. (This property is available starting with 2.6.0)");
 
             Assert.True(project.Trackers != null, "Trackers are null!");
-            Assert.True(project.Trackers.Count == 2, "Trackers count != " + 2);
+            Assert.True(project.Trackers.Count == 2, $"Trackers found ({project.Trackers.Count}) != Trackers expected (2)");
             Assert.All(project.Trackers, t => Assert.IsType<ProjectTracker>(t));
 
             Assert.True(project.EnabledModules != null, "Enabled modules is null!");
             Assert.True(project.EnabledModules.Count == 2,
-                "Enabled modules count (" + project.EnabledModules.Count + ") != " + 2);
+                $"Enabled modules found ({project.EnabledModules.Count}) != Enabled modules expected (2)");
             Assert.All(project.EnabledModules, em => Assert.IsType<ProjectEnabledModule>(em));
         }
 
@@ -232,6 +232,20 @@ namespace Tests
         public async void Should_Throw_Exception_Create_Project_Invalid_Trackers()
         {
             await Assert.ThrowsAsync<UnprocessableEntityException>(() => fixture.RedmineManager.Create(CreateTestProjectWithInvalidTrackersId()));
+        }
+
+        [Fact]
+        public async void Should_Get_All_Projects()
+        {
+            var projects = await fixture.RedmineManager.ListAll<Project>(null);
+            Assert.NotNull(projects);
+        }
+
+        [Fact]
+        public async void Should_Get_Paged_Projects()
+        {
+            var projects = await fixture.RedmineManager.List<Project>(new NameValueCollection() { { RedmineKeys.LIMIT,"2"}});
+            Assert.NotNull(projects);
         }
     }
 }

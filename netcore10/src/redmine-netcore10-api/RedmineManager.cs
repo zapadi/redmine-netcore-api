@@ -1,55 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Internals;
 using Redmine.Net.Api.Types;
-using Group = Redmine.Net.Api.Types.Group;
 
 namespace ClassLibrary
 {
     public class RedmineManager
     {
-        static readonly Dictionary<MimeType, string> mimeRepresentation = new Dictionary<MimeType, string>
-        {
-            [MimeType.Json] = MimeType.Json.ToString().ToLowerInvariant(),
-            [MimeType.Xml] = MimeType.Xml.ToString().ToLowerInvariant()
-        };
+        public const int DEFAULT_PAGE_SIZE_VALUE = 25;
 
         public MimeType MimeType { get; }
         public string Host { get; }
         internal string ApiKey { get; }
-
-        public static IImmutableDictionary<Type, string> TypePath => typePath.ToImmutableDictionary();
-        public static IImmutableDictionary<MimeType, string> MimeRepresentation => mimeRepresentation.ToImmutableDictionary();
-
-        internal static Dictionary<Type, string> typePath = new Dictionary<Type, string>
-        {
-            [typeof(Issue)] = "issues",
-            [typeof(Project)] = "projects",
-            [typeof(User)] = "users",
-            [typeof(News)] = "news",
-            [typeof(Query)] = "queries",
-            [typeof(Redmine.Net.Api.Types.Version)] = "versions",
-            [typeof(Attachment)] = "attachments",
-            [typeof(IssueRelation)] = "relations",
-            [typeof(TimeEntry)] = "time_entries",
-            [typeof(IssueStatus)] = "issue_statuses",
-            [typeof(Tracker)] = "trackers",
-            [typeof(IssueCategory)] = "issue_categories",
-            [typeof(Role)] = "roles",
-            [typeof(ProjectMembership)] = "memberships",
-            [typeof(Group)] = "groups",
-            [typeof(TimeEntryActivity)] = "enumerations/time_entry_activities",
-            [typeof(IssuePriority)] = "enumerations/issue_priorities",
-            [typeof(Watcher)] = "watchers",
-            [typeof(IssueCustomField)] = "custom_fields",
-            [typeof(CustomField)] = "custom_fields"
-        };
+        public int PageSize { get; set; }
 
         public RedmineManager(string host, string apiKey, MimeType mimeType = MimeType.Xml)
         {
@@ -75,43 +43,78 @@ namespace ClassLibrary
             return await Create(null, data);
         }
 
-        public async Task<TData> Create<TData>(string ownerId, TData data) 
+        public async Task<TData> Create<TData>(string ownerId, TData data)
             where TData : class, new()
         {
-            var uri = $"{UrlBuilder.CreateUrl<TData>(this, ownerId)}?key={ApiKey}";
+            var uri = UrlBuilde.Create(Host, ApiKey, MimeType).CreateUrl<TData>(ownerId).Build();
             var response = await RedmineHttp.Post(new Uri(uri), data, MimeType);
 
             return response;
         }
 
-        public async Task<TData> Get<TData>(string id, NameValueCollection parameters) 
+        public async Task<TData> Get<TData>(string id, NameValueCollection parameters)
             where TData : class, new()
         {
-            var uri = $"{UrlBuilder.GetUrl<TData>(this, id)}?key={ApiKey}";
+            var uri = UrlBuilde.Create(Host, ApiKey, MimeType).GetUrl<TData>(id).SetParameters(parameters).Build();
+
             var response = await RedmineHttp.Get<TData>(new Uri(uri), MimeType);
 
             return response;
         }
 
-        public async Task<TData> Get<TData>(string url)
-           where TData : class, new()
+        public async Task<List<TData>> ListAll<TData>(NameValueCollection parameters)
+            where TData : class, new()
         {
-            var uri = $"{url}?key={ApiKey}";
-            var response = await RedmineHttp.Get<TData>(new Uri(uri), MimeType);
+            int totalCount = 0, pageSize = 0, offset = 0;
+            var isLimitSet = false;
+            List<TData> resultList = null;
+
+            if (parameters == null)
+            {
+                parameters = new NameValueCollection();
+            }
+            else
+            {
+                isLimitSet = int.TryParse(parameters[RedmineKeys.LIMIT], out pageSize);
+                int.TryParse(parameters[RedmineKeys.OFFSET], out offset);
+            }
+            if (pageSize == default(int))
+            {
+                pageSize = PageSize > 0 ? PageSize : DEFAULT_PAGE_SIZE_VALUE;
+                parameters.Set(RedmineKeys.LIMIT, pageSize.ToString(CultureInfo.InvariantCulture));
+            }
+
+            do
+            {
+                parameters.Set(RedmineKeys.OFFSET, offset.ToString(CultureInfo.InvariantCulture));
+                var tempResult = await List<TData>(parameters);
+                if (tempResult != null)
+                {
+                    if (resultList == null)
+                    {
+                        resultList = tempResult.Items;
+                        totalCount = isLimitSet ? pageSize : tempResult.Total;
+                    }
+                    else
+                    {
+                        resultList.AddRange(tempResult.Items);
+                    }
+                }
+                offset += pageSize;
+            } while (offset < totalCount);
+
+            return resultList;
+        }
+
+        public async Task<PaginatedResult<TData>> List<TData>(NameValueCollection parameters)
+            where TData : class, new()
+        {
+
+            var uri = UrlBuilde.Create(Host, ApiKey, MimeType).ItemsUrl<TData>(parameters).SetParameters(parameters).Build();
+
+            var response = await RedmineHttp.List<TData>(new Uri(uri), MimeType).ConfigureAwait(false);
 
             return response;
-        }
-
-        public async Task<List<TData>> List<TData>(int limit, int offset, params string[] include) 
-            where TData : class, new()
-        {
-            throw new NotImplementedException("Get list");
-        }
-
-        public async Task<PaginatedResult<TData>> List<TData>(NameValueCollection parameters) 
-            where TData : class, new()
-        {
-            throw new NotImplementedException("Get list");
         }
 
         public async Task<TData> Update<TData>(string id, TData data) where TData : class, new()
@@ -121,9 +124,9 @@ namespace ClassLibrary
 
         public async Task<TData> Update<TData>(string id, TData data, string projectId) where TData : class, new()
         {
-            var uri = $"{UrlBuilder.UploadUrl<TData>(this, id, data)}?key={ApiKey}";
-            
-            var response = await RedmineHttp.Put<TData>(new Uri(uri), data, MimeType).ConfigureAwait(false);
+            var uri = UrlBuilde.Create(Host, ApiKey, MimeType).UploadUrl(id, data, projectId).Build();
+
+            var response = await RedmineHttp.Put(new Uri(uri), data, MimeType).ConfigureAwait(false);
 
             return response;
         }
@@ -135,7 +138,8 @@ namespace ClassLibrary
 
         public async Task<HttpStatusCode> Delete<T>(string id, string reasignedId) where T : class, new()
         {
-            var uri = $"{UrlBuilder.DeleteUrl<T>(this, id)}?key={ApiKey}";
+            var uri = UrlBuilde.Create(Host, ApiKey, MimeType).DeleteUrl<T>(id).Build();
+
             var response = await RedmineHttp.Delete(new Uri(uri), MimeType).ConfigureAwait(false);
 
             return response;

@@ -60,17 +60,17 @@ namespace ClassLibrary
         {
             // httpClient.DefaultRequestHeaders.Add("ContentType", $"application/{RedmineManager.MimeRepresentation[mimeType]}");
             var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
-            var tc = await CreateTaskCompletionSource<T>(responseMessage, mimeType);
+            var tc = await CreateTaskCompletionSource<T>(responseMessage, mimeType).ConfigureAwait(false);
             return await tc.Task;
         }
 
         public static async Task<PaginatedResult<T>> List<T>(Uri uri, MimeType mimeType) where T : class, new()
         {
-            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), $"application/{RedmineManager.MimeRepresentation[mimeType]}");
+            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), $"application/{UrlBuilde.mimeRepresentation[mimeType]}");
 
             var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
 
-            var tc = await CreateTaskCompletionSource(responseMessage, c => RedmineSerializer.DeserializeList<T>(c, mimeType), mimeType);
+            var tc = await CreateTaskCompletionSource(responseMessage, c => RedmineSerializer.DeserializeList<T>(c, mimeType), mimeType).ConfigureAwait(false);
             return await tc.Task;
         }
 
@@ -78,7 +78,7 @@ namespace ClassLibrary
         {
             var serializedData = RedmineSerializer.Serialize(data, mimeType);
             serializedData = Regex.Replace(serializedData, @"\r\n|\r|\n", "\r\n");
-            var requestContent = new StringContent(serializedData, Encoding.UTF8, $"application/{RedmineManager.MimeRepresentation[mimeType]}");
+            var requestContent = new StringContent(serializedData, Encoding.UTF8, $"application/{UrlBuilde.mimeRepresentation[mimeType]}");
 
             var responseMessage = await httpClient.PutAsync(uri.ToString(), requestContent).ConfigureAwait(false);
             var tc = new TaskCompletionSource<T>();
@@ -86,9 +86,13 @@ namespace ClassLibrary
             {
                 string responseContent = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (string.IsNullOrWhiteSpace(responseContent))
+                {
                     tc.SetResult(data);
+                }
                 else
+                {
                     tc.SetResult(RedmineSerializer.Deserialize<T>(responseContent, mimeType));
+                }
             }
             else
             {
@@ -136,10 +140,10 @@ namespace ClassLibrary
 
         public static async Task<T> Post<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
         {
-            var content = new StringContent(RedmineSerializer.Serialize(data, mimeType), Encoding.UTF8, $"application/{RedmineManager.MimeRepresentation[mimeType]}");
+            var content = new StringContent(RedmineSerializer.Serialize(data, mimeType), Encoding.UTF8, $"application/{UrlBuilde.mimeRepresentation[mimeType]}");
             var responseMessage = await httpClient.PostAsync(uri.ToString(), content).ConfigureAwait(false);
 
-            var tc = await CreateTaskCompletionSource<T>(responseMessage, mimeType);
+            var tc = await CreateTaskCompletionSource<T>(responseMessage, mimeType).ConfigureAwait(false);
             return await tc.Task;
         }
 
@@ -149,7 +153,6 @@ namespace ClassLibrary
             try
             {
                 var responseMessage = await httpClient.DeleteAsync(uri.ToString()).ConfigureAwait(false);
-
 
                 if (responseMessage.IsSuccessStatusCode)
                 {
@@ -170,7 +173,7 @@ namespace ClassLibrary
         public static async Task<byte[]> DownloadFile(Uri uri, MimeType mimeType)
         {
             var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
-            var tc = await CreateFileDownloadTaskCompletionSource(responseMessage, mimeType);
+            var tc = await CreateFileDownloadTaskCompletionSource(responseMessage, mimeType).ConfigureAwait(false);
             return await tc.Task;
         }
 
@@ -180,7 +183,7 @@ namespace ClassLibrary
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), "application/octet-stream");
             var responseMessage = await httpClient.PutAsync(uri.ToString(), content).ConfigureAwait(false);
 
-            var tc = await CreateTaskCompletionSource<Upload>(responseMessage, mimeType);
+            var tc = await CreateTaskCompletionSource<Upload>(responseMessage, mimeType).ConfigureAwait(false);
             return await tc.Task;
         }
 
