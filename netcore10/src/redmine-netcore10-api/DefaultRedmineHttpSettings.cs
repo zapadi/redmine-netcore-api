@@ -5,7 +5,7 @@ using System.Security.Authentication;
 
 namespace Redmine.Net.Api
 {
-    public class DefaultRedmineHttpSettings : IRedmineHttpSettings
+    internal class DefaultRedmineHttpSettings : IRedmineHttpSettings
     {
         private DefaultRedmineHttpSettings()
         {
@@ -16,7 +16,6 @@ namespace Redmine.Net.Api
         {
             return new DefaultRedmineHttpSettings();
         }
-
 
         public IWebProxy WebProxy { get; private set; }
         public AuthenticationHeaderValue Authentication { get; private set; }
@@ -31,73 +30,73 @@ namespace Redmine.Net.Api
         public bool UseCookies { get; private set; }
         public bool PreAuthenticate { get; private set; }
         
-        public DefaultRedmineHttpSettings SetWebProxy(IWebProxy webProxy)
+        public IRedmineHttpSettings SetWebProxy(IWebProxy webProxy)
         {
             WebProxy = webProxy;
             return this;
         }
 
-        public DefaultRedmineHttpSettings SetAuthentication(AuthenticationHeaderValue authenticationHeaderValue)
+        public IRedmineHttpSettings SetAuthentication(AuthenticationHeaderValue authenticationHeaderValue)
         {
             Authentication = authenticationHeaderValue;
             return this;
         }
 
-        public DefaultRedmineHttpSettings SetProxyAuthentication(AuthenticationHeaderValue proxyAuthenticationHeaderValue)
+        public IRedmineHttpSettings SetProxyAuthentication(AuthenticationHeaderValue proxyAuthenticationHeaderValue)
         {
             ProxyAuthentication = proxyAuthenticationHeaderValue;
             return this;
         }
 
-        public DefaultRedmineHttpSettings SetCookieContainer(CookieContainer cookieContainer)
+        public IRedmineHttpSettings SetCookieContainer(CookieContainer cookieContainer)
         {
             CookieContainer = cookieContainer;
             return this;
         }
 
-        public DefaultRedmineHttpSettings SetDefaultCredentials(ICredentials defaultCredentials)
+        public IRedmineHttpSettings SetDefaultCredentials(ICredentials defaultCredentials)
         {
             DefaultCredentials = defaultCredentials;
             return this;
         }
 
-        public DefaultRedmineHttpSettings SetProxyCredentials(ICredentials proxyCredentials)
+        public IRedmineHttpSettings SetProxyCredentials(ICredentials proxyCredentials)
         {
             ProxyCredentials = proxyCredentials;
             return this;
         }
 
-        public DefaultRedmineHttpSettings SetSslProtocols(SslProtocols sslProtocols)
+        public IRedmineHttpSettings SetSslProtocols(SslProtocols sslProtocols)
         {
             SslProtocols = sslProtocols;
             return this;
         }
 
-        public DefaultRedmineHttpSettings SetDecompressionMethods(DecompressionMethods decompressionMethods)
+        public IRedmineHttpSettings SetDecompressionMethods(DecompressionMethods decompressionMethods)
         {
             DecompressionMethods = decompressionMethods;
             return this;
         }
 
-        public DefaultRedmineHttpSettings SetUseProxy(bool useProxy)
+        public IRedmineHttpSettings SetUseProxy(bool useProxy)
         {
             UseProxy = useProxy;
             return this;
         }
 
-        public DefaultRedmineHttpSettings SetUseDefaultCredentials(bool useDefaultCredentials)
+        public IRedmineHttpSettings SetUseDefaultCredentials(bool useDefaultCredentials)
         {
             UseDefaultCredentials = useDefaultCredentials;
             return this;
         }
 
-        public DefaultRedmineHttpSettings SetUseCookies(bool useCookies)
+        public IRedmineHttpSettings SetUseCookies(bool useCookies)
         {
             UseCookies = useCookies;
             return this;
         }
 
-        public DefaultRedmineHttpSettings SetPreAuthenticate(bool preAuthenticate)
+        public IRedmineHttpSettings SetPreAuthenticate(bool preAuthenticate)
         {
             PreAuthenticate = preAuthenticate;
             return this;

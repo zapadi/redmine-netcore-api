@@ -20,6 +20,31 @@ namespace Redmine.Net.Api
         bool PreAuthenticate { get;  }
         DecompressionMethods DecompressionMethods { get;  }
 
+        IRedmineHttpSettings SetWebProxy(IWebProxy webProxy);
+
+        IRedmineHttpSettings SetAuthentication(AuthenticationHeaderValue authenticationHeaderValue);
+
+        IRedmineHttpSettings SetProxyAuthentication(AuthenticationHeaderValue proxyAuthenticationHeaderValue);
+
+        IRedmineHttpSettings SetCookieContainer(CookieContainer cookieContainer);
+
+        IRedmineHttpSettings SetDefaultCredentials(ICredentials defaultCredentials);
+
+        IRedmineHttpSettings SetProxyCredentials(ICredentials proxyCredentials);
+
+        IRedmineHttpSettings SetSslProtocols(SslProtocols sslProtocols);
+
+        IRedmineHttpSettings SetDecompressionMethods(DecompressionMethods decompressionMethods);
+
+        IRedmineHttpSettings SetUseProxy(bool useProxy);
+
+        IRedmineHttpSettings SetUseDefaultCredentials(bool useDefaultCredentials);
+
+        IRedmineHttpSettings SetUseCookies(bool useCookies);
+
+        IRedmineHttpSettings SetPreAuthenticate(bool preAuthenticate);
+
+
         HttpClientHandler Build();
     }
 }
