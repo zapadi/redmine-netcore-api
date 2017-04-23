@@ -14,15 +14,27 @@ namespace Redmine.Net.Api
     {
         public const int DEFAULT_PAGE_SIZE_VALUE = 25;
 
-        public RedmineManager(string host, IAuthentication authentication, MimeType mimeType = MimeType.Xml,
+        public RedmineManager(string host, string apiKey, MimeType mimeType = MimeType.Xml,
             IRedmineHttpSettings httpClientHandler = null)
         {
             host.EnsureValidHost();
             Host = host;
             MimeType = mimeType;
 
-            if (authentication is StatelessAuthentication)
-                ApiKey = ((StatelessAuthentication) authentication).ApiKey;
+            var clientHandler = httpClientHandler != null
+                ? httpClientHandler.Build()
+                : DefaultRedmineHttpSettings.Builder().Build();
+            RedmineHttp = new RedmineHttpClient(clientHandler);
+
+            ApiKey = apiKey;
+        }
+
+        public RedmineManager(string host, IAuthentication authentication, MimeType mimeType = MimeType.Xml,
+            IRedmineHttpSettings httpClientHandler = null)
+        {
+            host.EnsureValidHost();
+            Host = host;
+            MimeType = mimeType;
 
             var clientHandler = httpClientHandler != null
                 ? httpClientHandler.SetAuthentication(authentication?.Build()).Build()
@@ -36,11 +48,17 @@ namespace Redmine.Net.Api
 
         public int PageSize { get; set; }
 
-        public string ImpersonateUser { get => RedmineHttp.ImpersonateUser;
+        public string ImpersonateUser
+        {
+            get => RedmineHttp.ImpersonateUser;
             set => RedmineHttp.ImpersonateUser = value;
         }
 
-        public string ApiKey { get; }
+        public string ApiKey
+        {
+            get => RedmineHttp.ApiKey;
+            set => RedmineHttp.ApiKey = value;
+        }
 
         private RedmineHttpClient RedmineHttp { get; }
 
