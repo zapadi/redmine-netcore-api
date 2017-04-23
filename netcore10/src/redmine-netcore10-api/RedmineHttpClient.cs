@@ -23,6 +23,8 @@ namespace Redmine.Net.Api
 
         public string ImpersonateUser { get; set; }
 
+        public string ApiKey { get; set; }
+
         public void Dispose()
         {
             httpClient?.CancelPendingRequests();
@@ -31,6 +33,7 @@ namespace Redmine.Net.Api
 
         public async Task<T> Get<T>(Uri uri, MimeType mimeType) where T : class, new()
         {
+            httpClient.AddApiKeyIfSet(ApiKey);
             httpClient.AddImpersonationHeaderIfSet(ImpersonateUser);
             httpClient.AddContentType($"application/{UrlBuilder.RedmineMimeRepresentationDictionary[mimeType]}");
             var responseMessage = await httpClient.GetAsync(uri)
@@ -42,6 +45,7 @@ namespace Redmine.Net.Api
 
         public async Task<PaginatedResult<T>> List<T>(Uri uri, MimeType mimeType) where T : class, new()
         {
+            httpClient.AddApiKeyIfSet(ApiKey);
             httpClient.AddImpersonationHeaderIfSet(ImpersonateUser);
             httpClient.AddContentType($"application/{UrlBuilder.RedmineMimeRepresentationDictionary[mimeType]}");
             var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
@@ -53,6 +57,7 @@ namespace Redmine.Net.Api
 
         public async Task<T> Put<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
         {
+            httpClient.AddApiKeyIfSet(ApiKey);
             httpClient.AddImpersonationHeaderIfSet(ImpersonateUser);
             var serializedData = RedmineSerializer.Serialize(data, mimeType);
             serializedData = Regex.Replace(serializedData, @"\r\n|\r|\n", "\r\n");
@@ -120,6 +125,7 @@ namespace Redmine.Net.Api
 
         public async Task<T> Post<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
         {
+            httpClient.AddApiKeyIfSet(ApiKey);
             httpClient.AddImpersonationHeaderIfSet(ImpersonateUser);
             var content = new StringContent(RedmineSerializer.Serialize(data, mimeType), Encoding.UTF8,
                 $"application/{UrlBuilder.RedmineMimeRepresentationDictionary[mimeType]}");
@@ -152,6 +158,7 @@ namespace Redmine.Net.Api
 
         public async Task<byte[]> DownloadFile(Uri uri, MimeType mimeType)
         {
+            httpClient.AddApiKeyIfSet(ApiKey);
             httpClient.AddImpersonationHeaderIfSet(ImpersonateUser);
             var responseMessage = await httpClient.GetAsync(uri)
                 .ConfigureAwait(false);
@@ -163,6 +170,7 @@ namespace Redmine.Net.Api
         public async Task<Upload> UploadFile(Uri uri, byte[] bytes, MimeType mimeType)
         {
             var content = new ByteArrayContent(bytes);
+            httpClient.AddApiKeyIfSet(ApiKey);
             httpClient.AddImpersonationHeaderIfSet(ImpersonateUser);
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), "application/octet-stream");
             var responseMessage = await httpClient.PutAsync(uri.ToString(), content)
