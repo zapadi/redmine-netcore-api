@@ -1,4 +1,4 @@
-﻿namespace ClassLibrary
+﻿namespace Redmine.Net.Api
 {
     public enum MimeType
     {

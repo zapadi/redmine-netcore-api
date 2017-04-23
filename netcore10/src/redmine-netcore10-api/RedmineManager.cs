@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Internals;
 using Redmine.Net.Api.Types;
+using Redmine.NetCore.Api;
 
-namespace ClassLibrary
+namespace Redmine.Net.Api
 {
     public class RedmineManager
     {
@@ -21,7 +22,7 @@ namespace ClassLibrary
 
         public RedmineManager(string host, string apiKey, MimeType mimeType = MimeType.Xml)
         {
-            Extensions.CheckIfHostIsValid(host);
+            host.EnsureValidHost();
             Host = host;
             ApiKey = apiKey;
             MimeType = mimeType;

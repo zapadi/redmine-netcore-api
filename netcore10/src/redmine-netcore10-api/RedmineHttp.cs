@@ -13,7 +13,7 @@ using Redmine.Net.Api.Internals;
 using Redmine.Net.Api.Types;
 using System.Linq;
 
-namespace ClassLibrary
+namespace Redmine.Net.Api
 {
     internal class RedmineHttp
     {
