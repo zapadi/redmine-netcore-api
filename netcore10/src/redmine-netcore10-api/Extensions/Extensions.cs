@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Redmine.NetCore.Api
+namespace Redmine.Net.Api.Extensions
 {
     internal static class Extensions
     {

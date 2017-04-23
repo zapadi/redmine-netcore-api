@@ -5,9 +5,10 @@ using System.Globalization;
 using System.Net;
 using System.Threading.Tasks;
 using Redmine.Net.Api;
+using Redmine.Net.Api.Extensions;
 using Redmine.Net.Api.Internals;
 using Redmine.Net.Api.Types;
-using Redmine.NetCore.Api;
+
 
 namespace Redmine.Net.Api
 {

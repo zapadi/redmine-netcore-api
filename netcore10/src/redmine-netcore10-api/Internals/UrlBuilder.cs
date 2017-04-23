@@ -17,12 +17,13 @@
 using System;
 using System.Collections.Generic;
 using Redmine.Net.Api.Types;
-using ClassLibrary;
+
 using System.Collections.Specialized;
 using Redmine.Net.Api.Exceptions;
-using Redmine.Net.Api.Extensions;
+
 using System.Linq;
 using System.Net;
+using Redmine.Net.Api.Extensions;
 using Version = Redmine.Net.Api.Types.Version;
 
 namespace Redmine.Net.Api.Internals

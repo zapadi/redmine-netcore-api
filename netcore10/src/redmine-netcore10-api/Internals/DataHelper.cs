@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-using ClassLibrary;
+using Redmine.Net.Api;
 
 namespace Redmine.Net.Api.Internals
 {

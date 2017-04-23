@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using ClassLibrary;
 using Redmine.Net.Api.Exceptions;
 using Redmine.Net.Api.Extensions;
 using Redmine.Net.Api.Types;
@@ -84,7 +83,7 @@ namespace Redmine.Net.Api.Internals
                 if (mimeFormat == MimeType.Json)
                 {
                     var type = typeof(T);
-                  //  string jsonRoot = jsonRootPath.ContainsKey(type) ? jsonRootPath[type] : RedmineManager.TypePath[type];
+                    //  string jsonRoot = jsonRootPath.ContainsKey(type) ? jsonRootPath[type] : RedmineManager.TypePath[type];
                     //return JsonDeserialize<T>(response, jsonRoot);
                 }
 
@@ -113,7 +112,8 @@ namespace Redmine.Net.Api.Internals
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(response)) throw new RedmineException("Could not deserialize empty response!");
+                if (string.IsNullOrWhiteSpace(response))
+                    throw new RedmineException("Could not deserialize empty response!");
 
                 switch (mimeFormat)
                 {
@@ -139,7 +139,7 @@ namespace Redmine.Net.Api.Internals
         {
             int totalItems = 0, offset = 0;
             var type = typeof(T);
-          //  var jsonRoot = jsonRootPath.ContainsKey(type) ? jsonRootPath[type] : RedmineManager.TypePath[type];
+            //  var jsonRoot = jsonRootPath.ContainsKey(type) ? jsonRootPath[type] : RedmineManager.TypePath[type];
 
             //TODO: json deserialization
             //  var result = JsonDeserializeToList<T>(response, jsonRoot, out totalItems, out offset);
@@ -182,7 +182,7 @@ namespace Redmine.Net.Api.Internals
         // ReSharper disable once InconsistentNaming
         private static string ToXML<T>(T obj) where T : class
         {
-            var xws = new XmlWriterSettings { OmitXmlDeclaration = true };
+            var xws = new XmlWriterSettings {OmitXmlDeclaration = true};
             using (var stringWriter = new StringWriter())
             {
                 using (var xmlWriter = XmlWriter.Create(stringWriter, xws))

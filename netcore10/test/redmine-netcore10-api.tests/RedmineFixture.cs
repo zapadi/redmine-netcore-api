@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using ClassLibrary;
+using Redmine.Net.Api;
 
 namespace Tests
 {
