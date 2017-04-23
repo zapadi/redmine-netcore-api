@@ -3,46 +3,57 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Redmine.Net.Api;
 using Redmine.Net.Api.Extensions;
 using Redmine.Net.Api.Internals;
 using Redmine.Net.Api.Types;
 
-
 namespace Redmine.Net.Api
 {
-    public class RedmineManager: IDisposable
+    public class RedmineManager : IDisposable
     {
         public const int DEFAULT_PAGE_SIZE_VALUE = 25;
 
-        public MimeType MimeType { get; }
-        public string Host { get; }
-        internal string ApiKey { get; }
-        public int PageSize { get; set; }
-
-        private RedmineHttpClient RedmineHttp { get;  }
-
-        public RedmineManager(string host, string apiKey, MimeType mimeType = MimeType.Xml, IRedmineHttpSettings httpClientHandler = null)
+        public RedmineManager(string host, IAuthentication authentication, MimeType mimeType = MimeType.Xml,
+            IRedmineHttpSettings httpClientHandler = null)
         {
             host.EnsureValidHost();
             Host = host;
-            ApiKey = apiKey;
             MimeType = mimeType;
 
+            if (authentication is StatelessAuthentication)
+                ApiKey = ((StatelessAuthentication) authentication).ApiKey;
+
             var clientHandler = httpClientHandler != null
-                ? httpClientHandler.Build()
-                : DefaultRedmineHttpSettings.Builder().Build();
+                ? httpClientHandler.SetAuthentication(authentication?.Build()).Build()
+                : DefaultRedmineHttpSettings.Builder().SetAuthentication(authentication?.Build()).Build();
             RedmineHttp = new RedmineHttpClient(clientHandler);
+        }
+
+        public MimeType MimeType { get; }
+
+        public string Host { get; }
+
+        public int PageSize { get; set; }
+
+        public string ImpersonateUser { get => RedmineHttp.ImpersonateUser;
+            set => RedmineHttp.ImpersonateUser = value;
+        }
+
+        public string ApiKey { get; }
+
+        private RedmineHttpClient RedmineHttp { get; }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         ~RedmineManager()
         {
             Dispose(false);
         }
-
-       
 
         public async Task<TData> Create<TData>(TData data)
             where TData : class, new()
@@ -53,19 +64,16 @@ namespace Redmine.Net.Api
         public async Task<TData> Create<TData>(string ownerId, TData data)
             where TData : class, new()
         {
-            var uri = UrlBuilder.Create(Host, ApiKey, MimeType).CreateUrl<TData>(ownerId).Build();
+            var uri = UrlBuilder.Create(Host, MimeType).CreateUrl<TData>(ownerId).Build();
             var response = await RedmineHttp.Post(new Uri(uri), data, MimeType);
-
             return response;
         }
 
         public async Task<TData> Get<TData>(string id, NameValueCollection parameters)
             where TData : class, new()
         {
-            var uri = UrlBuilder.Create(Host, ApiKey, MimeType).GetUrl<TData>(id).SetParameters(parameters).Build();
-
+            var uri = UrlBuilder.Create(Host, MimeType).GetUrl<TData>(id).SetParameters(parameters).Build();
             var response = await RedmineHttp.Get<TData>(new Uri(uri), MimeType);
-
             return response;
         }
 
@@ -96,7 +104,6 @@ namespace Redmine.Net.Api
                 parameters.Set(RedmineKeys.OFFSET, offset.ToString(CultureInfo.InvariantCulture));
                 var tempResult = await List<TData>(parameters);
                 if (tempResult != null)
-                {
                     if (resultList == null)
                     {
                         resultList = tempResult.Items;
@@ -106,7 +113,6 @@ namespace Redmine.Net.Api
                     {
                         resultList.AddRange(tempResult.Items);
                     }
-                }
                 offset += pageSize;
             } while (offset < totalCount);
 
@@ -116,8 +122,10 @@ namespace Redmine.Net.Api
         public async Task<PaginatedResult<TData>> List<TData>(NameValueCollection parameters)
             where TData : class, new()
         {
-
-            var uri = UrlBuilder.Create(Host, ApiKey, MimeType).ItemsUrl<TData>(parameters).SetParameters(parameters).Build();
+            var uri = UrlBuilder.Create(Host, MimeType)
+                .ItemsUrl<TData>(parameters)
+                .SetParameters(parameters)
+                .Build();
 
             var response = await RedmineHttp.List<TData>(new Uri(uri), MimeType).ConfigureAwait(false);
 
@@ -131,10 +139,8 @@ namespace Redmine.Net.Api
 
         public async Task<TData> Update<TData>(string id, TData data, string projectId) where TData : class, new()
         {
-            var uri = UrlBuilder.Create(Host, ApiKey, MimeType).UploadUrl(id, data, projectId).Build();
-
+            var uri = UrlBuilder.Create(Host, MimeType).UploadUrl(id, data, projectId).Build();
             var response = await RedmineHttp.Put(new Uri(uri), data, MimeType).ConfigureAwait(false);
-
             return response;
         }
 
@@ -145,31 +151,20 @@ namespace Redmine.Net.Api
 
         public async Task<HttpStatusCode> Delete<T>(string id, string reasignedId) where T : class, new()
         {
-            var uri = UrlBuilder.Create(Host, ApiKey, MimeType).DeleteUrl<T>(id).Build();
-
+            var uri = UrlBuilder.Create(Host, MimeType).DeleteUrl<T>(id).Build();
             var response = await RedmineHttp.Delete(new Uri(uri), MimeType).ConfigureAwait(false);
-
             return response;
         }
 
         private void ReleaseUnmanagedResources()
         {
-            // TODO release unmanaged resources here
         }
 
         protected virtual void Dispose(bool disposing)
         {
             ReleaseUnmanagedResources();
             if (disposing)
-            {
                 RedmineHttp?.Dispose();
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }
