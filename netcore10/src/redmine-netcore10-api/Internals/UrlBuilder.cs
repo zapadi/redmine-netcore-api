@@ -31,7 +31,7 @@ namespace Redmine.Net.Api.Internals
     /// <summary>
     /// 
     /// </summary>
-    public class UrlBuilde : IUrlBuild
+    public class UrlBuilder : IUrlBuild
     {
         private string Host { get; set; }
         private MimeType MimeType { get; set; }
@@ -68,13 +68,13 @@ namespace Redmine.Net.Api.Internals
             [typeof(CustomField)] = "custom_fields"
         };
 
-        private UrlBuilde()
+        private UrlBuilder()
         {
         }
 
-        public static UrlBuilde Create(string host, string apiKey, MimeType mimeType)
+        public static UrlBuilder Create(string host, string apiKey, MimeType mimeType)
         {
-            var b = new UrlBuilde { Host = host, MimeType = mimeType, ApiKey = apiKey };
+            var b = new UrlBuilder { Host = host, MimeType = mimeType, ApiKey = apiKey };
             return b;
         }
 

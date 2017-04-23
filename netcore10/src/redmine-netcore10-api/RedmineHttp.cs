@@ -66,7 +66,7 @@ namespace Redmine.Net.Api
 
         public static async Task<PaginatedResult<T>> List<T>(Uri uri, MimeType mimeType) where T : class, new()
         {
-            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), $"application/{UrlBuilde.mimeRepresentation[mimeType]}");
+            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), $"application/{UrlBuilder.mimeRepresentation[mimeType]}");
 
             var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
 
@@ -78,7 +78,7 @@ namespace Redmine.Net.Api
         {
             var serializedData = RedmineSerializer.Serialize(data, mimeType);
             serializedData = Regex.Replace(serializedData, @"\r\n|\r|\n", "\r\n");
-            var requestContent = new StringContent(serializedData, Encoding.UTF8, $"application/{UrlBuilde.mimeRepresentation[mimeType]}");
+            var requestContent = new StringContent(serializedData, Encoding.UTF8, $"application/{UrlBuilder.mimeRepresentation[mimeType]}");
 
             var responseMessage = await httpClient.PutAsync(uri.ToString(), requestContent).ConfigureAwait(false);
             var tc = new TaskCompletionSource<T>();
@@ -140,7 +140,7 @@ namespace Redmine.Net.Api
 
         public static async Task<T> Post<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
         {
-            var content = new StringContent(RedmineSerializer.Serialize(data, mimeType), Encoding.UTF8, $"application/{UrlBuilde.mimeRepresentation[mimeType]}");
+            var content = new StringContent(RedmineSerializer.Serialize(data, mimeType), Encoding.UTF8, $"application/{UrlBuilder.mimeRepresentation[mimeType]}");
             var responseMessage = await httpClient.PostAsync(uri.ToString(), content).ConfigureAwait(false);
 
             var tc = await CreateTaskCompletionSource<T>(responseMessage, mimeType).ConfigureAwait(false);

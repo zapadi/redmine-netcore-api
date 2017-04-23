@@ -29,7 +29,7 @@ namespace Redmine.Net.Api.Extensions
         /// <param name="parameters">The parameters.</param>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <returns></returns>
-        public static string GetParameterValue(this NameValueCollection parameters, string parameterName)
+        public static string GetValue(this NameValueCollection parameters, string parameterName)
         {
             if (parameters == null) return null;
             var value = parameters.Get(parameterName);

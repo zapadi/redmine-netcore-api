@@ -48,7 +48,7 @@ namespace Redmine.Net.Api
         public async Task<TData> Create<TData>(string ownerId, TData data)
             where TData : class, new()
         {
-            var uri = UrlBuilde.Create(Host, ApiKey, MimeType).CreateUrl<TData>(ownerId).Build();
+            var uri = UrlBuilder.Create(Host, ApiKey, MimeType).CreateUrl<TData>(ownerId).Build();
             var response = await RedmineHttp.Post(new Uri(uri), data, MimeType);
 
             return response;
@@ -57,7 +57,7 @@ namespace Redmine.Net.Api
         public async Task<TData> Get<TData>(string id, NameValueCollection parameters)
             where TData : class, new()
         {
-            var uri = UrlBuilde.Create(Host, ApiKey, MimeType).GetUrl<TData>(id).SetParameters(parameters).Build();
+            var uri = UrlBuilder.Create(Host, ApiKey, MimeType).GetUrl<TData>(id).SetParameters(parameters).Build();
 
             var response = await RedmineHttp.Get<TData>(new Uri(uri), MimeType);
 
@@ -112,7 +112,7 @@ namespace Redmine.Net.Api
             where TData : class, new()
         {
 
-            var uri = UrlBuilde.Create(Host, ApiKey, MimeType).ItemsUrl<TData>(parameters).SetParameters(parameters).Build();
+            var uri = UrlBuilder.Create(Host, ApiKey, MimeType).ItemsUrl<TData>(parameters).SetParameters(parameters).Build();
 
             var response = await RedmineHttp.List<TData>(new Uri(uri), MimeType).ConfigureAwait(false);
 
@@ -126,7 +126,7 @@ namespace Redmine.Net.Api
 
         public async Task<TData> Update<TData>(string id, TData data, string projectId) where TData : class, new()
         {
-            var uri = UrlBuilde.Create(Host, ApiKey, MimeType).UploadUrl(id, data, projectId).Build();
+            var uri = UrlBuilder.Create(Host, ApiKey, MimeType).UploadUrl(id, data, projectId).Build();
 
             var response = await RedmineHttp.Put(new Uri(uri), data, MimeType).ConfigureAwait(false);
 
@@ -140,7 +140,7 @@ namespace Redmine.Net.Api
 
         public async Task<HttpStatusCode> Delete<T>(string id, string reasignedId) where T : class, new()
         {
-            var uri = UrlBuilde.Create(Host, ApiKey, MimeType).DeleteUrl<T>(id).Build();
+            var uri = UrlBuilder.Create(Host, ApiKey, MimeType).DeleteUrl<T>(id).Build();
 
             var response = await RedmineHttp.Delete(new Uri(uri), MimeType).ConfigureAwait(false);
 
