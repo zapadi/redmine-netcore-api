@@ -7,27 +7,24 @@ namespace Tests
     public class RedmineManagerFixture : IDisposable
     {
         private readonly string host = "";
+        private readonly string apiKey = "";
 
         public RedmineManagerFixture()
         {
-            IAuthentication authentication = StatelessAuthentication.Create("");
-
-            //authentication = BasicAuthentication.Create("", "");
-
-            SetMimeTypeXml(authentication);
-            SetMimeTypeJson(authentication);
+            SetMimeTypeXml();
+            SetMimeTypeJson();
         }
 
         [Conditional("JSON")]
-        private void SetMimeTypeJson(IAuthentication authentication)
+        private void SetMimeTypeJson()
         {
-            RedmineManager = new RedmineManager(host, authentication, MimeType.Json);
+            RedmineManager = new RedmineManager(host, apiKey, MimeType.Json);
         }
 
         [Conditional("XML")]
-        private void SetMimeTypeXml(IAuthentication authentication)
+        private void SetMimeTypeXml()
         {
-            RedmineManager = new RedmineManager(host, authentication);
+            RedmineManager = new RedmineManager(host, apiKey);
         }
 
         public void Dispose()
