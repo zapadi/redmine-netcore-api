@@ -25,6 +25,14 @@ namespace Redmine.Net.Api.Extensions
             httpClient.DefaultRequestHeaders.Add("X-Redmine-Switch-User", impersonateUser);
         }
 
+        public static void AddApiKeyIfSet(this HttpClient httpClient, string apiKey)
+        {
+            if (string.IsNullOrWhiteSpace(apiKey))
+                httpClient.DefaultRequestHeaders.Remove("X-Redmine-API-Key");
+            else
+                httpClient.DefaultRequestHeaders.Add("X-Redmine-API-Key", apiKey);
+        }
+
         public static void AddContentType(this HttpClient httpClient, string contentType)
         {
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), contentType);
