@@ -22,7 +22,7 @@ namespace Tests
        // [Conditional("XML")]
         private void SetMimeTypeXML()
         {
-            RedmineManager = new RedmineManager("http://padi.m.redmine.org/", "901e175d910799a8c9bb025d1d3c5bcb1a2a8ddc");
+           // RedmineManager = new RedmineManager();
         }
     }
 }

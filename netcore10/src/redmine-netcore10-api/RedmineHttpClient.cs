@@ -14,36 +14,18 @@ using Redmine.Net.Api.Extensions;
 
 namespace Redmine.Net.Api
 {
-    internal class RedmineHttp
+    internal class RedmineHttpClient : IDisposable
     {
-        private static readonly HttpClient httpClient;
+        private readonly HttpClient httpClient;
 
-        static RedmineHttp()
+        public RedmineHttpClient(HttpClientHandler clientHandler)
         {
-            //var byteArray = Encoding.ASCII.GetBytes("username:password1234");
-            // httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-            //  httpClient.DefaultRequestHeaders.ProxyAuthorization = new AuthenticationHeaderValue("","");
-
-            //HttpClientHandler handler = new HttpClientHandler()
-            //{
-            // //   Proxy = Proxy,
-            // //   UseProxy = true,
-            //    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate | DecompressionMethods.None,
-            // //   CookieContainer = new CookieContainer(),
-            // //   PreAuthenticate = true,
-            // //   SslProtocols = SslProtocols.Tls12,
-
-            //};
-
-            httpClient = new HttpClient();
+            httpClient = new HttpClient(clientHandler, true);
         }
 
-        public static IWebProxy Proxy { get; private set; }
+        public string ImpersonateUser { get; set; }
 
-        public static string ImpersonateUser { get; set; }
-
-        public static async Task<T> Get<T>(Uri uri, MimeType mimeType) where T : class, new()
+        public async Task<T> Get<T>(Uri uri, MimeType mimeType) where T : class, new()
         {
             httpClient.AddContentType($"application/{UrlBuilder.mimeRepresentation[mimeType]}");
             var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
@@ -51,7 +33,7 @@ namespace Redmine.Net.Api
             return await tc.Task;
         }
 
-        public static async Task<PaginatedResult<T>> List<T>(Uri uri, MimeType mimeType) where T : class, new()
+        public async Task<PaginatedResult<T>> List<T>(Uri uri, MimeType mimeType) where T : class, new()
         {
             httpClient.AddContentType($"application/{UrlBuilder.mimeRepresentation[mimeType]}");
 
@@ -61,7 +43,7 @@ namespace Redmine.Net.Api
             return await tc.Task;
         }
 
-        public static async Task<T> Put<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
+        public async Task<T> Put<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
         {
             var serializedData = RedmineSerializer.Serialize(data, mimeType);
             serializedData = Regex.Replace(serializedData, @"\r\n|\r|\n", "\r\n");
@@ -88,12 +70,12 @@ namespace Redmine.Net.Api
             return await tc.Task;
         }
 
-        private static async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(HttpResponseMessage responseMessage, MimeType mimeType) where T : class, new()
+        private async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(HttpResponseMessage responseMessage, MimeType mimeType) where T : class, new()
         {
             return await CreateTaskCompletionSource<T>(responseMessage, null, mimeType);
         }
 
-        private static async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(HttpResponseMessage responseMessage, Func<string, T> func, MimeType mimeType) where T : class, new()
+        private async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(HttpResponseMessage responseMessage, Func<string, T> func, MimeType mimeType) where T : class, new()
         {
             var tc = new TaskCompletionSource<T>();
             if (responseMessage.IsSuccessStatusCode)
@@ -109,7 +91,7 @@ namespace Redmine.Net.Api
             return tc;
         }
 
-        private static async Task<TaskCompletionSource<byte[]>> CreateFileDownloadTaskCompletionSource(HttpResponseMessage responseMessage, MimeType mimeType)
+        private async Task<TaskCompletionSource<byte[]>> CreateFileDownloadTaskCompletionSource(HttpResponseMessage responseMessage, MimeType mimeType)
         {
             var tc = new TaskCompletionSource<byte[]>();
             if (responseMessage.IsSuccessStatusCode)
@@ -125,7 +107,7 @@ namespace Redmine.Net.Api
             return tc;
         }
 
-        public static async Task<T> Post<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
+        public async Task<T> Post<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
         {
             var content = new StringContent(RedmineSerializer.Serialize(data, mimeType), Encoding.UTF8, $"application/{UrlBuilder.mimeRepresentation[mimeType]}");
             var responseMessage = await httpClient.PostAsync(uri.ToString(), content).ConfigureAwait(false);
@@ -134,7 +116,7 @@ namespace Redmine.Net.Api
             return await tc.Task;
         }
 
-        public static async Task<HttpStatusCode> Delete(Uri uri, MimeType mimeType)
+        public async Task<HttpStatusCode> Delete(Uri uri, MimeType mimeType)
         {
             var tc = new TaskCompletionSource<HttpStatusCode>();
             try
@@ -157,14 +139,14 @@ namespace Redmine.Net.Api
             return await tc.Task;
         }
 
-        public static async Task<byte[]> DownloadFile(Uri uri, MimeType mimeType)
+        public async Task<byte[]> DownloadFile(Uri uri, MimeType mimeType)
         {
             var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
             var tc = await CreateFileDownloadTaskCompletionSource(responseMessage, mimeType).ConfigureAwait(false);
             return await tc.Task;
         }
 
-        public static async Task<Upload> UploadFile(Uri uri, byte[] bytes, MimeType mimeType)
+        public async Task<Upload> UploadFile(Uri uri, byte[] bytes, MimeType mimeType)
         {
             var content = new ByteArrayContent(bytes);
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), "application/octet-stream");
@@ -174,10 +156,10 @@ namespace Redmine.Net.Api
             return await tc.Task;
         }
 
-        public static void Dispose()
+        public void Dispose()
         {
-            httpClient.CancelPendingRequests();
-            httpClient.Dispose();
+            httpClient?.CancelPendingRequests();
+            httpClient?.Dispose();
         }
 
         private static async Task<Exception> CreateExceptionAsync(HttpResponseMessage responseMessage, MimeType mimeFormat)

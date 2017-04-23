@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Extensions;
@@ -12,7 +13,7 @@ using Redmine.Net.Api.Types;
 
 namespace Redmine.Net.Api
 {
-    public class RedmineManager
+    public class RedmineManager: IDisposable
     {
         public const int DEFAULT_PAGE_SIZE_VALUE = 25;
 
@@ -21,23 +22,27 @@ namespace Redmine.Net.Api
         internal string ApiKey { get; }
         public int PageSize { get; set; }
 
-        public RedmineManager(string host, string apiKey, MimeType mimeType = MimeType.Xml)
+        private RedmineHttpClient RedmineHttp { get;  }
+
+        public RedmineManager(string host, string apiKey, MimeType mimeType = MimeType.Xml, IRedmineHttpSettings httpClientHandler = null)
         {
             host.EnsureValidHost();
             Host = host;
             ApiKey = apiKey;
             MimeType = mimeType;
+
+            var clientHandler = httpClientHandler != null
+                ? httpClientHandler.Build()
+                : DefaultRedmineHttpSettings.Builder().Build();
+            RedmineHttp = new RedmineHttpClient(clientHandler);
         }
 
         ~RedmineManager()
         {
-            Close();
+            Dispose(false);
         }
 
-        public void Close()
-        {
-            RedmineHttp.Dispose();
-        }
+       
 
         public async Task<TData> Create<TData>(TData data)
             where TData : class, new()
@@ -145,6 +150,26 @@ namespace Redmine.Net.Api
             var response = await RedmineHttp.Delete(new Uri(uri), MimeType).ConfigureAwait(false);
 
             return response;
+        }
+
+        private void ReleaseUnmanagedResources()
+        {
+            // TODO release unmanaged resources here
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            ReleaseUnmanagedResources();
+            if (disposing)
+            {
+                RedmineHttp?.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
