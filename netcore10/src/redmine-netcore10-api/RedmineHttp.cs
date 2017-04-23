@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Authentication;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,13 +10,13 @@ using Redmine.Net.Api.Exceptions;
 using Redmine.Net.Api.Internals;
 using Redmine.Net.Api.Types;
 using System.Linq;
+using Redmine.Net.Api.Extensions;
 
 namespace Redmine.Net.Api
 {
     internal class RedmineHttp
     {
         private static readonly HttpClient httpClient;
-        private static string impersonateUser;
 
         static RedmineHttp()
         {
@@ -43,22 +41,11 @@ namespace Redmine.Net.Api
 
         public static IWebProxy Proxy { get; private set; }
 
-        public static string ImpersonateUser
-        {
-            get { return impersonateUser; }
-            set
-            {
-                impersonateUser = value;
-                if (!string.IsNullOrEmpty(impersonateUser))
-                {
-                    httpClient.DefaultRequestHeaders.Add("X-Redmine-Switch-User", impersonateUser);
-                }
-            }
-        }
+        public static string ImpersonateUser { get; set; }
 
         public static async Task<T> Get<T>(Uri uri, MimeType mimeType) where T : class, new()
         {
-            // httpClient.DefaultRequestHeaders.Add("ContentType", $"application/{RedmineManager.MimeRepresentation[mimeType]}");
+            httpClient.AddContentType($"application/{UrlBuilder.mimeRepresentation[mimeType]}");
             var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
             var tc = await CreateTaskCompletionSource<T>(responseMessage, mimeType).ConfigureAwait(false);
             return await tc.Task;
@@ -66,7 +53,7 @@ namespace Redmine.Net.Api
 
         public static async Task<PaginatedResult<T>> List<T>(Uri uri, MimeType mimeType) where T : class, new()
         {
-            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), $"application/{UrlBuilder.mimeRepresentation[mimeType]}");
+            httpClient.AddContentType($"application/{UrlBuilder.mimeRepresentation[mimeType]}");
 
             var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
 
@@ -218,20 +205,5 @@ namespace Redmine.Net.Api
                     return new RedmineException(exceptionMessage);
             }
         }
-    }
-
-    public class HttpSettings
-    {
-        public IWebProxy WebProxy { get; set; }
-        public AuthenticationHeaderValue Authentication { get; set; }
-        public AuthenticationHeaderValue ProxyAuthentication { get; set; }
-        public CookieContainer CookieContainer { get; set; }
-        public ICredentials DefaultCredentials { get; set; }
-        public ICredentials ProxyCredentials { get; set; }
-        public SslProtocols SslProtocols { get; set; }
-        public bool UseProxy { get; set; }
-        public bool UseDefaultCredentials { get; set; }
-        public bool UseCookies { get; set; }
-        public bool PreAuthenticate { get; set; }
     }
 }
