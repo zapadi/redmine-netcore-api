@@ -10,6 +10,14 @@
     <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugJson|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;DEBUGJSON;NETCOREAPP1_0;JSON</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP1_0;XML</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\redmine-netcore10-api\redmine-netcore10-api.csproj" />
   </ItemGroup>

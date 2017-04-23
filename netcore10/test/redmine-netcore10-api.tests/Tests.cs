@@ -2,19 +2,25 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
-using Xunit;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Exceptions;
 using Redmine.Net.Api.Types;
+using Xunit;
 
 namespace Tests
 {
+    [Collection(Keywords.REDMINE_MANAGER_COLLECTION)]
     public class Tests
     {
+        public Tests(RedmineManagerFixture fixture)
+        {
+            this.fixture = fixture;
+        }
+
         private const string PROJECT_IDENTIFIER = "redmine-net-api-project-test";
         private const string PROJECT_NAME = "Redmine Net Api Project Test";
 
-        private readonly RedmineFixture fixture = new RedmineFixture();
+        private readonly RedmineManagerFixture fixture;
 
         private static Project CreateTestProjectWithRequiredPropertiesSet()
         {
@@ -75,21 +81,18 @@ namespace Tests
             {
                 Name = "Redmine Net Api Project With Parent Set",
                 Identifier = "rnapwps",
-                Parent = new IdentifiableName { Id = parentId }
+                Parent = new IdentifiableName {Id = parentId}
             };
 
             return project;
         }
 
-        [Fact]
-        public async void Should_Create_Project_With_Required_Properties()
+        private async Task Delete<T>(string id) where T : class, new()
         {
-            var savedProject = await fixture.RedmineManager.Create(CreateTestProjectWithRequiredPropertiesSet());
-
-            Assert.NotNull(savedProject);
-            Assert.NotEqual(savedProject.Id, 0);
-            Assert.True(savedProject.Name.Equals(PROJECT_NAME), "Project name is invalid.");
-            Assert.True(savedProject.Identifier.Equals(PROJECT_IDENTIFIER), "Project identifier is invalid.");
+            var exception = await Record.ExceptionAsync(() => fixture.RedmineManager.Delete<T>(id));
+            //Assert.Null(exception);
+            Assert.True(exception != null, $"Delete {id} - {exception.Message}");
+            await Assert.ThrowsAsync<RedmineException>(() => fixture.RedmineManager.Get<T>(id, null));
         }
 
         [Fact]
@@ -108,12 +111,66 @@ namespace Tests
         public async void Should_Create_Project_With_Parent()
         {
             var parentProject =
-                await fixture.RedmineManager.Create(new Project { Identifier = "parent-project", Name = "Parent project" });
+                await fixture.RedmineManager.Create(
+                    new Project {Identifier = "parent-project", Name = "Parent project"});
 
             var savedProject = await fixture.RedmineManager.Create(CreateTestProjectWithParentSet(parentProject.Id));
 
             Assert.NotNull(savedProject);
             Assert.True(savedProject.Parent.Id == parentProject.Id, "Parent project is invalid.");
+        }
+
+        [Fact]
+        public async void Should_Create_Project_With_Required_Properties()
+        {
+            var savedProject = await fixture.RedmineManager.Create(CreateTestProjectWithRequiredPropertiesSet());
+
+            Assert.NotNull(savedProject);
+            Assert.NotEqual(savedProject.Id, 0);
+            Assert.True(savedProject.Name.Equals(PROJECT_NAME), "Project name is invalid.");
+            Assert.True(savedProject.Identifier.Equals(PROJECT_IDENTIFIER), "Project identifier is invalid.");
+        }
+
+        [Fact]
+        public async void Should_Delete_Project_And_Parent_Project()
+        {
+            await Delete<Project>("rnapwps");
+            await Delete<Project>("parent-project");
+        }
+
+        [Fact]
+        public async void Should_Delete_Project_With_All_Properties_Set()
+        {
+            Func<Task> t = () => Task.Run(
+                () => fixture.RedmineManager.Delete<Project>("rnaptap"));
+            var exception = await Record.ExceptionAsync(t);
+            Assert.Null(exception);
+            await Assert.ThrowsAsync<RedmineException>(() => fixture.RedmineManager.Get<Project>("rnaptap", null));
+        }
+
+        [Fact]
+        public async void Should_Delete_Redmine_Net_Api_Project_Test_Project()
+        {
+            var exception =
+                await Record.ExceptionAsync(() => fixture.RedmineManager.Delete<Project>(PROJECT_IDENTIFIER));
+            Assert.Null(exception);
+            await Assert.ThrowsAsync<RedmineException>(
+                () => fixture.RedmineManager.Get<Project>(PROJECT_IDENTIFIER, null));
+        }
+
+        [Fact]
+        public async void Should_Get_All_Projects()
+        {
+            var projects = await fixture.RedmineManager.ListAll<Project>(null);
+            Assert.NotNull(projects);
+        }
+
+        [Fact]
+        public async void Should_Get_Paged_Projects()
+        {
+            var projects =
+                await fixture.RedmineManager.List<Project>(new NameValueCollection {{RedmineKeys.LIMIT, "2"}});
+            Assert.NotNull(projects);
         }
 
         [Fact]
@@ -145,13 +202,33 @@ namespace Tests
             //    "Project is_public not equal. (This property is available starting with 2.6.0)");
 
             Assert.True(project.Trackers != null, "Trackers are null!");
-            Assert.True(project.Trackers.Count == 2, $"Trackers found ({project.Trackers.Count}) != Trackers expected (2)");
+            Assert.True(project.Trackers.Count == 2,
+                $"Trackers found ({project.Trackers.Count}) != Trackers expected (2)");
             Assert.All(project.Trackers, t => Assert.IsType<ProjectTracker>(t));
 
             Assert.True(project.EnabledModules != null, "Enabled modules is null!");
             Assert.True(project.EnabledModules.Count == 2,
                 $"Enabled modules found ({project.EnabledModules.Count}) != Enabled modules expected (2)");
             Assert.All(project.EnabledModules, em => Assert.IsType<ProjectEnabledModule>(em));
+        }
+
+        [Fact]
+        public async void Should_Throw_Exception_Create_Project_Invalid_Trackers()
+        {
+            await Assert.ThrowsAsync<UnprocessableEntityException>(
+                () => fixture.RedmineManager.Create(CreateTestProjectWithInvalidTrackersId()));
+        }
+
+        [Fact]
+        public async void Should_Throw_Exception_When_Create_Empty_Project()
+        {
+            await Assert.ThrowsAsync<UnprocessableEntityException>(() => fixture.RedmineManager.Create(new Project()));
+        }
+
+        [Fact]
+        public async void Should_Throw_Exception_When_Project_Identifier_Is_Invalid()
+        {
+            await Assert.ThrowsAsync<RedmineException>(() => fixture.RedmineManager.Get<Project>("99999999", null));
         }
 
         [Fact]
@@ -171,80 +248,17 @@ namespace Tests
             project.IsPublic = UPDATED_PROJECT_ISPUBLIC;
             project.InheritMembers = UPDATED_PROJECT_INHERIT_MEMBERS;
 
-            var exception = await Record.ExceptionAsync(() => fixture.RedmineManager.Update(PROJECT_IDENTIFIER, project));
+            var exception =
+                await Record.ExceptionAsync(() => fixture.RedmineManager.Update(PROJECT_IDENTIFIER, project));
             Assert.Null(exception);
 
             var updatedProject = await fixture.RedmineManager.Get<Project>(PROJECT_IDENTIFIER, null);
 
             Assert.True(updatedProject.Name.Equals(UPDATED_PROJECT_NAME), "Project name was not updated.");
-            Assert.True(updatedProject.Description.Equals(UPDATED_PROJECT_DESCRIPTION), "Project description was not updated.");
+            Assert.True(updatedProject.Description.Equals(UPDATED_PROJECT_DESCRIPTION),
+                "Project description was not updated.");
             Assert.True(updatedProject.HomePage.Equals(UPDATED_PROJECT_HOMEPAGE), "Project homepage was not updated.");
             //  Assert.True(updatedProject.IsPublic.Equals(UPDATED_PROJECT_ISPUBLIC), "Project is_public was not updated. (This property is available starting with 2.6.0)");
-        }
-
-        [Fact]
-        public async void Should_Throw_Exception_When_Create_Empty_Project()
-        {
-            await Assert.ThrowsAsync<UnprocessableEntityException>(() => fixture.RedmineManager.Create(new Project()));
-        }
-
-        [Fact]
-        public async void Should_Throw_Exception_When_Project_Identifier_Is_Invalid()
-        {
-            await Assert.ThrowsAsync<RedmineException>(() => fixture.RedmineManager.Get<Project>("99999999", null));
-        }
-
-        [Fact]
-        public async void Should_Delete_Project_And_Parent_Project()
-        {
-            await Delete<Project>("rnapwps");
-            await Delete<Project>("parent-project");
-        }
-
-        private async Task Delete<T>(string id) where T : class, new()
-        {
-            var exception = await Record.ExceptionAsync(() => fixture.RedmineManager.Delete<T>(id));
-            //Assert.Null(exception);
-            Assert.True(exception != null, $"Delete {id} - {exception.Message}");
-            await Assert.ThrowsAsync<RedmineException>(() => fixture.RedmineManager.Get<T>(id, null));
-        }
-
-        [Fact]
-        public async void Should_Delete_Project_With_All_Properties_Set()
-        {
-            Func<Task> t = () => Task.Run(
-                 () => fixture.RedmineManager.Delete<Project>("rnaptap"));
-            var exception = await Record.ExceptionAsync(t);
-            Assert.Null(exception);
-            await Assert.ThrowsAsync<RedmineException>(() => fixture.RedmineManager.Get<Project>("rnaptap", null));
-        }
-
-        [Fact]
-        public async void Should_Delete_Redmine_Net_Api_Project_Test_Project()
-        {
-            var exception = await Record.ExceptionAsync(() => fixture.RedmineManager.Delete<Project>(PROJECT_IDENTIFIER));
-            Assert.Null(exception);
-            await Assert.ThrowsAsync<RedmineException>(() => fixture.RedmineManager.Get<Project>(PROJECT_IDENTIFIER, null));
-        }
-
-        [Fact]
-        public async void Should_Throw_Exception_Create_Project_Invalid_Trackers()
-        {
-            await Assert.ThrowsAsync<UnprocessableEntityException>(() => fixture.RedmineManager.Create(CreateTestProjectWithInvalidTrackersId()));
-        }
-
-        [Fact]
-        public async void Should_Get_All_Projects()
-        {
-            var projects = await fixture.RedmineManager.ListAll<Project>(null);
-            Assert.NotNull(projects);
-        }
-
-        [Fact]
-        public async void Should_Get_Paged_Projects()
-        {
-            var projects = await fixture.RedmineManager.List<Project>(new NameValueCollection() { { RedmineKeys.LIMIT,"2"}});
-            Assert.NotNull(projects);
         }
     }
 }
