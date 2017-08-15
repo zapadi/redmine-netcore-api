@@ -24,6 +24,9 @@ namespace Redmine.Net.Api.Extensions
     {
         public static void EnsureValidHost(this string host)
         {
+if(string.IsNullOrWhiteSpace(host))
+throw new UriFormatException("Host is not define!");
+
             if (!Uri.IsWellFormedUriString(host, UriKind.RelativeOrAbsolute))
                 throw new UriFormatException($"Host '{host}' is not valid!");
         }
