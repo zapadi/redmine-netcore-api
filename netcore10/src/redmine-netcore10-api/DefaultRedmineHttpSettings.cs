@@ -24,7 +24,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Redmine.Net.Api
 {
-    internal class DefaultRedmineHttpSettings : IRedmineHttpSettings
+    internal sealed class DefaultRedmineHttpSettings : IRedmineHttpSettings
     {
         private DefaultRedmineHttpSettings()
         {
@@ -50,6 +50,10 @@ namespace Redmine.Net.Api
             get;
             private set;
         }
+
+        public bool AllowAutoRedirect { get; private set; }
+
+        public int MaxAutomaticRedirections { get; private set; }
 
         public IRedmineHttpSettings SetWebProxy(IWebProxy webProxy)
         {
@@ -131,23 +135,41 @@ namespace Redmine.Net.Api
             return this;
         }
 
+        public IRedmineHttpSettings SetAllowAutoRedirect(bool allowAutoRedirect)
+        {
+            AllowAutoRedirect = allowAutoRedirect;
+            return this;
+        }
+
+        public IRedmineHttpSettings SetMaxAutomaticRedirections(int maxAutomaticRedirections)
+        {
+            MaxAutomaticRedirections = maxAutomaticRedirections;
+            return this;
+        }
+
         public HttpClientHandler Build()
         {
             var handler = new HttpClientHandler();
 
             if (handler.SupportsAutomaticDecompression)
+            {
                 handler.AutomaticDecompression = DecompressionMethods;
+            }
 
             if (handler.SupportsRedirectConfiguration)
             {
-                //TODO:
+                handler.AllowAutoRedirect = AllowAutoRedirect;
+                handler.MaxAutomaticRedirections = MaxAutomaticRedirections;
             }
 
+            handler.UseCookies = UseCookies;
             if (UseCookies)
             {
-                handler.UseCookies = UseCookies;
-                
-                //TODO: add default cookieContainer
+                if(CookieContainer == null)
+                {
+                    CookieContainer = new CookieContainer();
+                }
+
                 handler.CookieContainer = CookieContainer;
             }
 
@@ -159,7 +181,9 @@ namespace Redmine.Net.Api
                     handler.Proxy = WebProxy;
 
                     if (UseProxy && WebProxy != null)
+                    {
                         handler.Proxy.Credentials = ProxyCredentials;
+                    }
                 }
             }
 
@@ -173,7 +197,7 @@ namespace Redmine.Net.Api
 
             if (SslProtocols == default(SslProtocols))
             {
-            //   handler.SslProtocols 
+                SslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12;
             }
 
             handler.SslProtocols = SslProtocols;
@@ -198,12 +222,10 @@ namespace Redmine.Net.Api
                 }
             }
 
-            
-
             return handler;
         }
 
-        public static DefaultRedmineHttpSettings Builder()
+        public static DefaultRedmineHttpSettings Create()
         {
             return new DefaultRedmineHttpSettings();
         }

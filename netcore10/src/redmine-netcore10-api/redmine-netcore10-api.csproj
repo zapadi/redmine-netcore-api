@@ -12,6 +12,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugJson|AnyCPU'" />
 
   <ItemGroup>
+    <Compile Remove="Internals\DataHelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="System.Collections.Specialized" Version="4.0.1" />
     <PackageReference Include="System.Runtime.Serialization.Json" Version="4.0.2" />

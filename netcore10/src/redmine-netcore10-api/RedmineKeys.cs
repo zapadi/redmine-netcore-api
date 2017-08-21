@@ -139,7 +139,15 @@ namespace Redmine.Net.Api
         /// <summary>
         /// 
         /// </summary>
+        public const string DIGEST = "digest";
+        /// <summary>
+        /// 
+        /// </summary>
         public const string DONE_RATIO = "done_ratio";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string DOWNLOADS = "downloads";
         /// <summary>
         /// 
         /// </summary>
@@ -172,6 +180,10 @@ namespace Redmine.Net.Api
         /// 
         /// </summary>
         public const string FIELD_FORMAT = "field_format";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string FILE = "file";
         /// <summary>
         /// 
         /// </summary>
@@ -596,6 +608,10 @@ namespace Redmine.Net.Api
         /// 
         /// </summary>
         public const string VERSION = "version";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string VERSION_ID = "version_id";
         /// <summary>
         /// 
         /// </summary>

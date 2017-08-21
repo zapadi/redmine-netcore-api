@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using Redmine.Net.Api.Extensions;
 using Redmine.Net.Api.Internals;
 using Redmine.Net.Api.Types;
+
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("redmine-netcore10-api.tests")]
 /*
    Copyright 2016 - 2017 Adrian Popescu.
 
@@ -38,7 +41,7 @@ namespace Redmine.Net.Api
 
             var clientHandler = httpClientHandler != null
                 ? httpClientHandler.Build()
-                : DefaultRedmineHttpSettings.Builder().Build();
+                : DefaultRedmineHttpSettings.Create().Build();
             RedmineHttp = new RedmineHttpClient(clientHandler);
 
             ApiKey = apiKey;
@@ -48,12 +51,20 @@ namespace Redmine.Net.Api
             IRedmineHttpSettings httpClientHandler = null)
         {
             host.EnsureValidHost();
+
+            if(authentication == null)
+            {
+                throw new ArgumentNullException(nameof(authentication));
+            }
+
             Host = host;
             MimeType = mimeType;
 
+            var auth = authentication.Build();
+
             var clientHandler = httpClientHandler != null
-                ? httpClientHandler.SetAuthentication(authentication?.Build()).Build()
-                : DefaultRedmineHttpSettings.Builder().SetAuthentication(authentication?.Build()).Build();
+                ? httpClientHandler.SetAuthentication(auth).Build()
+                : DefaultRedmineHttpSettings.Create().SetAuthentication(auth).Build();
             RedmineHttp = new RedmineHttpClient(clientHandler);
         }
 
@@ -72,7 +83,7 @@ namespace Redmine.Net.Api
         public string ApiKey
         {
             get => RedmineHttp.ApiKey;
-            set => RedmineHttp.ApiKey = value;
+            private set => RedmineHttp.ApiKey = value;
         }
 
         private RedmineHttpClient RedmineHttp { get; }
@@ -91,22 +102,31 @@ namespace Redmine.Net.Api
         public async Task<TData> Create<TData>(TData data)
             where TData : class, new()
         {
-            return await Create(null, data);
+            return await Create(null, data).ConfigureAwait(false);
         }
 
         public async Task<TData> Create<TData>(string ownerId, TData data)
             where TData : class, new()
         {
-            var uri = UrlBuilder.Create(Host, MimeType).CreateUrl<TData>(ownerId).Build();
-            var response = await RedmineHttp.Post(new Uri(uri), data, MimeType);
+            var uri = UrlBuilder
+                .Create(Host, MimeType)
+                .CreateUrl<TData>(ownerId)
+                .Build();
+
+            var response = await RedmineHttp.Post(new Uri(uri), data, MimeType).ConfigureAwait(false);
             return response;
         }
 
         public async Task<TData> Get<TData>(string id, NameValueCollection parameters)
             where TData : class, new()
         {
-            var uri = UrlBuilder.Create(Host, MimeType).GetUrl<TData>(id).SetParameters(parameters).Build();
-            var response = await RedmineHttp.Get<TData>(new Uri(uri), MimeType);
+            var uri = UrlBuilder
+                .Create(Host, MimeType)
+                .GetUrl<TData>(id)
+                .SetParameters(parameters)
+                .Build();
+
+            var response = await RedmineHttp.Get<TData>(new Uri(uri), MimeType).ConfigureAwait(false);
             return response;
         }
 
@@ -135,8 +155,9 @@ namespace Redmine.Net.Api
             do
             {
                 parameters.Set(RedmineKeys.OFFSET, offset.ToString(CultureInfo.InvariantCulture));
-                var tempResult = await List<TData>(parameters);
+                var tempResult = await List<TData>(parameters).ConfigureAwait(false);
                 if (tempResult != null)
+                {
                     if (resultList == null)
                     {
                         resultList = tempResult.Items;
@@ -146,6 +167,8 @@ namespace Redmine.Net.Api
                     {
                         resultList.AddRange(tempResult.Items);
                     }
+                }
+
                 offset += pageSize;
             } while (offset < totalCount);
 
@@ -167,19 +190,23 @@ namespace Redmine.Net.Api
 
         public async Task<TData> Update<TData>(string id, TData data) where TData : class, new()
         {
-            return await Update(id, data, null);
+            return await Update(id, data, null).ConfigureAwait(false);
         }
 
         public async Task<TData> Update<TData>(string id, TData data, string projectId) where TData : class, new()
         {
-            var uri = UrlBuilder.Create(Host, MimeType).UploadUrl(id, data, projectId).Build();
+            var uri = UrlBuilder
+                .Create(Host, MimeType)
+                .UploadUrl(id, data, projectId)
+                .Build();
+
             var response = await RedmineHttp.Put(new Uri(uri), data, MimeType).ConfigureAwait(false);
             return response;
         }
 
         public async Task<HttpStatusCode> Delete<T>(string id) where T : class, new()
         {
-            return await Delete<T>(id, null);
+            return await Delete<T>(id, null).ConfigureAwait(false);
         }
 
         public async Task<HttpStatusCode> Delete<T>(string id, string reasignedId) where T : class, new()
@@ -197,7 +224,9 @@ namespace Redmine.Net.Api
         {
             ReleaseUnmanagedResources();
             if (disposing)
+            {
                 RedmineHttp?.Dispose();
+            }
         }
     }
 }

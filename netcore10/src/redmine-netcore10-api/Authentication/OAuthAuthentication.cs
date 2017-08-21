@@ -19,7 +19,7 @@ using System.Net.Http.Headers;
 
 namespace Redmine.Net.Api
 {
-    public class OAuthAuthentication : IAuthentication
+    public sealed class OAuthAuthentication : IAuthentication
     {
         private const string AUTHENTICATION_BEARER = "Bearer";
 

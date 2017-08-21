@@ -30,10 +30,13 @@ namespace Redmine.Net.Api
         ICredentials DefaultCredentials { get;  }
         ICredentials ProxyCredentials { get; }
         SslProtocols SslProtocols { get;  }
+        bool AllowAutoRedirect { get; }
         bool UseProxy { get;  }
         bool UseDefaultCredentials { get; }
         bool UseCookies { get;  }
         bool PreAuthenticate { get;  }
+        int MaxAutomaticRedirections { get; }
+
         DecompressionMethods DecompressionMethods { get;  }
 
         IRedmineHttpSettings SetWebProxy(IWebProxy webProxy);
@@ -60,6 +63,9 @@ namespace Redmine.Net.Api
 
         IRedmineHttpSettings SetPreAuthenticate(bool preAuthenticate);
 
+        IRedmineHttpSettings SetAllowAutoRedirect(bool allowAutoRedirect);
+
+        IRedmineHttpSettings SetMaxAutomaticRedirections(int maxAutomaticRedirections);
 
         HttpClientHandler Build();
     }

@@ -20,7 +20,7 @@ using System.Text;
 
 namespace Redmine.Net.Api
 {
-    public class BasicAuthentication : IAuthentication
+    public sealed class BasicAuthentication : IAuthentication
     {
         private const string AUTHENTICATION_BASIC = "Basic";
 

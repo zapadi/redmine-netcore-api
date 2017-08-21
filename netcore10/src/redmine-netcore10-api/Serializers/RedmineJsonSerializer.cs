@@ -14,24 +14,27 @@
    limitations under the License.
 */
 
+using System;
+using Redmine.Net.Api.Types;
+
+
 namespace Redmine.Net.Api.Internals
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    //internal static class DataHelper
-    //{
-    //    /// <summary>
-    //    /// Users the data.
-    //    /// </summary>
-    //    /// <param name="userId">The user identifier.</param>
-    //    /// <param name="mimeFormat">The MIME format.</param>
-    //    /// <returns></returns>
-    //    public static string UserData(int userId, MimeType mimeFormat)
-    //    {
-    //        return mimeFormat == MimeType.Xml
-    //            ? "<user_id>" + userId + "</user_id>"
-    //            : "{\"user_id\":\"" + userId + "\"}";
-    //    }
-    //}
+    internal sealed class RedmineJsonSerializer : IRedmineSerializer
+    {
+        public T Deserialize<T>(string response) where T : class
+        {
+            throw new NotImplementedException();
+        }
+
+        public PaginatedResult<T> DeserializeList<T>(string response) where T : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Serialize<T>(T obj) where T : class
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

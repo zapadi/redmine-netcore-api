@@ -28,7 +28,7 @@ namespace Redmine.Net.Api.Internals
 {
     /// <summary>
     /// </summary>
-    public class UrlBuilder : IUrlBuild
+    internal sealed class UrlBuilder : IUrlBuild
     {
         private const string URL_FORMAT = "{0}/{1}.{2}";
         private const string REQUEST_URL_FORMAT = "{0}/{1}/{2}.{3}";
@@ -37,8 +37,9 @@ namespace Redmine.Net.Api.Internals
         private const string WIKI_PAGE_URL_FORMAT = "{0}/projects/{1}/wiki/{2}.{3}";
         private const string WIKI_VERSION_URL_FORMAT = "{0}/projects/{1}/wiki/{2}/{3}.{4}";
         private const string ATTACHMENT_UPDATE_URL_FORMAT = "{0}/attachments/issues/{1}.{2}";
+        private const string FILE_URL_FORMAT = "{0}/projects/{1}/files.{2}";
 
-        public static readonly Dictionary<MimeType, string> RedmineMimeRepresentationDictionary = new Dictionary<MimeType, string>
+        public static readonly Dictionary<MimeType, string> mimeTypes = new Dictionary<MimeType, string>
         {
             [MimeType.Json] = MimeType.Json.ToString().ToLowerInvariant(),
             [MimeType.Xml] = MimeType.Xml.ToString().ToLowerInvariant()
@@ -65,11 +66,11 @@ namespace Redmine.Net.Api.Internals
             [typeof(IssuePriority)] = "enumerations/issue_priorities",
             [typeof(Watcher)] = "watchers",
             [typeof(IssueCustomField)] = "custom_fields",
-            [typeof(CustomField)] = "custom_fields"
+            [typeof(CustomField)] = "custom_fields",
+            [typeof(File)] = "files"
         };
 
         private NameValueCollection Parameters { get; set; }
-     //   private string query;
 
         private string Url { get; set; }
 
@@ -89,25 +90,21 @@ namespace Redmine.Net.Api.Internals
 
         public string Build()
         {
-           // var questionMarkSet = false;
             if (Parameters != null)
             {
                 var array = from key in Parameters.AllKeys
-                    from value in Parameters.GetValues(key)
-                    select string.Format("{0}={1}", WebUtility.UrlEncode(key), WebUtility.UrlEncode(value));
+                            from value in Parameters.GetValues(key)
+                            select string.Format("{0}={1}", WebUtility.UrlEncode(key), WebUtility.UrlEncode(value));
 
                 Url += "?" + string.Join("&", array);
-                //questionMarkSet = true;
             }
 
-            //if (!string.IsNullOrWhiteSpace(ApiKey))
-            //    return $"{url}{(questionMarkSet ? "&" : "?")}key={ApiKey}";
             return Url;
         }
 
         public static UrlBuilder Create(string host, MimeType mimeType)
         {
-            var b = new UrlBuilder {Host = host, MimeType = mimeType};
+            var b = new UrlBuilder { Host = host, MimeType = mimeType };
             return b;
         }
 
@@ -126,10 +123,12 @@ namespace Redmine.Net.Api.Internals
         {
             var type = typeof(T);
 
-            if (!typePath.ContainsKey(type)) throw new KeyNotFoundException(type.Name);
+            if (!typePath.ContainsKey(type))
+            {
+                throw new KeyNotFoundException(type.Name);
+            }
 
-            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[type], id, 
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[type], id, mimeTypes[MimeType]);
             return this;
         }
 
@@ -149,27 +148,45 @@ namespace Redmine.Net.Api.Internals
         {
             var type = typeof(T);
 
-            if (!typePath.ContainsKey(type)) throw new KeyNotFoundException(type.Name);
+            if (!typePath.ContainsKey(type))
+            {
+                throw new KeyNotFoundException(type.Name);
+            }
 
             if (type == typeof(Version) || type == typeof(IssueCategory) || type == typeof(ProjectMembership))
             {
-                if (string.IsNullOrEmpty(ownerId)) throw new RedmineException("The owner id(project id) is mandatory!");
-                Url = string.Format(ENTITY_WITH_PARENT_URL_FORMAT, Host, RedmineKeys.PROJECTS,
-                    ownerId, typePath[type], RedmineMimeRepresentationDictionary[MimeType]);
+                if (string.IsNullOrEmpty(ownerId))
+                {
+                    throw new RedmineException("The owner id(project id) is mandatory!");
+                }
+
+                Url = string.Format(ENTITY_WITH_PARENT_URL_FORMAT, Host, RedmineKeys.PROJECTS, ownerId, typePath[type], mimeTypes[MimeType]);
             }
             else
             {
                 if (type == typeof(IssueRelation))
                 {
                     if (string.IsNullOrEmpty(ownerId))
+                    {
                         throw new RedmineException("The owner id(issue id) is mandatory!");
-                    Url = string.Format(ENTITY_WITH_PARENT_URL_FORMAT, Host, RedmineKeys.ISSUES,
-                        ownerId, typePath[type], RedmineMimeRepresentationDictionary[MimeType]);
+                    }
+
+                    Url = string.Format(ENTITY_WITH_PARENT_URL_FORMAT, Host, RedmineKeys.ISSUES, ownerId, typePath[type], mimeTypes[MimeType]);
                 }
                 else
                 {
-                    Url = string.Format(URL_FORMAT, Host, typePath[type],
-                        RedmineMimeRepresentationDictionary[MimeType]);
+                    if (type == typeof(File))
+                    {
+                        if (string.IsNullOrEmpty(ownerId))
+                        {
+                            throw new RedmineException("The owner id(project id) is mandatory!");
+                        }
+                        Url = string.Format(FILE_URL_FORMAT, Host, ownerId, mimeTypes[MimeType]);
+                    }
+                    else
+                    {
+                        Url = string.Format(URL_FORMAT, Host, typePath[type], mimeTypes[MimeType]);
+                    }
                 }
             }
             return this;
@@ -187,10 +204,12 @@ namespace Redmine.Net.Api.Internals
         {
             var type = typeof(T);
 
-            if (!typePath.ContainsKey(type)) throw new KeyNotFoundException(type.Name);
+            if (!typePath.ContainsKey(type))
+            {
+                throw new KeyNotFoundException(type.Name);
+            }
 
-            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[type], id, 
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[type], id, mimeTypes[MimeType]);
             return this;
         }
 
@@ -205,10 +224,12 @@ namespace Redmine.Net.Api.Internals
         {
             var type = typeof(T);
 
-            if (!typePath.ContainsKey(type)) throw new KeyNotFoundException(type.Name);
+            if (!typePath.ContainsKey(type))
+            {
+                throw new KeyNotFoundException(type.Name);
+            }
 
-            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[type], id, 
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[type], id, mimeTypes[MimeType]);
             return this;
         }
 
@@ -229,17 +250,21 @@ namespace Redmine.Net.Api.Internals
         {
             var type = typeof(T);
 
-            if (!typePath.ContainsKey(type)) throw new KeyNotFoundException(type.Name);
+            if (!typePath.ContainsKey(type))
+            {
+                throw new KeyNotFoundException(type.Name);
+            }
 
             if (type == typeof(Version) || type == typeof(IssueCategory) || type == typeof(ProjectMembership))
             {
                 var projectId = parameters.GetValue(RedmineKeys.PROJECT_ID);
                 if (string.IsNullOrEmpty(projectId))
+                {
                     throw new RedmineException(
                         "The project id is mandatory! \nCheck if you have included the parameter project_id to parameters.");
+                }
 
-                Url = string.Format(ENTITY_WITH_PARENT_URL_FORMAT, Host, RedmineKeys.PROJECTS, projectId,
-                    typePath[type], RedmineMimeRepresentationDictionary[MimeType]);
+                Url = string.Format(ENTITY_WITH_PARENT_URL_FORMAT, Host, RedmineKeys.PROJECTS, projectId, typePath[type], mimeTypes[MimeType]);
             }
             else
             {
@@ -247,16 +272,29 @@ namespace Redmine.Net.Api.Internals
                 {
                     var issueId = parameters.GetValue(RedmineKeys.ISSUE_ID);
                     if (string.IsNullOrEmpty(issueId))
+                    {
                         throw new RedmineException(
                             "The issue id is mandatory! \nCheck if you have included the parameter issue_id to parameters");
+                    }
 
-                    Url = string.Format(ENTITY_WITH_PARENT_URL_FORMAT, Host, RedmineKeys.ISSUES, issueId,
-                        typePath[type], RedmineMimeRepresentationDictionary[MimeType]);
+                    Url = string.Format(ENTITY_WITH_PARENT_URL_FORMAT, Host, RedmineKeys.ISSUES, issueId, typePath[type], mimeTypes[MimeType]);
                 }
                 else
                 {
-                    Url = string.Format(URL_FORMAT, Host, typePath[type], 
-                        RedmineMimeRepresentationDictionary[MimeType]);
+                    if (type == typeof(File))
+                    {
+                        var projectId = parameters.GetValue(RedmineKeys.PROJECT_ID);
+                        if (string.IsNullOrEmpty(projectId))
+                        {
+                            throw new RedmineException("The project id is mandatory! \nCheck if you have included the parameter project_id to parameters.");
+                        }
+
+                        Url = string.Format(FILE_URL_FORMAT, Host, projectId, mimeTypes[MimeType]);
+                    }
+                    else
+                    {
+                        Url = string.Format(URL_FORMAT, Host, typePath[type], mimeTypes[MimeType]);
+                    }
                 }
             }
             return this;
@@ -269,8 +307,7 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         public IUrlBuild WikisUrl(string projectId)
         {
-            Url = string.Format(WIKI_INDEX_URL_FORMAT, Host, projectId, 
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(WIKI_INDEX_URL_FORMAT, Host, projectId, mimeTypes[MimeType]);
             return this;
         }
 
@@ -286,9 +323,8 @@ namespace Redmine.Net.Api.Internals
             uint version = 0)
         {
             Url = version == 0
-                ? string.Format(WIKI_PAGE_URL_FORMAT, Host, projectId, pageName, RedmineMimeRepresentationDictionary[MimeType])
-                : string.Format(WIKI_VERSION_URL_FORMAT, Host, projectId, pageName, version,
-                    RedmineMimeRepresentationDictionary[MimeType]);
+                ? string.Format(WIKI_PAGE_URL_FORMAT, Host, projectId, pageName, mimeTypes[MimeType])
+                : string.Format(WIKI_VERSION_URL_FORMAT, Host, projectId, pageName, version, mimeTypes[MimeType]);
             return this;
         }
 
@@ -299,8 +335,7 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         public IUrlBuild AddUserToGroupUrl(int groupId)
         {
-            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[typeof(Group)], $"{groupId}/users",
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[typeof(Group)], $"{groupId}/users", mimeTypes[MimeType]);
             return this;
         }
 
@@ -312,8 +347,7 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         public IUrlBuild RemoveUserFromGroupUrl(int groupId, int userId)
         {
-            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[typeof(Group)], $"{groupId}/users/{userId}",
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[typeof(Group)], $"{groupId}/users/{userId}", mimeTypes[MimeType]);
             return this;
         }
 
@@ -323,8 +357,7 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         public IUrlBuild UploadFileUrl()
         {
-            Url = string.Format(URL_FORMAT, Host, RedmineKeys.UPLOADS, 
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(URL_FORMAT, Host, RedmineKeys.UPLOADS, mimeTypes[MimeType]);
             return this;
         }
 
@@ -334,8 +367,7 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         public IUrlBuild CurrentUserUrl()
         {
-            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[typeof(User)], "current",
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[typeof(User)], "current", mimeTypes[MimeType]);
             return this;
         }
 
@@ -347,8 +379,7 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         public IUrlBuild WikiCreateOrUpdaterUrl(string projectId, string pageName)
         {
-            Url = string.Format(WIKI_PAGE_URL_FORMAT, Host, projectId, pageName, 
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(WIKI_PAGE_URL_FORMAT, Host, projectId, pageName, mimeTypes[MimeType]);
             return this;
         }
 
@@ -360,8 +391,7 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         public IUrlBuild DeleteWikirUrl(string projectId, string pageName)
         {
-            Url = string.Format(WIKI_PAGE_URL_FORMAT, Host, projectId, pageName, 
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(WIKI_PAGE_URL_FORMAT, Host, projectId, pageName, mimeTypes[MimeType]);
             return this;
         }
 
@@ -373,8 +403,7 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         public IUrlBuild AddWatcherToIssueUrl(int issueId, int userId)
         {
-            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[typeof(Issue)], $"{issueId}/watchers",
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[typeof(Issue)], $"{issueId}/watchers", mimeTypes[MimeType]);
             return this;
         }
 
@@ -386,8 +415,7 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         public IUrlBuild RemoveWatcherFromIssueUrl(int issueId, int userId)
         {
-            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[typeof(Issue)], $"{issueId}/watchers/{userId}",
-                RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(REQUEST_URL_FORMAT, Host, typePath[typeof(Issue)], $"{issueId}/watchers/{userId}", mimeTypes[MimeType]);
             return this;
         }
 
@@ -398,8 +426,7 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         public IUrlBuild AttachmentUpdateUrl(int issueId)
         {
-            Url = string.Format(ATTACHMENT_UPDATE_URL_FORMAT, Host, issueId
-                , RedmineMimeRepresentationDictionary[MimeType]);
+            Url = string.Format(ATTACHMENT_UPDATE_URL_FORMAT, Host, issueId, mimeTypes[MimeType]);
             return this;
         }
     }
