@@ -46,7 +46,8 @@ namespace Redmine.Net.Api
 
         public bool VerifyServerCertificate { get; private set; } = true;
 
-        public Func<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> ServerCertificateCustomValidationCallback {
+        public Func<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> ServerCertificateCustomValidationCallback
+        {
             get;
             private set;
         }
@@ -159,13 +160,14 @@ namespace Redmine.Net.Api
             if (handler.SupportsRedirectConfiguration)
             {
                 handler.AllowAutoRedirect = AllowAutoRedirect;
-                handler.MaxAutomaticRedirections = MaxAutomaticRedirections;
+                if (MaxAutomaticRedirections > 0)
+                    handler.MaxAutomaticRedirections = MaxAutomaticRedirections;
             }
 
             handler.UseCookies = UseCookies;
             if (UseCookies)
             {
-                if(CookieContainer == null)
+                if (CookieContainer == null)
                 {
                     CookieContainer = new CookieContainer();
                 }
