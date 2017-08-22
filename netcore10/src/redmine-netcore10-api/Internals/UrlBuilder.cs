@@ -200,7 +200,7 @@ namespace Redmine.Net.Api.Internals
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException"></exception>
-        public IUrlBuild DeleteUrl<T>(string id) where T : class, new()
+        public IUrlBuild DeleteUrl<T>(string id, string reasignedId) where T : class, new()
         {
             var type = typeof(T);
 

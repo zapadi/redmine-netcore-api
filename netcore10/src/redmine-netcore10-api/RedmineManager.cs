@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Globalization;
-using System.Net;
-using System.Threading.Tasks;
-using Redmine.Net.Api.Extensions;
-using Redmine.Net.Api.Internals;
-using Redmine.Net.Api.Types;
-
-using System.Runtime.CompilerServices;
-[assembly: InternalsVisibleTo("redmine-netcore10-api.tests")]
-/*
+﻿/*
    Copyright 2016 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +13,19 @@ using System.Runtime.CompilerServices;
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Globalization;
+using System.Net;
+using System.Threading.Tasks;
+using Redmine.Net.Api.Extensions;
+using Redmine.Net.Api.Internals;
+using Redmine.Net.Api.Types;
+
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("redmine-netcore10-api.tests")]
 
 namespace Redmine.Net.Api
 {
@@ -211,7 +212,11 @@ namespace Redmine.Net.Api
 
         public async Task<HttpStatusCode> Delete<T>(string id, string reasignedId) where T : class, new()
         {
-            var uri = UrlBuilder.Create(Host, MimeType).DeleteUrl<T>(id).Build();
+            var uri = UrlBuilder
+                .Create(Host, MimeType)
+                .DeleteUrl<T>(id, reasignedId)
+                .Build();
+
             var response = await RedmineHttp.Delete(new Uri(uri), MimeType).ConfigureAwait(false);
             return response;
         }

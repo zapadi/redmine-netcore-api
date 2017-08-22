@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETCOREAPP1_0;XML</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP1_0;XML;NETCOREAPP1_0</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
