@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -225,22 +225,22 @@ namespace Redmine.Net.Api.Types
             unchecked
             {
                 var hashCode = 13;
-                hashCode = HashCodeHelper.GetHashCode(Id,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(IsFilter,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(IsRequired,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(Multiple,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(Searchable,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(Visible,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(CustomizedType,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(DefaultValue,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(FieldFormat,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(MaxLength,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(MinLength,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(Name,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(Regexp,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(PossibleValues,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(Roles,hashCode);
-				hashCode = HashCodeHelper.GetHashCode(Trackers,hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Id, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(IsFilter, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(IsRequired, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Multiple, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Searchable, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Visible, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(CustomizedType, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(DefaultValue, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(FieldFormat, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(MaxLength, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(MinLength, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Name, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Regexp, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(PossibleValues, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Roles, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Trackers, hashCode);
                 return hashCode;
             }
         }
@@ -249,10 +249,9 @@ namespace Redmine.Net.Api.Types
         /// 
         /// </summary>
         /// <returns></returns>
-		public override string ToString ()
-		{
-			return string.Format ("[CustomField: Id={0}, Name={1}, CustomizedType={2}, FieldFormat={3}, Regexp={4}, MinLength={5}, MaxLength={6}, IsRequired={7}, IsFilter={8}, Searchable={9}, Multiple={10}, DefaultValue={11}, Visible={12}, PossibleValues={13}, Trackers={14}, Roles={15}]",
-				Id, Name, CustomizedType, FieldFormat, Regexp, MinLength, MaxLength, IsRequired, IsFilter, Searchable, Multiple, DefaultValue, Visible, PossibleValues, Trackers, Roles);
-		}
+		public override string ToString()
+        {
+            return $"[CustomField: Id={Id}, Name={Name}, CustomizedType={CustomizedType}, FieldFormat={FieldFormat}, Regexp={Regexp}, MinLength={MinLength}, MaxLength={MaxLength}, IsRequired={IsRequired}, IsFilter={IsFilter}, Searchable={Searchable}, Multiple={Multiple}, DefaultValue={DefaultValue}, Visible={Visible}, PossibleValues={PossibleValues}, Trackers={Trackers}, Roles={Roles}]";
+        }
     }
 }

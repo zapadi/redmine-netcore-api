@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -112,9 +112,9 @@ namespace Redmine.Net.Api.Types
             if (other == null) return false;
             return Id == other.Id
                 && Name == other.Name
-                && (Users?.Equals(other.Users) ?? other.Users == null)
-                && (CustomFields?.Equals(other.CustomFields) ?? other.CustomFields == null)
-                && (Memberships?.Equals(other.Memberships) ?? other.Memberships == null);
+                && Users == other.Users
+                && CustomFields == other.CustomFields
+                && Memberships == other.Memberships;
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[Group: Id={0}, Name={1}, Users={2}, CustomFields={3}, Memberships={4}]", Id, Name, Users, CustomFields, Memberships);
+            return $"[Group: Id={Id}, Name={Name}, Users={Users}, CustomFields={CustomFields}, Memberships={Memberships}]";
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu, Dorin Huzum.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ namespace Redmine.Net.Api.Types
     /// See Issue journals for more information.
     /// </summary>
     [XmlRoot(RedmineKeys.ISSUE)]
-    public class Issue : Identifiable<Issue>, IXmlSerializable, IEquatable<Issue>//, ICloneable
+    public class Issue : Identifiable<Issue>, IXmlSerializable, IEquatable<Issue>
     {
         /// <summary>
         /// Gets or sets the project.
@@ -205,6 +205,20 @@ namespace Redmine.Net.Api.Types
         public bool IsPrivate { get; set; }
 
         /// <summary>
+        /// Returns the sum of spent hours of the task and all the subtasks.
+        /// </summary>
+        /// <remarks>Availability starting with redmine version 3.3</remarks>
+        [XmlElement(RedmineKeys.TOTAL_SPENT_HOURS)]
+        public float? TotalSpentHours { get; set; }
+
+        /// <summary>
+        /// Returns the sum of estimated hours of task and all the subtasks.
+        /// </summary>
+        /// <remarks>Availability starting with redmine version 3.3</remarks>
+        [XmlElement(RedmineKeys.TOTAL_ESTIMATED_HOURS)]
+        public float? TotalEstimatedHours { get; set; }
+
+        /// <summary>
         /// Gets or sets the journals.
         /// </summary>
         /// <value>
@@ -375,6 +389,14 @@ namespace Redmine.Net.Api.Types
                         EstimatedHours = reader.ReadElementContentAsNullableFloat();
                         break;
 
+                    case RedmineKeys.TOTAL_ESTIMATED_HOURS:
+                        TotalEstimatedHours = reader.ReadElementContentAsNullableFloat();
+                        break;
+
+                    case RedmineKeys.TOTAL_SPENT_HOURS:
+                        TotalSpentHours = reader.ReadElementContentAsNullableFloat();
+                        break;
+
                     case RedmineKeys.SPENT_HOURS:
                         SpentHours = reader.ReadElementContentAsNullableFloat();
                         break;
@@ -469,36 +491,6 @@ namespace Redmine.Net.Api.Types
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public object Clone()
-        {
-            var issue = new Issue
-            {
-                AssignedTo = AssignedTo,
-                Author = Author,
-                Category = Category,
-             //   CustomFields = CustomFields.Clone(),
-                Description = Description,
-                DoneRatio = DoneRatio,
-                DueDate = DueDate,
-                SpentHours = SpentHours,
-                EstimatedHours = EstimatedHours,
-                Priority = Priority,
-                StartDate = StartDate,
-                Status = Status,
-                Subject = Subject,
-                Tracker = Tracker,
-                Project = Project,
-                FixedVersion = FixedVersion,
-                Notes = Notes,
-             //   Watchers = Watchers.Clone()
-            };
-            return issue;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         public bool Equals(Issue other)
@@ -518,21 +510,21 @@ namespace Redmine.Net.Api.Types
             && DueDate == other.DueDate
             && DoneRatio == other.DoneRatio
             && EstimatedHours == other.EstimatedHours
-            && (CustomFields != null ? CustomFields.Equals(other.CustomFields) : other.CustomFields == null)
+            && CustomFields == other.CustomFields
             && CreatedOn == other.CreatedOn
             && UpdatedOn == other.UpdatedOn
             && AssignedTo == other.AssignedTo
             && FixedVersion == other.FixedVersion
             && Notes == other.Notes
-            && (Watchers != null ? Watchers.Equals(other.Watchers) : other.Watchers == null)
+            && Watchers == other.Watchers
             && ClosedOn == other.ClosedOn
             && SpentHours == other.SpentHours
             && PrivateNotes == other.PrivateNotes
-            && (Attachments != null ? Attachments.Equals(other.Attachments) : other.Attachments == null)
-            && (Changesets!= null ? Changesets.Equals(other.Changesets) : other.Changesets == null)
-            && (Children != null ?  Children.Equals(other.Children) : other.Children == null)
-            && (Journals != null ? Journals.Equals(other.Journals) : other.Journals == null)
-            && (Relations != null ? Relations.Equals(other.Relations) : other.Relations == null)
+            && Attachments == other.Attachments
+            && Changesets == other.Changesets
+            && Children == other.Children
+            && Journals == other.Journals
+            && Relations == other.Relations
             );
         }
 

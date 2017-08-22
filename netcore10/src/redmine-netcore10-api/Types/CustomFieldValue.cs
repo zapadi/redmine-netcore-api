@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ namespace Redmine.Net.Api.Types
     /// 
     /// </summary>
     [XmlRoot(RedmineKeys.VALUE)]
-    public class CustomFieldValue : IEquatable<CustomFieldValue>//, ICloneable
+    public class CustomFieldValue : IEquatable<CustomFieldValue>
     {
         /// <summary>
         /// 
@@ -75,14 +75,14 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[CustomFieldValue: Info={0}]", Info);
+            return $"[CustomFieldValue: Info={Info}]";
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public object Clone()
+        public CustomFieldValue Clone()
         {
             var customFieldValue = new CustomFieldValue { Info = Info };
             return customFieldValue;

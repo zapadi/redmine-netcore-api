@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -84,6 +84,17 @@ namespace Redmine.Net.Api.Types
         [XmlArrayItem(RedmineKeys.ATTACHMENT)]
         public IList<Attachment> Attachments { get; set; }
 
+        /// <summary>
+        /// Sets the uploads.
+        /// </summary>
+        /// <value>
+        /// The uploads.
+        /// </value>
+        /// <remarks>Availability starting with redmine version 3.3</remarks>
+        [XmlArray(RedmineKeys.UPLOADS)]
+        [XmlArrayItem(RedmineKeys.UPLOAD)]
+        public IList<Attachment> Uploads { get; set; }
+
         #region Implementation of IXmlSerializable
 
         /// <summary>
@@ -141,6 +152,7 @@ namespace Redmine.Net.Api.Types
             writer.WriteElementString(RedmineKeys.TEXT, Text);
             writer.WriteElementString(RedmineKeys.COMMENTS, Comments);
             writer.WriteValueOrEmpty<int>(Version, RedmineKeys.VERSION);
+            writer.WriteArray(Uploads, RedmineKeys.UPLOADS);
         }
 
         #endregion
@@ -165,6 +177,7 @@ namespace Redmine.Net.Api.Types
                 && CreatedOn == other.CreatedOn
                 && UpdatedOn == other.UpdatedOn;
         }
+        #endregion
 
         /// <summary>
         /// 
@@ -193,10 +206,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[WikiPage: {8}, Title={0}, Text={1}, Comments={2}, Version={3}, Author={4}, CreatedOn={5}, UpdatedOn={6}, Attachments={7}]",
-                Title, Text, Comments, Version, Author, CreatedOn, UpdatedOn, Attachments, base.ToString());
+            return $"[WikiPage: {base.ToString()}, Title={Title}, Text={Text}, Comments={Comments}, Version={Version}, Author={Author}, CreatedOn={CreatedOn}, UpdatedOn={UpdatedOn}, Attachments={Attachments}]";
         }
-
-        #endregion
     }
 }

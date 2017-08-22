@@ -1,5 +1,5 @@
 ﻿/*
-Copyright 2016 - 2017 Adrian Popescu.
+Copyright 2011 - 2017 Adrian Popescu.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ namespace Redmine.Net.Api.Types
     /// the module name: boards, calendar, documents, files, gantt, issue_tracking, news, repository, time_tracking, wiki.
     /// </summary>
     [XmlRoot(RedmineKeys.ENABLED_MODULE)]
- public class ProjectEnabledModule : IdentifiableName, IValue
+    public class ProjectEnabledModule : IdentifiableName, IValue
     {
         #region IValue implementation
         /// <summary>
@@ -40,7 +40,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[ProjectEnabledModule: {0}]", base.ToString());
+            return $"[ProjectEnabledModule: {base.ToString()}]";
         }
     }
 }

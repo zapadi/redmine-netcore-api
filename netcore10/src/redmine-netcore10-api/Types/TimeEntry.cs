@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ namespace Redmine.Net.Api.Types
     /// Availability 1.1
     /// </summary>
     [XmlRoot(RedmineKeys.TIME_ENTRY)]
-    public class TimeEntry : Identifiable<TimeEntry>, IEquatable<TimeEntry>, IXmlSerializable//, ICloneable
+    public class TimeEntry : Identifiable<TimeEntry>, IEquatable<TimeEntry>, IXmlSerializable
     {
         private string comments;
 
@@ -124,7 +124,7 @@ namespace Redmine.Net.Api.Types
         /// 
         /// </summary>
         /// <returns></returns>
-        public object Clone()
+        public TimeEntry Clone()
         {
             var timeEntry = new TimeEntry { Activity = Activity, Comments = Comments, Hours = Hours, Issue = Issue, Project = Project, SpentOn = SpentOn, User = User, CustomFields = CustomFields };
             return timeEntry;
@@ -224,7 +224,7 @@ namespace Redmine.Net.Api.Types
                 && User == other.User
                 && CreatedOn == other.CreatedOn
                 && UpdatedOn == other.UpdatedOn
-                && (CustomFields?.Equals(other.CustomFields) ?? other.CustomFields == null));
+                && CustomFields == other.CustomFields);
         }
 
         /// <summary>
@@ -256,8 +256,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[TimeEntry: {10}, Issue={0}, Project={1}, SpentOn={2}, Hours={3}, Activity={4}, User={5}, Comments={6}, CreatedOn={7}, UpdatedOn={8}, CustomFields={9}]",
-                Issue, Project, SpentOn, Hours, Activity, User, Comments, CreatedOn, UpdatedOn, CustomFields, base.ToString());
+            return $"[TimeEntry: {base.ToString()}, Issue={Issue}, Project={Project}, SpentOn={SpentOn}, Hours={Hours}, Activity={Activity}, User={User}, Comments={Comments}, CreatedOn={CreatedOn}, UpdatedOn={UpdatedOn}, CustomFields={CustomFields}]";
         }
     }
 }

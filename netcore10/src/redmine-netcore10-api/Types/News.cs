@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -135,7 +135,7 @@ namespace Redmine.Net.Api.Types
                 && Description == other.Description
                 && CreatedOn == other.CreatedOn);
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -161,8 +161,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[News: {6}, Project={0}, Author={1}, Title={2}, Summary={3}, Description={4}, CreatedOn={5}]",
-                Project, Author, Title, Summary, Description, CreatedOn, base.ToString());
+            return $"[News: {base.ToString()}, Project={Project}, Author={Author}, Title={Title}, Summary={Summary}, Description={Description}, CreatedOn={CreatedOn}]";
         }
     }
 }

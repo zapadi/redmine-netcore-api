@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -135,6 +135,15 @@ namespace Redmine.Net.Api.Types
         public List<UserGroup> Groups { get; set; }
 
         /// <summary>
+        /// Gets or sets the user's mail_notification.
+        /// </summary>
+        /// <value>
+        /// only_my_events, only_assigned, [...]
+        /// </value>
+        [XmlElement(RedmineKeys.MAIL_NOTIFICATION)]
+        public string MailNotification { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
@@ -170,6 +179,8 @@ namespace Redmine.Net.Api.Types
 
                     case RedmineKeys.MAIL: Email = reader.ReadElementContentAsString(); break;
 
+                    case RedmineKeys.MAIL_NOTIFICATION: MailNotification = reader.ReadElementContentAsString(); break;
+
                     case RedmineKeys.MUST_CHANGE_PASSWD: MustChangePassword = reader.ReadElementContentAsBoolean(); break;
 
                     case RedmineKeys.AUTH_SOURCE_ID: AuthenticationModeId = reader.ReadElementContentAsNullableInt(); break;
@@ -203,6 +214,7 @@ namespace Redmine.Net.Api.Types
             writer.WriteElementString(RedmineKeys.FIRSTNAME, FirstName);
             writer.WriteElementString(RedmineKeys.LASTNAME, LastName);
             writer.WriteElementString(RedmineKeys.MAIL, Email);
+            writer.WriteElementString(RedmineKeys.MAIL_NOTIFICATION, MailNotification);
             writer.WriteElementString(RedmineKeys.PASSWORD, Password);
             writer.WriteValueOrEmpty(AuthenticationModeId, RedmineKeys.AUTH_SOURCE_ID);
             writer.WriteElementString(RedmineKeys.MUST_CHANGE_PASSWD, MustChangePassword.ToString().ToLowerInvariant());
@@ -220,20 +232,20 @@ namespace Redmine.Net.Api.Types
             if (other == null) return false;
             return (
                 Id == other.Id
-                && Login.Equals(other.Login)
-                //&& Password.Equals(other.Password)
-                && FirstName.Equals(other.FirstName)
-                && LastName.Equals(other.LastName)
-                && Email.Equals(other.Email)
-				&& (ApiKey?.Equals(other.ApiKey) ?? other.ApiKey == null)
+                && Login == other.Login
+                && FirstName == other.FirstName
+                && LastName == other.LastName
+                && Email == other.Email
+                && MailNotification == other.MailNotification
+                && ApiKey == other.ApiKey
                 && AuthenticationModeId == other.AuthenticationModeId
                 && CreatedOn == other.CreatedOn
                 && LastLoginOn == other.LastLoginOn
                 && Status == other.Status
                 && MustChangePassword == other.MustChangePassword
-                && (CustomFields?.Equals(other.CustomFields) ?? other.CustomFields == null)
-                && (Memberships?.Equals(other.Memberships) ?? other.Memberships == null)
-                && (Groups?.Equals(other.Groups) ?? other.Groups == null)
+                && CustomFields == other.CustomFields
+                && Memberships == other.Memberships
+                && Groups == other.Groups
             );
         }
 
@@ -251,6 +263,7 @@ namespace Redmine.Net.Api.Types
                 hashCode = HashCodeHelper.GetHashCode(FirstName, hashCode);
                 hashCode = HashCodeHelper.GetHashCode(LastName, hashCode);
                 hashCode = HashCodeHelper.GetHashCode(Email, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(MailNotification, hashCode);
                 hashCode = HashCodeHelper.GetHashCode(AuthenticationModeId, hashCode);
                 hashCode = HashCodeHelper.GetHashCode(CreatedOn, hashCode);
                 hashCode = HashCodeHelper.GetHashCode(LastLoginOn, hashCode);
@@ -270,8 +283,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return
-                $"[User: {base.ToString()}, Login={Login}, Password={Password}, FirstName={FirstName}, LastName={LastName}, Email={Email}, AuthenticationModeId={AuthenticationModeId}, CreatedOn={CreatedOn}, LastLoginOn={LastLoginOn}, ApiKey={ApiKey}, Status={Status}, MustChangePassword={MustChangePassword}, CustomFields={CustomFields}, Memberships={Memberships}, Groups={Groups}]";
+            return $"[User: {Groups}, Login={Login}, Password={Password}, FirstName={FirstName}, LastName={LastName}, Email={Email}, EmailNotification={MailNotification}, AuthenticationModeId={AuthenticationModeId}, CreatedOn={CreatedOn}, LastLoginOn={LastLoginOn}, ApiKey={ApiKey}, Status={Status}, MustChangePassword={MustChangePassword}, CustomFields={CustomFields}, Memberships={Memberships}, Groups={Groups}]";
         }
     }
 }

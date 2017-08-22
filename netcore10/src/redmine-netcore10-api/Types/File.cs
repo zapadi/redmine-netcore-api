@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+
 
 
 using Redmine.Net.Api.Extensions;
@@ -60,17 +61,17 @@ namespace Redmine.Net.Api.Types
 
         [XmlElement(RedmineKeys.TOKEN)]
         public string Token { get; set; }
-        
+
         public bool Equals(File other)
         {
             if (other == null) return false;
-            return (Id == other.Id 
-                && Filename == other.Filename 
-                && Filesize == other.Filesize 
+            return (Id == other.Id
+                && Filename == other.Filename
+                && Filesize == other.Filesize
                 && Description == other.Description
-                && ContentType == other.ContentType 
+                && ContentType == other.ContentType
                 && ContentUrl == other.ContentUrl
-                && Author ==other.Author
+                && Author == other.Author
                 && CreatedOn == other.CreatedOn
                 && Version == other.Version
                 && Digest == other.Digest
@@ -138,12 +139,12 @@ namespace Redmine.Net.Api.Types
                     case RedmineKeys.DESCRIPTION: Description = reader.ReadElementContentAsString(); break;
                     case RedmineKeys.CONTENT_URL: ContentUrl = reader.ReadElementContentAsString(); break;
                     case RedmineKeys.AUTHOR: Author = new IdentifiableName(reader); break;
-                    case RedmineKeys.CREATED_ON:CreatedOn = reader.ReadElementContentAsNullableDateTime(); break;
+                    case RedmineKeys.CREATED_ON: CreatedOn = reader.ReadElementContentAsNullableDateTime(); break;
                     case RedmineKeys.VERSION: Version = new IdentifiableName(reader); break;
-                    case RedmineKeys.VERSION_ID: Version = new IdentifiableName() {Id = reader.ReadElementContentAsInt()}; break;
+                    case RedmineKeys.VERSION_ID: Version = new IdentifiableName() { Id = reader.ReadElementContentAsInt() }; break;
                     case RedmineKeys.DIGEST: Digest = reader.ReadElementContentAsString(); break;
                     case RedmineKeys.DOWNLOADS: Downloads = reader.ReadElementContentAsInt(); break;
-                    case RedmineKeys.TOKEN:Token = reader.ReadElementContentAsString(); break;
+                    case RedmineKeys.TOKEN: Token = reader.ReadElementContentAsString(); break;
                     default:
                         reader.Read();
                         break;

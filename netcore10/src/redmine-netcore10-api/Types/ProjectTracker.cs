@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -22,20 +22,20 @@ namespace Redmine.Net.Api.Types
     /// 
     /// </summary>
     [XmlRoot(RedmineKeys.TRACKER)]
-	public class ProjectTracker : IdentifiableName,  IValue
+    public class ProjectTracker : IdentifiableName, IValue
     {
         /// <summary>
         /// 
         /// </summary>
-		public string Value{get{return Id.ToString ();}}
+		public string Value { get { return Id.ToString(); } }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-		public override string ToString ()
-		{
-			return string.Format ("[ProjectTracker: {0}]", base.ToString());
-		}
+		public override string ToString()
+        {
+            return $"[ProjectTracker: {base.ToString()}]";
+        }
     }
 }

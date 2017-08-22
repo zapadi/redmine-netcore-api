@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Redmine.Net.Api.Extensions;
 using Redmine.Net.Api.Internals;
+using System.Linq;
 
 namespace Redmine.Net.Api.Types
 {
@@ -28,7 +29,7 @@ namespace Redmine.Net.Api.Types
     /// 
     /// </summary>
     [XmlRoot(RedmineKeys.CUSTOM_FIELD)]
-    public class IssueCustomField : IdentifiableName, IEquatable<IssueCustomField>//, ICloneable
+    public class IssueCustomField : IdentifiableName, IEquatable<IssueCustomField>
     {
         /// <summary>
         /// Gets or sets the value.
@@ -95,18 +96,19 @@ namespace Redmine.Net.Api.Types
         public bool Equals(IssueCustomField other)
         {
             if (other == null) return false;
-            return (Id == other.Id && Name == other.Name && Multiple == other.Multiple && Values.Equals(other.Values));
+            return (Id == other.Id
+                && Name == other.Name
+                && Multiple == other.Multiple
+                && Values == other.Values);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public object Clone()
+        public IssueCustomField Clone()
         {
-            var issueCustomField = new IssueCustomField { Multiple = Multiple,
-            //    Values = Values.Clone<CustomFieldValue>()
-            };
+            var issueCustomField = new IssueCustomField { Multiple = Multiple, Values = Values.Select(x => x.Clone()).ToList() };
             return issueCustomField;
         }
 
@@ -116,7 +118,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[IssueCustomField: {2} Values={0}, Multiple={1}]", Values, Multiple, base.ToString());
+            return $"[IssueCustomField: {base.ToString()} Values={Values}, Multiple={Multiple}]";
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -146,7 +146,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("Revision: {0}, User: '{1}', CommitedOn: {2}, Comments: '{3}'", Revision, User, CommittedOn, Comments);
+            return $"Revision: {Revision}, User: '{User}', CommitedOn: {CommittedOn}, Comments: '{Comments}'";
         }
     }
 }

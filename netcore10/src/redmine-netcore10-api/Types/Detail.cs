@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -114,10 +114,10 @@ namespace Redmine.Net.Api.Types
         public bool Equals(Detail other)
         {
             if (other == null) return false;
-            return (Property != null ? Property.Equals(other.Property) : other.Property == null)
-                && (Name != null ? Name.Equals(other.Name) : other.Name == null)
-                && (OldValue != null ? OldValue.Equals(other.OldValue) : other.OldValue == null)
-                && (NewValue != null ? NewValue.Equals(other.NewValue) : other.NewValue == null);
+            return (Property == other.Property
+                && Name == other.Name
+                && OldValue == other.OldValue
+                && NewValue == other.NewValue);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[Detail: Property={0}, Name={1}, OldValue={2}, NewValue={3}]", Property, Name, OldValue, NewValue);
+            return $"[Detail: Property={Property}, Name={Name}, OldValue={OldValue}, NewValue={NewValue}]";
         }
     }
 }

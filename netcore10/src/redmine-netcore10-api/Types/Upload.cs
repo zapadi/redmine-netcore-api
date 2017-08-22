@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[Upload: Token={0}, FileName={1}, ContentType={2}, Description={3}]", Token, FileName, ContentType, Description);
+            return $"[Upload: Token={Token}, FileName={FileName}, ContentType={ContentType}, Description={Description}]";
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -76,10 +76,10 @@ namespace Redmine.Net.Api.Types
         {
             if (other == null) return false;
             return (Id == other.Id
-                && Project.Equals(other.Project)
-                && Roles.Equals(other.Roles)
-                && (User != null ? User.Equals(other.User) : other.User == null)
-                && (Group != null ? Group.Equals(other.Group) : other.Group == null));
+                && Project == other.Project
+                && Roles == other.Roles
+                && User == other.User
+                && Group == other.Group);
         }
 
         /// <summary>
@@ -153,8 +153,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return
-                $"[ProjectMembership: {base.ToString()}, Project={Project}, User={User}, Group={Group}, Roles={Roles}]";
+            return $"[ProjectMembership: {base.ToString()}, Project={Project}, User={User}, Group={Group}, Roles={Roles}]";
         }
     }
 }

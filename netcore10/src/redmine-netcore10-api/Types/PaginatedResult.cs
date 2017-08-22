@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ namespace Redmine.Net.Api.Types
     {
         public PaginatedResult()
         {
-            
+
         }
 
         public PaginatedResult(List<T> items, int total, int offset)
@@ -35,17 +35,23 @@ namespace Redmine.Net.Api.Types
             Total = total;
             Offset = offset;
         }
+
         /// <summary>
         /// 
         /// </summary>
-        public List<T> Items { get; private set; }
+        public List<T> Items { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public int Total { get; private set; }
+        public int Total { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public int Offset { get; private set; }
+        public int Offset { get; set; }
+
+        public override string ToString()
+        {
+            return $"Total: {Total}, Offset: {Offset}";
+        }
     }
 }

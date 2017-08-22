@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ namespace Redmine.Net.Api.Types
     /// 
     /// </summary>
     [XmlRoot(RedmineKeys.ISSUE)]
-    public class IssueChild : Identifiable<IssueChild>, IXmlSerializable, IEquatable<IssueChild>//, ICloneable
+    public class IssueChild : Identifiable<IssueChild>, IXmlSerializable, IEquatable<IssueChild>
     {
         /// <summary>
         /// Gets or sets the tracker.
@@ -86,7 +86,7 @@ namespace Redmine.Net.Api.Types
         /// 
         /// </summary>
         /// <returns></returns>
-        public object Clone()
+        public IssueChild Clone()
         {
             var issueChild = new IssueChild { Subject = Subject, Tracker = Tracker };
             return issueChild;
@@ -100,7 +100,9 @@ namespace Redmine.Net.Api.Types
         public bool Equals(IssueChild other)
         {
             if (other == null) return false;
-            return (Id == other.Id && Tracker == other.Tracker && Subject == other.Subject);
+            return (Id == other.Id
+                && Tracker == other.Tracker
+                && Subject == other.Subject);
         }
 
         /// <summary>
@@ -125,7 +127,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[IssueChild: {0}, Tracker={1}, Subject={2}]", base.ToString(), Tracker, Subject);
+            return $"[IssueChild: {base.ToString()}, Tracker={Tracker}, Subject={Subject}]";
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -139,6 +139,10 @@ namespace Redmine.Net.Api.Types
         [XmlArrayItem(RedmineKeys.ENABLED_MODULE)]
         public IList<ProjectEnabledModule> EnabledModules { get; set; }
 
+        [XmlArray(RedmineKeys.TIME_ENTRY_ACTIVITIES)]
+        [XmlArrayItem(RedmineKeys.TIME_ENTRY_ACTIVITY)]
+        public IList<TimeEntryActivity> TimeEntryActivities { get; set; }
+
         /// <summary>
         /// Generates an object from its XML representation.
         /// </summary>
@@ -186,6 +190,8 @@ namespace Redmine.Net.Api.Types
 
                     case RedmineKeys.ENABLED_MODULES: EnabledModules = reader.ReadElementContentAsCollection<ProjectEnabledModule>(); break;
 
+                    case RedmineKeys.TIME_ENTRY_ACTIVITIES: TimeEntryActivities = reader.ReadElementContentAsCollection<TimeEntryActivity>(); break;
+
                     default: reader.Read(); break;
                 }
             }
@@ -220,20 +226,22 @@ namespace Redmine.Net.Api.Types
         public bool Equals(Project other)
         {
             if (other == null) return false;
-            return Id == other.Id
-                   && Identifier.Equals(other.Identifier)
-                   && Description.Equals(other.Description)
-                   && (Parent != null ? Parent.Equals(other.Parent) : other.Parent == null)
-                   && (HomePage?.Equals(other.HomePage) ?? other.HomePage == null)
-                   && CreatedOn == other.CreatedOn
-                   && UpdatedOn == other.UpdatedOn
-                   && Status == other.Status
-                   && IsPublic == other.IsPublic
-                   && InheritMembers == other.InheritMembers
-                   && (Trackers?.Equals(other.Trackers) ?? other.Trackers == null)
-                   && (CustomFields?.Equals(other.CustomFields) ?? other.CustomFields == null)
-                   && (IssueCategories?.Equals(other.IssueCategories) ?? other.IssueCategories == null)
-                   && (EnabledModules?.Equals(other.EnabledModules) ?? other.EnabledModules == null);
+            return (
+                Id == other.Id
+                && Identifier.Equals(other.Identifier)
+                && Description.Equals(other.Description)
+                && Parent == other.Parent
+                && HomePage == other.HomePage
+                && CreatedOn == other.CreatedOn
+                && UpdatedOn == other.UpdatedOn
+                && Status == other.Status
+                && IsPublic == other.IsPublic
+                && InheritMembers == other.InheritMembers
+                && Trackers == other.Trackers
+                && CustomFields == other.CustomFields
+                && IssueCategories == other.IssueCategories
+                && EnabledModules == other.EnabledModules
+            );
         }
 
         /// <summary>
@@ -242,25 +250,25 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override int GetHashCode()
         {
-	        unchecked
-	        {
-		        var hashCode = base.GetHashCode();
-		        hashCode = HashCodeHelper.GetHashCode(Identifier, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(Description, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(Parent, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(HomePage, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(CreatedOn, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(UpdatedOn, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(Status, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(IsPublic, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(InheritMembers, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(Trackers, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(CustomFields, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(IssueCategories, hashCode);
-		        hashCode = HashCodeHelper.GetHashCode(EnabledModules, hashCode);
+            unchecked
+            {
+                var hashCode = base.GetHashCode();
+                hashCode = HashCodeHelper.GetHashCode(Identifier, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Description, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Parent, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(HomePage, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(CreatedOn, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(UpdatedOn, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Status, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(IsPublic, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(InheritMembers, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Trackers, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(CustomFields, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(IssueCategories, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(EnabledModules, hashCode);
 
-		        return hashCode;
-	        }
+                return hashCode;
+            }
         }
 
         /// <summary>
@@ -269,8 +277,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[Project: {13}, Identifier={0}, Description={1}, Parent={2}, HomePage={3}, CreatedOn={4}, UpdatedOn={5}, Status={6}, IsPublic={7}, InheritMembers={8}, Trackers={9}, CustomFields={10}, IssueCategories={11}, EnabledModules={12}]",
-                Identifier, Description, Parent, HomePage, CreatedOn, UpdatedOn, Status, IsPublic, InheritMembers, Trackers, CustomFields, IssueCategories, EnabledModules, base.ToString());
+            return $"[Project: {base.ToString()}, Identifier={Identifier}, Description={Description}, Parent={Parent}, HomePage={HomePage}, CreatedOn={CreatedOn}, UpdatedOn={UpdatedOn}, Status={Status}, IsPublic={IsPublic}, InheritMembers={InheritMembers}, Trackers={Trackers}, CustomFields={CustomFields}, IssueCategories={IssueCategories}, EnabledModules={EnabledModules}]";
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+using System;
 using System.Xml.Serialization;
 
 namespace Redmine.Net.Api.Types
@@ -22,7 +23,7 @@ namespace Redmine.Net.Api.Types
     /// 
     /// </summary>
     [XmlRoot(RedmineKeys.USER)]
-    public class Watcher : IdentifiableName, IValue//, ICloneable
+    public class Watcher : IdentifiableName, IValue
     {
         #region IValue implementation
         /// <summary>
@@ -44,14 +45,14 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[Watcher: {0}]", base.ToString());
+            return $"[Watcher: {base.ToString()}]";
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public object Clone()
+        public Watcher Clone()
         {
             var watcher = new Watcher { Id = Id, Name = Name };
             return watcher;

@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2016 - 2017 Adrian Popescu.
+   Copyright 2011 - 2017 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -93,9 +93,9 @@ namespace Redmine.Net.Api.Types
         public bool Equals(Membership other)
         {
             if (other == null) return false;
-            return Id == other.Id && 
-                   (Project != null ? Project.Equals(other.Project) : other.Project == null) && 
-                   (Roles?.Equals(other.Roles) ?? other.Roles == null);
+            return (Id == other.Id
+                && Project == other.Project
+                && Roles == other.Roles);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Redmine.Net.Api.Types
                 var hashCode = 13;
                 hashCode = HashCodeHelper.GetHashCode(Id, hashCode);
                 hashCode = HashCodeHelper.GetHashCode(Project, hashCode);
-                //hashCode = Utils.GetHashCode(Roles, hashCode);
+                hashCode = HashCodeHelper.GetHashCode(Roles, hashCode);
                 return hashCode;
             }
         }
@@ -120,7 +120,7 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[Membership: {2}, Project={0}, Roles={1}]", Project, Roles, base.ToString());
+            return $"[Membership: {base.ToString()}, Project={Project}, Roles={Roles}]";
         }
     }
 }
