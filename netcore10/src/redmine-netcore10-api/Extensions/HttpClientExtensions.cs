@@ -28,10 +28,15 @@ namespace Redmine.Net.Api.Extensions
 
         public static void EnsureValidHost(this string host)
         {
+<<<<<<< HEAD:netcore10/src/redmine-netcore10-api/Extensions/HttpClientExtensions.cs
             if (string.IsNullOrWhiteSpace(host))
             {
                 throw new UriFormatException("Host is not define!");
             }
+=======
+if(string.IsNullOrWhiteSpace(host))
+throw new UriFormatException("Host is not define!");
+>>>>>>> a37e73a2a794ccb7412d5784a4746de8169502c7:netcore10/src/redmine-netcore10-api/Extensions/Extensions.cs
 
             if (!Uri.IsWellFormedUriString(host, UriKind.RelativeOrAbsolute))
             {
