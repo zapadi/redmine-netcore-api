@@ -22,10 +22,10 @@ namespace Redmine.Api.Tests
             };
 
             var actual = RedmineSerializer.Serialize(file, Net.Api.MimeType.Xml);
-            
+
             Assert.True(actual.Equals(expected), "File type serialization failed.");
         }
-        
+
         [Fact]
         public void ShouldDeserializeFileXml()
         {
@@ -84,6 +84,49 @@ namespace Redmine.Api.Tests
 
             var actual = RedmineSerializer.Deserialize<File>(response, Net.Api.MimeType.Xml);
             Assert.True(actual.Equals(expected), "File deserialize error.");
+        }
+
+        [Fact]
+        public void ShouldReturnGetFileUrl()
+        {
+            var localhost = "http://localhost";
+
+            var expected = $"{localhost}/projects/1/files.xml";
+
+            var actual = UrlBuilder
+                .Create(localhost, Net.Api.MimeType.Xml)
+                .ItemsUrl<File>(new System.Collections.Specialized.NameValueCollection() { { Net.Api.RedmineKeys.PROJECT_ID, "1" } })
+                .Build();
+
+            Assert.True(expected == actual);
+        }
+
+        [Fact]
+        public void ShouldReturnCreateFileUrl()
+        {
+            var localhost = "http://localhost";
+
+            var expected = $"{localhost}/projects/1/files.xml";
+
+            var actual = UrlBuilder
+                .Create(localhost, Net.Api.MimeType.Xml)
+                .CreateUrl<File>("1")
+                .Build();
+
+            Assert.True(expected == actual);
+        }
+
+        [Fact]
+        public void TrowExceptionWhenCreateFileUrlWithout()
+        {
+            var localhost = "http://localhost";
+
+            var expected = $"{localhost}/projects/1/files.xml";
+
+            Assert.Throws<Redmine.Net.Api.Exceptions.RedmineException>(() => UrlBuilder
+                .Create(localhost, Net.Api.MimeType.Xml)
+                .CreateUrl<File>(null)
+                .Build());
         }
     }
 }
