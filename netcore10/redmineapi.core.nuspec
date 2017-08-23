@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>redmine-netcore10-api</id>
+    <version>1.0.0</version>
+    <title>RedmineApi.Core</title>
+    <authors>Adrian Popescu</authors>
+    <owners>Adrian Popescu</owners>
+    <licenseUrl>https://github.com/zapadi/redmine-netcore-api/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/zapadi/redmine-netcore-api</projectUrl>
+    <iconUrl>https://github.com/zapadi/redmine-netcore-api/raw/master/logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Redmine .NET core API is a communication library for Redmine project management application.</description>
+    <copyright>Copyright &#x00A9; Adrian Popescu.  All rights reserved.</copyright>
+    <language>en-GB</language>
+    <tags>Redmine API .NET Core C#</tags>
+  </metadata>
+</package>
