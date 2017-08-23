@@ -20,7 +20,7 @@ var binDir = String.Concat(projDir,"bin");
 // The output directory the build artefacts saved too
 var outputDir = Directory(binDir) + Directory(configuration);  
 //
-var outputPackDir = "./../nupkgs";
+var outputPackDir = "../nupkgs";
 
 var version = "1.0.1";
 var revision = "";
@@ -79,8 +79,8 @@ RunTarget(target);
 
 private void CleanDirectory(string path)
 {
-    if(DirectoryExists(outputPackDir))
+    if(DirectoryExists(path))
     {
-        DeleteDirectory(outputPackDir, recursive: true);
+        DeleteDirectory(path, recursive: true);
     }
 }
