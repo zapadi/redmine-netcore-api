@@ -11,13 +11,14 @@
     <Company />
     <Copyright>Copyright &#x00A9; Adrian Popescu.  All rights reserved.</Copyright>
     <PackageTags>Redmine, dotnet, api, c-sharp, csharp, c#</PackageTags>
-    <Description>.Net API for Redmine bug/task management systems.</Description>
+    <Description>.Net Core API for Redmine bug/task management systems.</Description>
     <PackageProjectUrl>http://zapadi.github.io/redmine-net-api-github.io/</PackageProjectUrl>
     <PackageIconUrl>https://github.com/zapadi/redmine-net-api/raw/master/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/zapadi/redmine-net-api</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/zapadi/redmine-net-api/blob/master/LICENSE</PackageLicenseUrl>
-  
-    <VersionPrefix>1.0.0</VersionPrefix>
+
+    <Version>$(SemVer)</Version>
+    <VersionPrefix>$(SemVer)</VersionPrefix>
     <VersionSuffix>$(VersionSuffix)</VersionSuffix>
   
   </PropertyGroup>
