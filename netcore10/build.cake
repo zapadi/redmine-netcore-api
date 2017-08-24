@@ -63,7 +63,7 @@ Task(PACK)
         var packSettings = new DotNetCorePackSettings
         {
             OutputDirectory = outputPackDir,
-            Configuration = RELEASE,
+            Configuration = configuration,
             VersionSuffix = revision,
             ArgumentCustomization = args => args.Append(String.Concat("/p:PackageVersion=",version)),
             NoBuild = true
