@@ -69,7 +69,11 @@ namespace RedmineApi.Core.Types
         /// <param name="reader"></param>
         public void ReadXml(XmlReader reader)
         {
-            if (!reader.IsEmptyElement) reader.Read();
+            if (!reader.IsEmptyElement)
+            {
+                reader.Read();
+            }
+
             while (!reader.EOF)
             {
                 if (reader.IsEmptyElement && !reader.HasAttributes)
@@ -128,7 +132,9 @@ namespace RedmineApi.Core.Types
             writer.WriteElementString(RedmineKeys.ISSUE_TO_ID, IssueToId.ToString());
             writer.WriteElementString(RedmineKeys.RELATION_TYPE, Type.ToString());
             if (Type == IssueRelationType.precedes || Type == IssueRelationType.follows)
+            {
                 writer.WriteValueOrEmpty(Delay, RedmineKeys.DELAY);
+            }
         }
 
         /// <summary>
@@ -138,7 +144,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(IssueRelation other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (Id == other.Id && IssueId == other.IssueId && IssueToId == other.IssueToId && Type == other.Type && Delay == other.Delay);
         }
 

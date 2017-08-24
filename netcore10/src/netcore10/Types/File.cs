@@ -22,11 +22,13 @@ using System;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
     [XmlRoot(RedmineKeys.FILE)]
-    public class File : Identifiable<File>, IEquatable<File>, IXmlSerializable
+    public class File : Identifiable<File>, IEquatable<File>, IXmlSerializable, IJsonSerializable
     {
 
         [XmlElement(RedmineKeys.FILENAME)]
@@ -64,7 +66,11 @@ namespace RedmineApi.Core.Types
 
         public bool Equals(File other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (Id == other.Id
                 && Filename == other.Filename
                 && Filesize == other.Filesize
@@ -107,9 +113,21 @@ namespace RedmineApi.Core.Types
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
+
             return Equals(obj as File);
         }
 
@@ -158,6 +176,68 @@ namespace RedmineApi.Core.Types
             writer.WriteIdIfNotNull(Version, RedmineKeys.VERSION_ID);
             writer.WriteElementString(RedmineKeys.FILENAME, Filename);
             writer.WriteElementString(RedmineKeys.DESCRIPTION, Description);
+        }
+
+        public void Serialize(JsonWriter writer)
+        {
+            writer.WriteStartObject();
+            writer.WritePropertyName(RedmineKeys.FILE);
+            writer.WriteStartObject();
+            writer.WritePropertyName(RedmineKeys.TOKEN);
+            writer.WriteValue(Token);
+
+            if (Version != null)
+            {
+                writer.WritePropertyName(RedmineKeys.VERSION_ID);
+                writer.WriteValue(Version.Id);
+            }
+
+            writer.WritePropertyName(RedmineKeys.FILENAME);
+            writer.WriteValue(Filename);
+
+            writer.WritePropertyName(RedmineKeys.DESCRIPTION);
+            writer.WriteValue(Description);
+
+            writer.WriteEndObject();
+            writer.WriteEndObject();
+        }
+
+        public void Deserialize(JsonReader reader)
+        {
+            reader.Read();
+
+            while(reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if(reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt32().GetValueOrDefault(); break;
+                    case RedmineKeys.FILENAME: Filename = reader.ReadAsString(); break;
+                    case RedmineKeys.FILESIZE: Filesize = reader.ReadAsInt32().GetValueOrDefault(); break;
+                    case RedmineKeys.CONTENT_TYPE: ContentType = reader.ReadAsString(); break;
+                    case RedmineKeys.DESCRIPTION: Description = reader.ReadAsString(); break;
+                    case RedmineKeys.CONTENT_URL: ContentUrl = reader.ReadAsString(); break;
+                    case RedmineKeys.AUTHOR: Author = new IdentifiableName(reader); break;
+                    case RedmineKeys.CREATED_ON: CreatedOn = reader.ReadAsDateTime(); break;
+                    case RedmineKeys.VERSION: Version = new IdentifiableName(reader); break;
+                    case RedmineKeys.VERSION_ID: Version = new IdentifiableName() { Id = reader.ReadAsInt32().GetValueOrDefault() }; break;
+                    case RedmineKeys.DIGEST: Digest = reader.ReadAsString(); break;
+                    case RedmineKeys.DOWNLOADS: Downloads = reader.ReadAsInt32().GetValueOrDefault(); break;
+                    case RedmineKeys.TOKEN: Token = reader.ReadAsString(); break;
+                    default:
+                        reader.Read();
+                        break;
+                }
+            }
         }
     }
 }

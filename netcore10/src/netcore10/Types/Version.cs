@@ -149,7 +149,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(Version other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (Id == other.Id && Name == other.Name
                 && Project == other.Project
                 && Description == other.Description

@@ -213,7 +213,10 @@ namespace RedmineApi.Core.Types
             writer.WriteListElements(Trackers as List<IValue>, RedmineKeys.TRACKER_IDS);
             writer.WriteListElements(EnabledModules as List<IValue>, RedmineKeys.ENABLED_MODULE_NAMES);
 
-            if (Id == 0) return;
+            if (Id == 0)
+            {
+                return;
+            }
 
             writer.WriteArray(CustomFields, RedmineKeys.CUSTOM_FIELDS);
         }
@@ -225,7 +228,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(Project other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (
                 Id == other.Id
                 && Identifier.Equals(other.Identifier)

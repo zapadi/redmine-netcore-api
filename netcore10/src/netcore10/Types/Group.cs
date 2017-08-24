@@ -109,7 +109,11 @@ namespace RedmineApi.Core.Types
         /// <param name="other">An object to compare with this object.</param>
         public bool Equals(Group other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return Id == other.Id
                 && Name == other.Name
                 && Users == other.Users
@@ -124,9 +128,21 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
+
             return Equals(obj as Group);
         }
 

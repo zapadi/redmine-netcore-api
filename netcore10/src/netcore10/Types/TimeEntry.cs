@@ -196,7 +196,9 @@ namespace RedmineApi.Core.Types
             writer.WriteIdIfNotNull(Project, RedmineKeys.PROJECT_ID);
 
             if (!SpentOn.HasValue)
+            {
                 SpentOn = DateTime.Now;
+            }
 
             writer.WriteDateOrEmpty(SpentOn, RedmineKeys.SPENT_ON);
             writer.WriteValueOrEmpty<decimal>(Hours, RedmineKeys.HOURS);
@@ -213,7 +215,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(TimeEntry other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (Id == other.Id
                 && Issue == other.Issue
                 && Project == other.Project

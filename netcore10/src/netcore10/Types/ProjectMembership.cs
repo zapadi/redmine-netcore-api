@@ -74,7 +74,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(ProjectMembership other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (Id == other.Id
                 && Project == other.Project
                 && Roles == other.Roles

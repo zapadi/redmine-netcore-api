@@ -19,14 +19,16 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 using RedmineApi.Core.Internals;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
     /// <summary>
     /// 
     /// </summary>
-    public class IdentifiableName : Identifiable<IdentifiableName>, IXmlSerializable, IEquatable<IdentifiableName>
+    public class IdentifiableName : Identifiable<IdentifiableName>, IXmlSerializable, IEquatable<IdentifiableName>, IJsonSerializable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="IdentifiableName"/> class.
@@ -41,12 +43,22 @@ namespace RedmineApi.Core.Types
         /// <param name="reader">The reader.</param>
         public IdentifiableName(XmlReader reader)
         {
-            Initialize(reader);
+            InitializeXmlReader(reader);
         }
 
-        private void Initialize(XmlReader reader)
+        public IdentifiableName(JsonReader reader)
+        {
+            InitializeJsonReader(reader);
+        }
+
+        private void InitializeXmlReader(XmlReader reader)
         {
             ReadXml(reader);
+        }
+
+        private void InitializeJsonReader(JsonReader reader)
+        {
+            Deserialize(reader);
         }
 
         /// <summary>
@@ -98,7 +110,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(IdentifiableName other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (Id == other.Id && Name == other.Name);
         }
 
@@ -114,6 +130,36 @@ namespace RedmineApi.Core.Types
                 hashCode = HashCodeHelper.GetHashCode(Name, hashCode);
                 return hashCode;
             }
+        }
+
+        public void Serialize(JsonWriter writer)
+        {
+            //writer.WriteAttributeString(RedmineKeys.ID, Id.ToString(CultureInfo.InvariantCulture));
+            //writer.WriteAttributeString(RedmineKeys.NAME, Name);
+        }
+
+        public void Deserialize(JsonReader reader)
+        {
+            reader.Read();
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType == JsonToken.PropertyName)
+                {
+                    switch (reader.Value)
+                    {
+                        case RedmineKeys.ID: Id = reader.ReadAsInt32().GetValueOrDefault(); break;
+                        case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
+                        default: reader.Read(); break;
+                    }
+                }
+            }
+
         }
     }
 }

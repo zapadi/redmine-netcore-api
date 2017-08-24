@@ -37,7 +37,10 @@ namespace RedmineApi.Core.Extensions
         public static int ReadAttributeAsInt(this XmlReader reader, string attributeName)
         {
             var attribute = reader.GetAttribute(attributeName);
-            if (string.IsNullOrEmpty(attribute) || !int.TryParse(attribute, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out int result)) return default(int);
+            if (string.IsNullOrEmpty(attribute) || !int.TryParse(attribute, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out int result))
+            {
+                return default(int);
+            }
 
             return result;
         }
@@ -51,7 +54,10 @@ namespace RedmineApi.Core.Extensions
         public static int? ReadAttributeAsNullableInt(this XmlReader reader, string attributeName)
         {
             var attribute = reader.GetAttribute(attributeName);
-            if (string.IsNullOrEmpty(attribute) || !int.TryParse(attribute, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out int result)) return default(int?);
+            if (string.IsNullOrEmpty(attribute) || !int.TryParse(attribute, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out int result))
+            {
+                return default(int?);
+            }
 
             return result;
         }
@@ -65,7 +71,10 @@ namespace RedmineApi.Core.Extensions
         public static bool ReadAttributeAsBoolean(this XmlReader reader, string attributeName)
         {
             var attribute = reader.GetAttribute(attributeName);
-            if (string.IsNullOrEmpty(attribute) || !bool.TryParse(attribute, out bool result)) return false;
+            if (string.IsNullOrEmpty(attribute) || !bool.TryParse(attribute, out bool result))
+            {
+                return false;
+            }
 
             return result;
         }
@@ -78,7 +87,10 @@ namespace RedmineApi.Core.Extensions
         public static DateTime? ReadElementContentAsNullableDateTime(this XmlReader reader)
         {
             var str = reader.ReadElementContentAsString();
-            if (string.IsNullOrEmpty(str) || !DateTime.TryParse(str, out DateTime result)) return null;
+            if (string.IsNullOrEmpty(str) || !DateTime.TryParse(str, out DateTime result))
+            {
+                return null;
+            }
 
             return result;
         }
@@ -91,7 +103,10 @@ namespace RedmineApi.Core.Extensions
         public static float? ReadElementContentAsNullableFloat(this XmlReader reader)
         {
             var str = reader.ReadElementContentAsString();
-            if (string.IsNullOrEmpty(str) || !float.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out float result)) return null;
+            if (string.IsNullOrEmpty(str) || !float.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out float result))
+            {
+                return null;
+            }
 
             return result;
         }
@@ -104,7 +119,10 @@ namespace RedmineApi.Core.Extensions
         public static int? ReadElementContentAsNullableInt(this XmlReader reader)
         {
             var str = reader.ReadElementContentAsString();
-            if (string.IsNullOrEmpty(str) || !int.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out int result)) return null;
+            if (string.IsNullOrEmpty(str) || !int.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out int result))
+            {
+                return null;
+            }
 
             return result;
         }
@@ -117,7 +135,10 @@ namespace RedmineApi.Core.Extensions
         public static decimal? ReadElementContentAsNullableDecimal(this XmlReader reader)
         {
             var str = reader.ReadElementContentAsString();
-            if (string.IsNullOrEmpty(str) || !decimal.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out decimal result)) return null;
+            if (string.IsNullOrEmpty(str) || !decimal.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out decimal result))
+            {
+                return null;
+            }
 
             return result;
         }
@@ -158,10 +179,14 @@ namespace RedmineApi.Core.Extensions
                             obj = serializer.Deserialize(subTree) as T;
                         }
                         if (obj != null)
+                        {
                             result.Add(obj);
+                        }
 
                         if (!xmlTextReader.IsEmptyElement)
+                        {
                             xmlTextReader.Read();
+                        }
                     }
                 }
             }

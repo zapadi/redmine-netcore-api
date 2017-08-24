@@ -229,7 +229,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(User other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (
                 Id == other.Id
                 && Login == other.Login

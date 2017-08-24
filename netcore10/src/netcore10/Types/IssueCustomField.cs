@@ -74,7 +74,11 @@ namespace RedmineApi.Core.Types
         /// <param name="writer"></param>
         public override void WriteXml(XmlWriter writer)
         {
-            if (Values == null) return;
+            if (Values == null)
+            {
+                return;
+            }
+
             var itemsCount = Values.Count;
 
             writer.WriteAttributeString(RedmineKeys.ID, Id.ToString(CultureInfo.InvariantCulture));
@@ -95,7 +99,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(IssueCustomField other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (Id == other.Id
                 && Name == other.Name
                 && Multiple == other.Multiple

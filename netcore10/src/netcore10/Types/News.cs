@@ -126,7 +126,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(News other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (Id == other.Id
                 && Project == other.Project
                 && Author == other.Author

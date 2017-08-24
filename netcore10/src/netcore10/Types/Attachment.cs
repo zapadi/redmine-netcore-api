@@ -135,7 +135,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(Attachment other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (Id == other.Id
                 && FileName == other.FileName
                 && FileSize == other.FileSize

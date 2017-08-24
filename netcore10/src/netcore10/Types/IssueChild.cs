@@ -99,7 +99,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(IssueChild other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (Id == other.Id
                 && Tracker == other.Tracker
                 && Subject == other.Subject);

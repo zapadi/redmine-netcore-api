@@ -85,7 +85,10 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(Query other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
 
             return (other.Id == Id && other.Name == Name && other.IsPublic == IsPublic && other.ProjectId == ProjectId);
         }

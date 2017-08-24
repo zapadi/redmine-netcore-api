@@ -166,7 +166,10 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(WikiPage other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
 
             return Id == other.Id
                 && Title == other.Title

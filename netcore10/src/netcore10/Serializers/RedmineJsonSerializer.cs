@@ -16,7 +16,13 @@
 
 using System;
 using RedmineApi.Core.Types;
-
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+using Newtonsoft.Json;
+using RedmineApi.Core.Exceptions;
+using RedmineApi.Core.Serializers;
+using RedmineApi.Core.Extensions;
 
 namespace RedmineApi.Core.Internals
 {
@@ -24,17 +30,80 @@ namespace RedmineApi.Core.Internals
     {
         public T Deserialize<T>(string response) where T : class
         {
-            throw new NotImplementedException();
+            using (var sr = new StringReader(response))
+            {
+                using (JsonReader reader = new JsonTextReader(sr))
+                {
+                    var obj = Activator.CreateInstance<T>();
+                    var ser = obj as IJsonSerializable;
+
+                    if (ser == null)
+                    {
+                        throw new RedmineException($"object '{typeof(T)}' should implement IJsonSerializable.");
+                    }
+
+                    if (reader.Read())
+                    {
+                        ser.Deserialize(reader);
+                    }
+                    return (T)ser;
+                }
+            }
         }
 
         public PaginatedResult<T> DeserializeList<T>(string response) where T : class, new()
         {
-            throw new NotImplementedException();
+            using (var sr = new StringReader(response))
+            {
+                using (JsonReader reader = new JsonTextReader(sr))
+                {
+                    int total = 0;
+                    int offset = 0;
+                    List<T> list = null;
+
+                    while (reader.Read())
+                    {
+
+                        if (reader.TokenType == JsonToken.PropertyName)
+                        {
+                            switch (reader.Value)
+                            {
+                                case RedmineKeys.TOTAL_COUNT: total = reader.ReadAsInt32().GetValueOrDefault(); break;
+                                case RedmineKeys.OFFSET: offset = reader.ReadAsInt32().GetValueOrDefault(); break;
+                                default:
+                                    list = reader.ReadAsCollection<T>(); break;
+                            }
+                        }
+                    }
+                    return new PaginatedResult<T>(list, total, offset);
+                }
+            }
         }
 
         public string Serialize<T>(T obj) where T : class
         {
-            throw new NotImplementedException();
+            var sb = new StringBuilder();
+
+            using (var sw = new StringWriter(sb))
+            {
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    writer.Formatting = Formatting.Indented;
+                    writer.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                    
+                    var ser = obj as IJsonSerializable;
+
+                    if (ser == null)
+                    {
+                        throw new RedmineException($"object '{typeof(T)}' should implement IJsonSerializable.");
+                    }
+
+                    ser.Serialize(writer);
+
+                    return sb.ToString();
+                }
+            }
+
         }
     }
 }

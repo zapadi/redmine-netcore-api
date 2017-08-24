@@ -43,7 +43,10 @@ namespace RedmineApi.Core.Internals
                     foreach (T t in list)
                     {
                         hashCode *= 13;
-                        if (t != null) hashCode = hashCode + t.GetHashCode();
+                        if (t != null)
+                        {
+                            hashCode = hashCode + t.GetHashCode();
+                        }
                     }
                 }
 

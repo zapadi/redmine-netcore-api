@@ -65,7 +65,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(MembershipRole other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return Id == other.Id && Name == other.Name && Inherited == other.Inherited;
         }
 

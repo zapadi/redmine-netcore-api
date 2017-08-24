@@ -161,7 +161,9 @@ namespace RedmineApi.Core
             {
                 handler.AllowAutoRedirect = AllowAutoRedirect;
                 if (MaxAutomaticRedirections > 0)
+                {
                     handler.MaxAutomaticRedirections = MaxAutomaticRedirections;
+                }
             }
 
             handler.UseCookies = UseCookies;

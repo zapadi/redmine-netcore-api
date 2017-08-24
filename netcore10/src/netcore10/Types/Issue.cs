@@ -19,8 +19,10 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -31,7 +33,7 @@ namespace RedmineApi.Core.Types
     /// See Issue journals for more information.
     /// </summary>
     [XmlRoot(RedmineKeys.ISSUE)]
-    public class Issue : Identifiable<Issue>, IXmlSerializable, IEquatable<Issue>
+    public class Issue : Identifiable<Issue>, IXmlSerializable, IEquatable<Issue>, IJsonSerializable
     {
         /// <summary>
         /// Gets or sets the project.
@@ -495,7 +497,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(Issue other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (
                 Id == other.Id
             && Project == other.Project
@@ -581,6 +587,164 @@ namespace RedmineApi.Core.Types
             hashCode = HashCodeHelper.GetHashCode(Watchers, hashCode);
 
             return hashCode;
+        }
+
+        public void Serialize(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Deserialize(JsonReader reader)
+        {
+            reader.Read();
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID:
+                        Id = reader.ReadAsInt32().GetValueOrDefault();
+                        break;
+
+                    case RedmineKeys.PROJECT:
+                        Project = new IdentifiableName(reader);
+                        break;
+
+                    case RedmineKeys.TRACKER:
+                        Tracker = new IdentifiableName(reader);
+                        break;
+
+                    case RedmineKeys.STATUS:
+                        Status = new IdentifiableName(reader);
+                        break;
+
+                    case RedmineKeys.PRIORITY:
+                        Priority = new IdentifiableName(reader);
+                        break;
+
+                    case RedmineKeys.AUTHOR:
+                        Author = new IdentifiableName(reader);
+                        break;
+
+                    case RedmineKeys.ASSIGNED_TO:
+                        AssignedTo = new IdentifiableName(reader);
+                        break;
+
+                    case RedmineKeys.CATEGORY:
+                        Category = new IdentifiableName(reader);
+                        break;
+
+                    case RedmineKeys.PARENT:
+                        ParentIssue = new IdentifiableName(reader);
+                        break;
+
+                    case RedmineKeys.FIXED_VERSION:
+                        FixedVersion = new IdentifiableName(reader);
+                        break;
+
+                    case RedmineKeys.PRIVATE_NOTES:
+                        PrivateNotes = reader.ReadAsBoolean().GetValueOrDefault();
+                        break;
+
+                    case RedmineKeys.IS_PRIVATE:
+                        IsPrivate = reader.ReadAsBoolean().GetValueOrDefault();
+                        break;
+
+                    case RedmineKeys.SUBJECT:
+                        Subject = reader.ReadAsString();
+                        break;
+
+                    case RedmineKeys.NOTES:
+                        Notes = reader.ReadAsString();
+                        break;
+
+                    case RedmineKeys.DESCRIPTION:
+                        Description = reader.ReadAsString();
+                        break;
+
+                    case RedmineKeys.START_DATE:
+                        StartDate = reader.ReadAsDateTime();
+                        break;
+
+                    case RedmineKeys.DUE_DATE:
+                        DueDate = reader.ReadAsDateTime();
+                        break;
+
+                    case RedmineKeys.DONE_RATIO:
+                        DoneRatio = (float?)reader.ReadAsDouble();
+                        break;
+
+                    case RedmineKeys.ESTIMATED_HOURS:
+                        EstimatedHours = (float?)reader.ReadAsDouble();
+                        break;
+
+                    case RedmineKeys.TOTAL_ESTIMATED_HOURS:
+                        TotalEstimatedHours = (float?)reader.ReadAsDouble();
+                        break;
+
+                    case RedmineKeys.TOTAL_SPENT_HOURS:
+                        TotalSpentHours = (float?)reader.ReadAsDouble();
+                        break;
+
+                    case RedmineKeys.SPENT_HOURS:
+                        SpentHours = (float?)reader.ReadAsDouble();
+                        break;
+
+                    case RedmineKeys.CREATED_ON:
+                        CreatedOn = reader.ReadAsDateTime();
+                        break;
+
+                    case RedmineKeys.UPDATED_ON:
+                        UpdatedOn = reader.ReadAsDateTime();
+                        break;
+
+                    case RedmineKeys.CLOSED_ON:
+                        ClosedOn = reader.ReadAsDateTime();
+                        break;
+
+                    case RedmineKeys.CUSTOM_FIELDS:
+                        CustomFields = reader.ReadAsCollection<IssueCustomField>();
+                        break;
+
+                    case RedmineKeys.ATTACHMENTS:
+                        Attachments = reader.ReadAsCollection<Attachment>();
+                        break;
+
+                    case RedmineKeys.RELATIONS:
+                        Relations = reader.ReadAsCollection<IssueRelation>();
+                        break;
+
+                    case RedmineKeys.JOURNALS:
+                        Journals = reader.ReadAsCollection<Journal>();
+                        break;
+
+                    case RedmineKeys.CHANGESETS:
+                        Changesets = reader.ReadAsCollection<ChangeSet>();
+                        break;
+
+                    case RedmineKeys.CHILDREN:
+                        Children = reader.ReadAsCollection<IssueChild>();
+                        break;
+
+                    case RedmineKeys.WATCHERS:
+                        Watchers = reader.ReadAsCollection<Watcher>();
+                        break;
+
+                    default:
+                        reader.Read();
+                        break;
+                }
+            }
         }
     }
 }

@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.0</TargetFramework>
-    <DebugType>none</DebugType>
+    <DebugType>full</DebugType>
     <AssemblyName>RedmineApi.Core</AssemblyName>
     <PackageId>redmine-netcore10-api</PackageId>
     <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
     <Authors>Adrian Popescu</Authors>
     <Company />
-    <Copyright>Copyright &#x00A9; Adrian Popescu.  All rights reserved.</Copyright>
+    <Copyright>Copyright © Adrian Popescu.  All rights reserved.</Copyright>
     <PackageTags>Redmine, dotnet, api, c-sharp, csharp, c#</PackageTags>
     <Description>.Net Core API for Redmine bug/task management systems.</Description>
     <PackageProjectUrl>http://zapadi.github.io/redmine-net-api-github.io/</PackageProjectUrl>
@@ -31,15 +31,18 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Internals\DataHelper.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <!-- <PackageReference Include="Newtonsoft.Json" Version="9.0.1" /> -->
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="System.Collections.Specialized" Version="4.0.1" />
-    <!-- <PackageReference Include="System.Runtime.Serialization.Json" Version="4.0.2" />
-    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.1.1" /> -->
     <PackageReference Include="System.Xml.XmlSerializer" Version="4.0.11" />
   </ItemGroup>
 

@@ -63,7 +63,11 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(IssueCategory other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return (Id == other.Id && Project == other.Project && AsignTo == other.AsignTo && Name == other.Name);
         }
 

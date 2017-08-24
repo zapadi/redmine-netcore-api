@@ -39,7 +39,10 @@ namespace RedmineApi.Core.Authentication
 
         public static IAuthentication Create(string token)
         {
-            if (string.IsNullOrWhiteSpace(token)) throw new ArgumentNullException(nameof(token));
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
 
             return new OAuthAuthentication(token);
         }
