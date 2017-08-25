@@ -44,6 +44,7 @@ namespace RedmineApi.Core.Internals
 
                     if (reader.Read())
                     {
+                        reader.Read();
                         ser.Deserialize(reader);
                     }
                     return (T)ser;
@@ -59,23 +60,24 @@ namespace RedmineApi.Core.Internals
                 {
                     int total = 0;
                     int offset = 0;
+                    int limit = 0;
                     List<T> list = null;
 
                     while (reader.Read())
                     {
-
                         if (reader.TokenType == JsonToken.PropertyName)
                         {
                             switch (reader.Value)
                             {
                                 case RedmineKeys.TOTAL_COUNT: total = reader.ReadAsInt32().GetValueOrDefault(); break;
                                 case RedmineKeys.OFFSET: offset = reader.ReadAsInt32().GetValueOrDefault(); break;
+                                case RedmineKeys.LIMIT: limit = reader.ReadAsInt32().GetValueOrDefault(); break;
                                 default:
                                     list = reader.ReadAsCollection<T>(); break;
                             }
                         }
                     }
-                    return new PaginatedResult<T>(list, total, offset);
+                    return new PaginatedResult<T>(list, total, offset, limit);
                 }
             }
         }

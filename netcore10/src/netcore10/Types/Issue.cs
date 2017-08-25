@@ -596,7 +596,7 @@ namespace RedmineApi.Core.Types
 
         public void Deserialize(JsonReader reader)
         {
-            reader.Read();
+           // reader.Read();
 
             while (reader.Read())
             {

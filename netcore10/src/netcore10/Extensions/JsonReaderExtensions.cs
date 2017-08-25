@@ -36,7 +36,7 @@ namespace RedmineApi.Core.Extensions
                     throw new RedmineException($"object '{typeof(T)}' should implement IJsonSerializable.");
                 }
 
-                if (reader.Read())
+               // if (reader.Read())
                 {
                     ser.Deserialize(reader);
                 }
