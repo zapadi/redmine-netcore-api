@@ -93,15 +93,16 @@ namespace RedmineApi.Core.Types
                 writer.WriteElementString(RedmineKeys.VALUE, itemsCount > 0 ? Values[0].Info : null);
             }
         }
-#endregion
+        #endregion
 
         #region Implementation of IJsonSerialization
-        public override void ReadJson(JsonWriter writer)
+        public override void WriteJson(JsonWriter writer)
         {
+            //TODO: implement
             throw new NotImplementedException();
         }
 
-        public override void WriteJson(JsonReader reader)
+        public override void ReadJson(JsonReader reader)
         {
             while (reader.Read())
             {
@@ -114,6 +115,8 @@ namespace RedmineApi.Core.Types
                 {
                     continue;
                 }
+
+                //TODO: implement
             }
         }
         #endregion

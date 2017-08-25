@@ -35,9 +35,9 @@ namespace RedmineApi.Core.Types
         public string Info { get; set; }
 
         #region Implementation of IJsonSerialization
-        public void ReadJson(JsonWriter writer) { }
+        public void WriteJson(JsonWriter writer) { }
 
-        public void WriteJson(JsonReader reader)
+        public void ReadJson(JsonReader reader)
         {
             while (reader.Read())
             {
@@ -50,11 +50,13 @@ namespace RedmineApi.Core.Types
                 {
                     continue;
                 }
+
+                //TODO: implement
             }
         }
         #endregion
 
-        #region Implementation of IEquatable<>
+        #region Implementation of IEquatable<Permission>
         /// <summary>
         /// 
         /// </summary>

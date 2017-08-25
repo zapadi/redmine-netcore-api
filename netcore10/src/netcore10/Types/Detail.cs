@@ -111,12 +111,9 @@ namespace RedmineApi.Core.Types
         #endregion
 
         #region Implementation of IJsonSerialization
-        public void ReadJson(JsonWriter writer)
-        {
-           
-        }
+        public void WriteJson(JsonWriter writer) { }
 
-        public void WriteJson(JsonReader reader)
+        public void ReadJson(JsonReader reader)
         {
             while (reader.Read())
             {

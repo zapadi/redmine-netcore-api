@@ -160,12 +160,13 @@ namespace RedmineApi.Core.Types
         #endregion
 
         #region Implementation of IJsonSerialization
-        public void ReadJson(JsonWriter writer)
+        public void WriteJson(JsonWriter writer)
         {
+            //TODO: implement
             throw new NotImplementedException();
         }
 
-        public void WriteJson(JsonReader reader)
+        public void ReadJson(JsonReader reader)
         {
             while (reader.Read())
             {
@@ -250,7 +251,7 @@ namespace RedmineApi.Core.Types
             }
         }
         #endregion
-        
+
         /// <summary>
         /// 
         /// </summary>

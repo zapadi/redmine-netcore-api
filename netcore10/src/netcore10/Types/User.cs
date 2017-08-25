@@ -225,14 +225,15 @@ namespace RedmineApi.Core.Types
             writer.WriteArray(CustomFields, RedmineKeys.CUSTOM_FIELDS);
         }
         #endregion
-       
+
         #region Implementation of IJsonSerialization
-        public void ReadJson(JsonWriter writer)
+        public void WriteJson(JsonWriter writer)
         {
+            //TODO: implement
             throw new NotImplementedException();
         }
 
-        public void WriteJson(JsonReader reader)
+        public void ReadJson(JsonReader reader)
         {
             while (reader.Read())
             {

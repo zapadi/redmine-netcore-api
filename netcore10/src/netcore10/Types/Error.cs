@@ -71,15 +71,12 @@ namespace RedmineApi.Core.Types
         /// </summary>
         /// <param name="writer"></param>
         public void WriteXml(XmlWriter writer) { }
-#endregion
+        #endregion
 
         #region Implementation of IJsonSerialization
-        public void ReadJson(JsonWriter writer)
-        {
-           
-        }
+        public void WriteJson(JsonWriter writer) { }
 
-        public void WriteJson(JsonReader reader)
+        public void ReadJson(JsonReader reader)
         {
             while (reader.Read())
             {

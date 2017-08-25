@@ -74,9 +74,9 @@ namespace RedmineApi.Core.Types
         #endregion
 
         #region Implementation of IJsonSerialization
-        public override void ReadJson(JsonWriter writer)        {                   }
+        public override void WriteJson(JsonWriter writer) { }
 
-        public override void WriteJson(JsonReader reader)
+        public override void ReadJson(JsonReader reader)
         {
             while (reader.Read())
             {
@@ -161,7 +161,7 @@ namespace RedmineApi.Core.Types
             }
         }
         #endregion
-        
+
         /// <summary>
         /// 
         /// </summary>

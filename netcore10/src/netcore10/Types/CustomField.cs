@@ -180,7 +180,7 @@ namespace RedmineApi.Core.Types
         #endregion
 
         #region Implementation of IJsonSerialization
-        public override void WriteJson(JsonReader reader)
+        public override void ReadJson(JsonReader reader)
         {
             while (reader.Read())
             {
@@ -232,6 +232,8 @@ namespace RedmineApi.Core.Types
                 }
             }
         }
+
+        public override void WriteJson(JsonWriter writer) { }
         #endregion
 
         #region Implementation of IEquatable<>

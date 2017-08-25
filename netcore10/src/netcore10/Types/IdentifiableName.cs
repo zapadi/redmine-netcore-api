@@ -22,6 +22,7 @@ using System.Xml.Serialization;
 using Newtonsoft.Json;
 using RedmineApi.Core.Internals;
 using RedmineApi.Core.Serializers;
+using RedmineApi.Core.Extensions;
 
 namespace RedmineApi.Core.Types
 {
@@ -58,7 +59,7 @@ namespace RedmineApi.Core.Types
 
         private void InitializeJsonReader(JsonReader reader)
         {
-            WriteJson(reader);
+            ReadJson(reader);
         }
 
         /// <summary>
@@ -130,13 +131,15 @@ namespace RedmineApi.Core.Types
         #endregion
 
         #region Implementation of IJsonSerializable
-        public virtual void ReadJson(JsonWriter writer)
+        public virtual void WriteJson(JsonWriter writer)
         {
-            //writer.WriteAttributeString(RedmineKeys.ID, Id.ToString(CultureInfo.InvariantCulture));
-            //writer.WriteAttributeString(RedmineKeys.NAME, Name);
+            //TODO: implement
+
+            writer.WriteProperty(RedmineKeys.ID, Id.ToString(CultureInfo.InvariantCulture));
+            writer.WriteProperty(RedmineKeys.NAME, Name);
         }
 
-        public virtual void WriteJson(JsonReader reader)
+        public virtual void ReadJson(JsonReader reader)
         {
             reader.Read();
 
@@ -151,7 +154,7 @@ namespace RedmineApi.Core.Types
                 {
                     switch (reader.Value)
                     {
-                        case RedmineKeys.ID: Id = reader.ReadAsInt32().GetValueOrDefault(); break;
+                        case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
                         case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
                         default: reader.Read(); break;
                     }

@@ -42,7 +42,7 @@ namespace RedmineApi.Core.Extensions
                     throw new RedmineException($"object '{typeof(T)}' should implement IJsonSerializable.");
                 }
 
-                ser.WriteJson(reader);
+                ser.ReadJson(reader);
 
                 T des = (T)ser;
                 if (des != default(T))

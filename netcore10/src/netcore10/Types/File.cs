@@ -179,31 +179,21 @@ namespace RedmineApi.Core.Types
         #endregion
 
         #region Implementation of IJsonSerializable
-        public void ReadJson(JsonWriter writer)
+        public void WriteJson(JsonWriter writer)
         {
-            writer.WriteStartObject();
-            writer.WritePropertyName(RedmineKeys.FILE);
-            writer.WriteStartObject();
-            writer.WritePropertyName(RedmineKeys.TOKEN);
-            writer.WriteValue(Token);
-
-            if (Version != null)
+            using (new JsonObject(writer, RedmineKeys.FILE))
             {
-                writer.WritePropertyName(RedmineKeys.VERSION_ID);
-                writer.WriteValue(Version.Id);
+                using (new JsonObject(writer))
+                {
+                    writer.WriteProperty(RedmineKeys.TOKEN, Token);
+                    writer.WriteIdIfNotNull(RedmineKeys.VERSION_ID, Version);
+                    writer.WriteProperty(RedmineKeys.FILENAME, Filename);
+                    writer.WriteProperty(RedmineKeys.DESCRIPTION, Description);
+                }
             }
-
-            writer.WritePropertyName(RedmineKeys.FILENAME);
-            writer.WriteValue(Filename);
-
-            writer.WritePropertyName(RedmineKeys.DESCRIPTION);
-            writer.WriteValue(Description);
-
-            writer.WriteEndObject();
-            writer.WriteEndObject();
         }
 
-        public void WriteJson(JsonReader reader)
+        public void ReadJson(JsonReader reader)
         {
             while (reader.Read())
             {
