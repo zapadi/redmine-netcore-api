@@ -2,7 +2,7 @@
 
 namespace RedmineApi.Core.Serializers
 {
-    internal interface IJsonSerializable
+    public interface IJsonSerializable
     {
         void WriteJson(JsonWriter writer);
         void ReadJson(JsonReader reader);
