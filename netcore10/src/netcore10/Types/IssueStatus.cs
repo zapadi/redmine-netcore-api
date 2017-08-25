@@ -18,6 +18,8 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Extensions;
 
 namespace RedmineApi.Core.Types
 {
@@ -43,6 +45,7 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.IS_CLOSED)]
         public bool IsClosed { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -78,7 +81,42 @@ namespace RedmineApi.Core.Types
         /// </summary>
         /// <param name="writer"></param>
         public override void WriteXml(XmlWriter writer) { }
+        #endregion
 
+        #region Implementation of IJsonSerialization
+        public override void ReadJson(JsonWriter writer) { }
+
+        public override void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
+
+                    case RedmineKeys.IS_DEFAULT: IsDefault = reader.ReadAsBool(); break;
+
+                    case RedmineKeys.IS_CLOSED: IsClosed = reader.ReadAsBool(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -110,6 +148,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 

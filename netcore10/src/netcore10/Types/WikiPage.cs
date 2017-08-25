@@ -21,6 +21,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -28,7 +30,7 @@ namespace RedmineApi.Core.Types
     /// Availability 2.2
     /// </summary>
     [XmlRoot(RedmineKeys.WIKI_PAGE)]
-    public class WikiPage : Identifiable<WikiPage>, IXmlSerializable, IEquatable<WikiPage>
+    public class WikiPage : Identifiable<WikiPage>, IXmlSerializable, IEquatable<WikiPage>, IJsonSerializable
     {
         /// <summary>
         /// 
@@ -157,6 +159,52 @@ namespace RedmineApi.Core.Types
 
         #endregion
 
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.TITLE: Title = reader.ReadAsString(); break;
+
+                    case RedmineKeys.TEXT: Text = reader.ReadAsString(); break;
+
+                    case RedmineKeys.COMMENTS: Comments = reader.ReadAsString(); break;
+
+                    case RedmineKeys.VERSION: Version = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.AUTHOR: Author = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.CREATED_ON: CreatedOn = reader.ReadAsDateTime(); break;
+
+                    case RedmineKeys.UPDATED_ON: UpdatedOn = reader.ReadAsDateTime(); break;
+
+                    case RedmineKeys.ATTACHMENTS: Attachments = reader.ReadAsCollection<Attachment>(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
         #region Implementation of IEquatable<WikiPage>
 
         /// <summary>
@@ -180,7 +228,6 @@ namespace RedmineApi.Core.Types
                 && CreatedOn == other.CreatedOn
                 && UpdatedOn == other.UpdatedOn;
         }
-        #endregion
 
         /// <summary>
         /// 
@@ -202,7 +249,8 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
-
+        #endregion
+        
         /// <summary>
         /// 
         /// </summary>

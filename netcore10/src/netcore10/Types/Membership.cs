@@ -21,6 +21,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -28,7 +30,7 @@ namespace RedmineApi.Core.Types
     /// Only the roles can be updated, the project and the user of a membership are read-only.
     /// </summary>
     [XmlRoot(RedmineKeys.MEMBERSHIP)]
-    public class Membership : Identifiable<Membership>, IEquatable<Membership>, IXmlSerializable
+    public class Membership : Identifiable<Membership>, IEquatable<Membership>, IXmlSerializable, IJsonSerializable
     {
         /// <summary>
         /// Gets or sets the project.
@@ -45,6 +47,7 @@ namespace RedmineApi.Core.Types
         [XmlArrayItem(RedmineKeys.ROLE)]
         public List<MembershipRole> Roles { get; set; }
 
+        #region Implementation of IXmlSerialization
         /// <summary>
         /// 
         /// </summary>
@@ -84,7 +87,40 @@ namespace RedmineApi.Core.Types
         /// </summary>
         /// <param name="writer"></param>
         public void WriteXml(XmlWriter writer) { }
+        #endregion
 
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer) { }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.PROJECT: Project = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.ROLES: Roles = reader.ReadAsCollection<MembershipRole>(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -117,7 +153,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
-
+        #endregion
         /// <summary>
         /// 
         /// </summary>

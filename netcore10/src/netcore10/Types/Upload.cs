@@ -18,6 +18,8 @@ using System;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -25,7 +27,7 @@ namespace RedmineApi.Core.Types
     /// Support for adding attachments through the REST API is added in Redmine 1.4.0.
     /// </summary>
     [XmlRoot(RedmineKeys.UPLOAD)]
-    public class Upload : IEquatable<Upload>
+    public class Upload : IEquatable<Upload>, IJsonSerializable
     {
         /// <summary>
         /// Gets or sets the uploaded token.
@@ -56,12 +58,38 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.DESCRIPTION)]
         public string Description { get; set; }
 
+        #region Implementation of IXmlSerialization
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public XmlSchema GetSchema() { return null; }
+        #endregion
 
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<Upload>
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
@@ -119,6 +147,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 

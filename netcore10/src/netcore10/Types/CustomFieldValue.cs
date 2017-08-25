@@ -17,6 +17,8 @@
 using System;
 using System.Xml.Serialization;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -24,7 +26,7 @@ namespace RedmineApi.Core.Types
     /// 
     /// </summary>
     [XmlRoot(RedmineKeys.VALUE)]
-    public class CustomFieldValue : IEquatable<CustomFieldValue>
+    public class CustomFieldValue : IEquatable<CustomFieldValue>, IJsonSerializable
     {
         /// <summary>
         /// 
@@ -32,6 +34,35 @@ namespace RedmineApi.Core.Types
         [XmlText]
         public string Info { get; set; }
 
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                if (reader.Value as string == RedmineKeys.INFO)
+                {
+                    Info = reader.ReadAsString();
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -80,6 +111,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 

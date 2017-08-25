@@ -17,6 +17,8 @@
 using System;
 using System.Xml.Serialization;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -24,7 +26,7 @@ namespace RedmineApi.Core.Types
     /// 
     /// </summary>
     [XmlRoot(RedmineKeys.PERMISSION)]
-    public class Permission : IEquatable<Permission>
+    public class Permission : IEquatable<Permission>, IJsonSerializable
     {
         /// <summary>
         /// 
@@ -32,6 +34,27 @@ namespace RedmineApi.Core.Types
         [XmlText]
         public string Info { get; set; }
 
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer) { }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -41,7 +64,6 @@ namespace RedmineApi.Core.Types
         {
             return Info == other.Info;
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -80,7 +102,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
-
+        #endregion
         /// <summary>
         /// 
         /// </summary>

@@ -21,6 +21,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -28,7 +30,7 @@ namespace RedmineApi.Core.Types
     /// Availability 1.1
     /// </summary>
     [XmlRoot(RedmineKeys.USER)]
-    public class User : Identifiable<User>, IXmlSerializable, IEquatable<User>
+    public class User : Identifiable<User>, IXmlSerializable, IEquatable<User>, IJsonSerializable
     {
         /// <summary>
         /// Gets or sets the user login.
@@ -143,6 +145,7 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.MAIL_NOTIFICATION)]
         public string MailNotification { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -221,7 +224,67 @@ namespace RedmineApi.Core.Types
 
             writer.WriteArray(CustomFields, RedmineKeys.CUSTOM_FIELDS);
         }
+        #endregion
+       
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
 
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.LOGIN: Login = reader.ReadAsString(); break;
+
+                    case RedmineKeys.FIRSTNAME: FirstName = reader.ReadAsString(); break;
+
+                    case RedmineKeys.LASTNAME: LastName = reader.ReadAsString(); break;
+
+                    case RedmineKeys.MAIL: Email = reader.ReadAsString(); break;
+
+                    case RedmineKeys.MAIL_NOTIFICATION: MailNotification = reader.ReadAsString(); break;
+
+                    case RedmineKeys.MUST_CHANGE_PASSWD: MustChangePassword = reader.ReadAsBool(); break;
+
+                    case RedmineKeys.AUTH_SOURCE_ID: AuthenticationModeId = reader.ReadAsInt32(); break;
+
+                    case RedmineKeys.LAST_LOGIN_ON: LastLoginOn = reader.ReadAsDateTime(); break;
+
+                    case RedmineKeys.CREATED_ON: CreatedOn = reader.ReadAsDateTime(); break;
+
+                    case RedmineKeys.API_KEY: ApiKey = reader.ReadAsString(); break;
+
+                    case RedmineKeys.STATUS: Status = (UserStatus)reader.ReadAsInt(); break;
+
+                    case RedmineKeys.CUSTOM_FIELDS: CustomFields = reader.ReadAsCollection<IssueCustomField>(); break;
+
+                    case RedmineKeys.MEMBERSHIPS: Memberships = reader.ReadAsCollection<Membership>(); break;
+
+                    case RedmineKeys.GROUPS: Groups = reader.ReadAsCollection<UserGroup>(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<User>
         /// <summary>
         /// 
         /// </summary>
@@ -280,6 +343,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 

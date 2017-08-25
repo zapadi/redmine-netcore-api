@@ -19,6 +19,9 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
+using RedmineApi.Core.Extensions;
 
 namespace RedmineApi.Core.Types
 {
@@ -26,7 +29,7 @@ namespace RedmineApi.Core.Types
     /// 
     /// </summary>
     [XmlRoot(RedmineKeys.ISSUE)]
-    public class IssueChild : Identifiable<IssueChild>, IXmlSerializable, IEquatable<IssueChild>
+    public class IssueChild : Identifiable<IssueChild>, IXmlSerializable, IEquatable<IssueChild>, IJsonSerializable
     {
         /// <summary>
         /// Gets or sets the tracker.
@@ -42,6 +45,7 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.SUBJECT)]
         public String Subject { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -81,17 +85,40 @@ namespace RedmineApi.Core.Types
         /// </summary>
         /// <param name="writer"></param>
         public void WriteXml(XmlWriter writer) { }
+        #endregion
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public IssueChild Clone()
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer) { }
+
+        public void WriteJson(JsonReader reader)
         {
-            var issueChild = new IssueChild { Subject = Subject, Tracker = Tracker };
-            return issueChild;
-        }
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
 
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.TRACKER: Tracker = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.SUBJECT: Subject = reader.ReadAsString(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -124,6 +151,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 
@@ -132,6 +160,16 @@ namespace RedmineApi.Core.Types
         public override string ToString()
         {
             return $"[IssueChild: {base.ToString()}, Tracker={Tracker}, Subject={Subject}]";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IssueChild Clone()
+        {
+            var issueChild = new IssueChild { Subject = Subject, Tracker = Tracker };
+            return issueChild;
         }
     }
 }

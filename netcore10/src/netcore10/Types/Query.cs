@@ -19,6 +19,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
 
 namespace RedmineApi.Core.Types
 {
@@ -42,6 +43,7 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.PROJECT_ID)]
         public int? ProjectId { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -77,7 +79,42 @@ namespace RedmineApi.Core.Types
         /// </summary>
         /// <param name="writer"></param>
         public override void WriteXml(XmlWriter writer) { }
+        #endregion
 
+        #region Implementation of IJsonSerialization
+        public override void ReadJson(JsonWriter writer) { }
+
+        public override void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
+
+                    case RedmineKeys.IS_PUBLIC: IsPublic = reader.ReadAsBool(); break;
+
+                    case RedmineKeys.PROJECT_ID: ProjectId = reader.ReadAsInt(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<Query>
         /// <summary>
         /// 
         /// </summary>
@@ -109,7 +146,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
-
+        #endregion
         /// <summary>
         /// 
         /// </summary>

@@ -20,6 +20,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -27,7 +29,7 @@ namespace RedmineApi.Core.Types
     /// Availability 1.1
     /// </summary>
     [XmlRoot(RedmineKeys.NEWS)]
-    public class News : Identifiable<News>, IEquatable<News>, IXmlSerializable
+    public class News : Identifiable<News>, IEquatable<News>, IXmlSerializable, IJsonSerializable
     {
         /// <summary>
         /// Gets or sets the project.
@@ -71,6 +73,7 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.CREATED_ON, IsNullable = true)]
         public DateTime? CreatedOn { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -118,7 +121,48 @@ namespace RedmineApi.Core.Types
         /// </summary>
         /// <param name="writer"></param>
         public void WriteXml(XmlWriter writer) { }
+        #endregion
 
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer) { }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.PROJECT: Project = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.AUTHOR: Author = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.TITLE: Title = reader.ReadAsString(); break;
+
+                    case RedmineKeys.SUMMARY: Summary = reader.ReadAsString(); break;
+
+                    case RedmineKeys.DESCRIPTION: Description = reader.ReadAsString(); break;
+
+                    case RedmineKeys.CREATED_ON: CreatedOn = reader.ReadAsDateTime(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -158,7 +202,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
-
+        #endregion
         /// <summary>
         /// 
         /// </summary>

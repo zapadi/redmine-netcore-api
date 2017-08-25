@@ -20,6 +20,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
 
 namespace RedmineApi.Core.Types
 {
@@ -143,6 +144,7 @@ namespace RedmineApi.Core.Types
         [XmlArrayItem(RedmineKeys.TIME_ENTRY_ACTIVITY)]
         public IList<TimeEntryActivity> TimeEntryActivities { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// Generates an object from its XML representation.
         /// </summary>
@@ -220,7 +222,69 @@ namespace RedmineApi.Core.Types
 
             writer.WriteArray(CustomFields, RedmineKeys.CUSTOM_FIELDS);
         }
+#endregion
+        
+        #region Implementation of IJsonSerialization
+        public override void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
 
+        public override void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
+
+                    case RedmineKeys.IDENTIFIER: Identifier = reader.ReadAsString(); break;
+
+                    case RedmineKeys.DESCRIPTION: Description = reader.ReadAsString(); break;
+
+                    case RedmineKeys.STATUS: Status = (ProjectStatus)reader.ReadAsInt(); break;
+
+                    case RedmineKeys.PARENT: Parent = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.HOMEPAGE: HomePage = reader.ReadAsString(); break;
+
+                    case RedmineKeys.IS_PUBLIC: IsPublic = reader.ReadAsBool(); break;
+
+                    case RedmineKeys.INHERIT_MEMBERS: InheritMembers = reader.ReadAsBool(); break;
+
+                    case RedmineKeys.CREATED_ON: CreatedOn = reader.ReadAsDateTime(); break;
+
+                    case RedmineKeys.UPDATED_ON: UpdatedOn = reader.ReadAsDateTime(); break;
+
+                    case RedmineKeys.TRACKERS: Trackers = reader.ReadAsCollection<ProjectTracker>(); break;
+
+                    case RedmineKeys.CUSTOM_FIELDS: CustomFields = reader.ReadAsCollection<IssueCustomField>(); break;
+
+                    case RedmineKeys.ISSUE_CATEGORIES: IssueCategories = reader.ReadAsCollection<ProjectIssueCategory>(); break;
+
+                    case RedmineKeys.ENABLED_MODULES: EnabledModules = reader.ReadAsCollection<ProjectEnabledModule>(); break;
+
+                    case RedmineKeys.TIME_ENTRY_ACTIVITIES: TimeEntryActivities = reader.ReadAsCollection<TimeEntryActivity>(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -277,6 +341,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+#endregion
 
         /// <summary>
         /// 

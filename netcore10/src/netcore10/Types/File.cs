@@ -64,6 +64,7 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.TOKEN)]
         public string Token { get; set; }
 
+        #region Implementation of IEquatable<>
         public bool Equals(File other)
         {
             if (other == null)
@@ -106,11 +107,6 @@ namespace RedmineApi.Core.Types
             return hashCode;
         }
 
-        public override string ToString()
-        {
-            return $"[File: Id={Id}, Name={Filename}]";
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
@@ -130,7 +126,9 @@ namespace RedmineApi.Core.Types
 
             return Equals(obj as File);
         }
+        #endregion
 
+        #region Implementation of IXmlSerializable
         public XmlSchema GetSchema()
         {
             return null;
@@ -178,7 +176,10 @@ namespace RedmineApi.Core.Types
             writer.WriteElementString(RedmineKeys.DESCRIPTION, Description);
         }
 
-        public void Serialize(JsonWriter writer)
+        #endregion
+
+        #region Implementation of IJsonSerializable
+        public void ReadJson(JsonWriter writer)
         {
             writer.WriteStartObject();
             writer.WritePropertyName(RedmineKeys.FILE);
@@ -202,18 +203,16 @@ namespace RedmineApi.Core.Types
             writer.WriteEndObject();
         }
 
-        public void Deserialize(JsonReader reader)
+        public void WriteJson(JsonReader reader)
         {
-           // reader.Read();
-
-            while(reader.Read())
+            while (reader.Read())
             {
                 if (reader.TokenType == JsonToken.EndObject)
                 {
                     return;
                 }
 
-                if(reader.TokenType != JsonToken.PropertyName)
+                if (reader.TokenType != JsonToken.PropertyName)
                 {
                     continue;
                 }
@@ -233,11 +232,15 @@ namespace RedmineApi.Core.Types
                     case RedmineKeys.DIGEST: Digest = reader.ReadAsString(); break;
                     case RedmineKeys.DOWNLOADS: Downloads = reader.ReadAsInt32().GetValueOrDefault(); break;
                     case RedmineKeys.TOKEN: Token = reader.ReadAsString(); break;
-                    default:
-                        reader.Read();
-                        break;
+                    default: reader.Read(); break;
                 }
             }
+        }
+        #endregion
+
+        public override string ToString()
+        {
+            return $"[File: Id={Id}, Name={Filename}]";
         }
     }
 }

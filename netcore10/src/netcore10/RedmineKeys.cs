@@ -247,6 +247,10 @@ namespace RedmineApi.Core
         /// <summary>
         /// 
         /// </summary>
+        public const string INFO = "info";
+        /// <summary>
+        /// 
+        /// </summary>
         public const string ISSUE = "issue";
         /// <summary>
         /// 

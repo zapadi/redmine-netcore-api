@@ -21,7 +21,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
-
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -29,7 +30,7 @@ namespace RedmineApi.Core.Types
     /// Availability 1.1
     /// </summary>
     [XmlRoot(RedmineKeys.TIME_ENTRY)]
-    public class TimeEntry : Identifiable<TimeEntry>, IEquatable<TimeEntry>, IXmlSerializable
+    public class TimeEntry : Identifiable<TimeEntry>, IEquatable<TimeEntry>, IXmlSerializable, IJsonSerializable
     {
         private string comments;
 
@@ -130,6 +131,7 @@ namespace RedmineApi.Core.Types
             return timeEntry;
         }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -207,7 +209,65 @@ namespace RedmineApi.Core.Types
 
             writer.WriteArray(CustomFields, RedmineKeys.CUSTOM_FIELDS);
         }
+        #endregion
 
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.ISSUE_ID: Issue = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.ISSUE: Issue = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.PROJECT_ID: Project = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.PROJECT: Project = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.SPENT_ON: SpentOn = reader.ReadAsDateTime(); break;
+
+                    case RedmineKeys.USER: User = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.HOURS: Hours = reader.ReadAsDecimal().GetValueOrDefault(); break;
+
+                    case RedmineKeys.ACTIVITY_ID: Activity = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.ACTIVITY: Activity = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.COMMENTS: Comments = reader.ReadAsString(); break;
+
+                    case RedmineKeys.CREATED_ON: CreatedOn = reader.ReadAsDateTime(); break;
+
+                    case RedmineKeys.UPDATED_ON: UpdatedOn = reader.ReadAsDateTime(); break;
+
+                    case RedmineKeys.CUSTOM_FIELDS: CustomFields = reader.ReadAsCollection<IssueCustomField>(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<TimeEntry>
         /// <summary>
         /// 
         /// </summary>
@@ -255,6 +315,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 

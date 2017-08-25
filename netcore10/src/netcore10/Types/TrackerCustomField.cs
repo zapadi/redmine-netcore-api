@@ -17,6 +17,7 @@
 using System.Xml;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
+using Newtonsoft.Json;
 
 namespace RedmineApi.Core.Types
 {
@@ -26,6 +27,7 @@ namespace RedmineApi.Core.Types
     [XmlRoot(RedmineKeys.TRACKER)]
     public class TrackerCustomField : Tracker
     {
+        #region Implementation of IXmlSerialization
         /// <summary>
         /// 
         /// </summary>
@@ -36,6 +38,35 @@ namespace RedmineApi.Core.Types
             Name = reader.GetAttribute(RedmineKeys.NAME);
             reader.Read();
         }
+        #endregion
+
+        #region Implementation of IJsonSerialization
+        
+        public override void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
 
         /// <summary>
         /// 

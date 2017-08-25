@@ -17,6 +17,8 @@
 using System;
 using System.Xml.Serialization;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -24,7 +26,7 @@ namespace RedmineApi.Core.Types
     /// 
     /// </summary>
     [XmlRoot(RedmineKeys.POSSIBLE_VALUE)]
-    public class CustomFieldPossibleValue : IEquatable<CustomFieldPossibleValue>
+    public class CustomFieldPossibleValue : IEquatable<CustomFieldPossibleValue>, IJsonSerializable
     {
         /// <summary>
         /// 
@@ -32,6 +34,35 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.VALUE)]
         public string Value { get; set; }
 
+        #region IJsonSerialization
+        public void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                if(reader.Value as string == RedmineKeys.VALUE)
+                {
+                    Value = reader.ReadAsString();
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -86,11 +117,13 @@ namespace RedmineApi.Core.Types
             }
         }
 
+        #endregion
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-		public override string ToString()
+        public override string ToString()
         {
             return $"[CustomFieldPossibleValue: {base.ToString()}]";
         }

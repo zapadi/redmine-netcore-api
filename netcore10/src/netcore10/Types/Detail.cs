@@ -19,6 +19,8 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -26,7 +28,7 @@ namespace RedmineApi.Core.Types
     /// 
     /// </summary>
     [XmlRoot(RedmineKeys.DETAIL)]
-    public class Detail : IXmlSerializable, IEquatable<Detail>
+    public class Detail : IXmlSerializable, IEquatable<Detail>, IJsonSerializable
     {
         /// <summary>
         /// Gets or sets the property.
@@ -64,6 +66,7 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.NEW_VALUE)]
         public string NewValue { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -105,7 +108,45 @@ namespace RedmineApi.Core.Types
         /// </summary>
         /// <param name="writer"></param>
         public void WriteXml(XmlWriter writer) { }
+        #endregion
 
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer)
+        {
+           
+        }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.PROPERTY: Property = reader.ReadAsString(); break;
+
+                    case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
+
+                    case RedmineKeys.OLD_VALUE: OldValue = reader.ReadAsString(); break;
+
+                    case RedmineKeys.NEW_VALUE: NewValue = reader.ReadAsString(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -166,6 +207,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 

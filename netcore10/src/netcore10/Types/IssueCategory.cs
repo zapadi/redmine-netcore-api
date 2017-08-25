@@ -20,6 +20,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -27,7 +29,7 @@ namespace RedmineApi.Core.Types
     /// Availability 1.3
     /// </summary>
     [XmlRoot(RedmineKeys.ISSUE_CATEGORY)]
-    public class IssueCategory : Identifiable<IssueCategory>, IEquatable<IssueCategory>, IXmlSerializable
+    public class IssueCategory : Identifiable<IssueCategory>, IEquatable<IssueCategory>, IXmlSerializable, IJsonSerializable
     {
         /// <summary>
         /// Gets or sets the project.
@@ -56,21 +58,8 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.NAME)]
         public string Name { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public bool Equals(IssueCategory other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return (Id == other.Id && Project == other.Project && AsignTo == other.AsignTo && Name == other.Name);
-        }
-
+       
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -117,6 +106,59 @@ namespace RedmineApi.Core.Types
             writer.WriteElementString(RedmineKeys.NAME, Name);
             writer.WriteIdIfNotNull(AsignTo, RedmineKeys.ASSIGNED_TO_ID);
         }
+        #endregion
+       
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.PROJECT: Project = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.ASSIGNED_TO: AsignTo = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Equals(IssueCategory other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return (Id == other.Id && Project == other.Project && AsignTo == other.AsignTo && Name == other.Name);
+        }
 
         /// <summary>
         /// 
@@ -134,7 +176,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
-
+        #endregion
         /// <summary>
         /// 
         /// </summary>

@@ -288,6 +288,7 @@ namespace RedmineApi.Core.Types
         [XmlArrayItem(RedmineKeys.WATCHER)]
         public IList<Watcher> Watchers { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -489,7 +490,9 @@ namespace RedmineApi.Core.Types
 
             writer.WriteListElements(Watchers as IList<IValue>, RedmineKeys.WATCHER_USER_IDS);
         }
+        #endregion
 
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -538,15 +541,6 @@ namespace RedmineApi.Core.Types
         /// 
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"[Issue: {base.ToString()}, Project={Project}, Tracker={Tracker}, Status={Status}, Priority={Priority}, Author={Author}, Category={Category}, Subject={Subject}, Description={Description}, StartDate={StartDate}, DueDate={DueDate}, DoneRatio={DoneRatio}, PrivateNotes={PrivateNotes}, EstimatedHours={EstimatedHours}, SpentHours={SpentHours}, CustomFields={CustomFields}, CreatedOn={CreatedOn}, UpdatedOn={UpdatedOn}, ClosedOn={ClosedOn}, Notes={Notes}, AssignedTo={AssignedTo}, ParentIssue={ParentIssue}, FixedVersion={FixedVersion}, IsPrivate={IsPrivate}, Journals={Journals}, Changesets={Changesets}, Attachments={Attachments}, Relations={Relations}, Children={Children}, Uploads={Uploads}, Watchers={Watchers}]";
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public override int GetHashCode()
         {
             var hashCode = base.GetHashCode();
@@ -588,16 +582,17 @@ namespace RedmineApi.Core.Types
 
             return hashCode;
         }
+        #endregion
 
-        public void Serialize(JsonWriter writer)
+        #region Implementation of IJsonSerializable
+
+        public void ReadJson(JsonWriter writer)
         {
             throw new NotImplementedException();
         }
 
-        public void Deserialize(JsonReader reader)
+        public void WriteJson(JsonReader reader)
         {
-           // reader.Read();
-
             while (reader.Read())
             {
                 if (reader.TokenType == JsonToken.EndObject)
@@ -745,6 +740,17 @@ namespace RedmineApi.Core.Types
                         break;
                 }
             }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"[Issue: {base.ToString()}, Project={Project}, Tracker={Tracker}, Status={Status}, Priority={Priority}, Author={Author}, Category={Category}, Subject={Subject}, Description={Description}, StartDate={StartDate}, DueDate={DueDate}, DoneRatio={DoneRatio}, PrivateNotes={PrivateNotes}, EstimatedHours={EstimatedHours}, SpentHours={SpentHours}, CustomFields={CustomFields}, CreatedOn={CreatedOn}, UpdatedOn={UpdatedOn}, ClosedOn={ClosedOn}, Notes={Notes}, AssignedTo={AssignedTo}, ParentIssue={ParentIssue}, FixedVersion={FixedVersion}, IsPrivate={IsPrivate}, Journals={Journals}, Changesets={Changesets}, Attachments={Attachments}, Relations={Relations}, Children={Children}, Uploads={Uploads}, Watchers={Watchers}]";
         }
     }
 }

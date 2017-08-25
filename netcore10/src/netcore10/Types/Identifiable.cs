@@ -34,6 +34,7 @@ namespace RedmineApi.Core.Types
         [XmlAttribute(RedmineKeys.ID)]
         public int Id { get; set; }
 
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -109,7 +110,8 @@ namespace RedmineApi.Core.Types
         {
             return !Equals(left, right);
         }
-
+        #endregion
+        
         /// <summary>
         /// 
         /// </summary>

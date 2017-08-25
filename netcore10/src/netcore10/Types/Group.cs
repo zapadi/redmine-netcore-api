@@ -20,6 +20,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
 
 namespace RedmineApi.Core.Types
 {
@@ -96,6 +97,44 @@ namespace RedmineApi.Core.Types
             writer.WriteArrayIds(Users, RedmineKeys.USER_IDS, typeof(int), GetGroupUserId);
         }
 
+        #endregion
+
+        #region Implementation of IJsonSerialization
+        public override void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
+
+                    case RedmineKeys.USERS: Users = reader.ReadAsCollection<GroupUser>(); break;
+
+                    case RedmineKeys.CUSTOM_FIELDS: CustomFields = reader.ReadAsCollection<IssueCustomField>(); break;
+
+                    case RedmineKeys.MEMBERSHIPS: Memberships = reader.ReadAsCollection<Membership>(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
         #endregion
 
         #region Implementation of IEquatable<Group>

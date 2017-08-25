@@ -20,6 +20,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -27,7 +29,7 @@ namespace RedmineApi.Core.Types
     /// 
     /// </summary>
     [XmlRoot(RedmineKeys.CHANGESET)]
-    public class ChangeSet : IXmlSerializable, IEquatable<ChangeSet>
+    public class ChangeSet : IXmlSerializable, IEquatable<ChangeSet>, IJsonSerializable
     {
         /// <summary>
         /// 
@@ -53,6 +55,7 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.COMMITTED_ON, IsNullable = true)]
         public DateTime? CommittedOn { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -94,7 +97,42 @@ namespace RedmineApi.Core.Types
         /// </summary>
         /// <param name="writer"></param>
         public void WriteXml(XmlWriter writer) { }
+        #endregion
 
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer) { }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.USER: User = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.COMMENTS: Comments = reader.ReadAsString(); break;
+
+                    case RedmineKeys.COMMITTED_ON: CommittedOn = reader.ReadAsDateTime(); break;
+
+                    case RedmineKeys.REVISION: Revision = reader.ReadAsInt(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -154,6 +192,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 

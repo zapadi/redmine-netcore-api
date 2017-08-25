@@ -18,6 +18,8 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Extensions;
 
 namespace RedmineApi.Core.Types
 {
@@ -27,6 +29,7 @@ namespace RedmineApi.Core.Types
     [XmlRoot(RedmineKeys.TRACKER)]
     public class Tracker : IdentifiableName, IEquatable<Tracker>
     {
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// </summary>
         /// <param name="writer"></param>
@@ -57,7 +60,38 @@ namespace RedmineApi.Core.Types
                 }
             }
         }
+        #endregion
 
+        #region Implementation of IJsonSerialization
+        public override void ReadJson(JsonWriter writer) { }
+
+        public override void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<Tracker>
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
@@ -114,6 +148,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 

@@ -21,6 +21,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -32,7 +34,7 @@ namespace RedmineApi.Core.Types
     /// DELETE - Deletes a memberships. Memberships inherited from a group membership can not be deleted. You must delete the group membership.
     /// </summary>
     [XmlRoot(RedmineKeys.MEMBERSHIP)]
-    public class ProjectMembership : Identifiable<ProjectMembership>, IEquatable<ProjectMembership>, IXmlSerializable
+    public class ProjectMembership : Identifiable<ProjectMembership>, IEquatable<ProjectMembership>, IXmlSerializable, IJsonSerializable
     {
         /// <summary>
         /// Gets or sets the project.
@@ -67,25 +69,7 @@ namespace RedmineApi.Core.Types
         [XmlArrayItem(RedmineKeys.ROLE)]
         public List<MembershipRole> Roles { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public bool Equals(ProjectMembership other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            return (Id == other.Id
-                && Project == other.Project
-                && Roles == other.Roles
-                && User == other.User
-                && Group == other.Group);
-        }
-
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -133,7 +117,65 @@ namespace RedmineApi.Core.Types
             writer.WriteIdIfNotNull(User, RedmineKeys.USER_ID);
             writer.WriteArray(Roles, RedmineKeys.ROLE_IDS, typeof(MembershipRole), RedmineKeys.ROLE_ID);
         }
+        #endregion
 
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.PROJECT: Project = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.USER: User = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.GROUP: Group = new IdentifiableName(reader); break;
+
+                    case RedmineKeys.ROLES: Roles = reader.ReadAsCollection<MembershipRole>(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<ProjectMembership>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Equals(ProjectMembership other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return (Id == other.Id
+                && Project == other.Project
+                && Roles == other.Roles
+                && User == other.User
+                && Group == other.Group);
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -150,6 +192,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 

@@ -58,7 +58,7 @@ namespace RedmineApi.Core.Types
 
         private void InitializeJsonReader(JsonReader reader)
         {
-            Deserialize(reader);
+            WriteJson(reader);
         }
 
         /// <summary>
@@ -68,6 +68,7 @@ namespace RedmineApi.Core.Types
         [XmlAttribute(RedmineKeys.NAME)]
         public String Name { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -94,15 +95,10 @@ namespace RedmineApi.Core.Types
             writer.WriteAttributeString(RedmineKeys.ID, Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteAttributeString(RedmineKeys.NAME, Name);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return $"[IdentifiableName: Id={Id}, Name={Name}]";
-        }
 
+#endregion
+        
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -131,14 +127,16 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
-        public void Serialize(JsonWriter writer)
+        #region Implementation of IJsonSerializable
+        public virtual void ReadJson(JsonWriter writer)
         {
             //writer.WriteAttributeString(RedmineKeys.ID, Id.ToString(CultureInfo.InvariantCulture));
             //writer.WriteAttributeString(RedmineKeys.NAME, Name);
         }
 
-        public void Deserialize(JsonReader reader)
+        public virtual void WriteJson(JsonReader reader)
         {
             reader.Read();
 
@@ -160,6 +158,16 @@ namespace RedmineApi.Core.Types
                 }
             }
 
+        }
+        #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"[IdentifiableName: Id={Id}, Name={Name}]";
         }
     }
 }

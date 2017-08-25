@@ -45,7 +45,7 @@ namespace RedmineApi.Core.Internals
                     if (reader.Read())
                     {
                         reader.Read();
-                        ser.Deserialize(reader);
+                        ser.WriteJson(reader);
                     }
                     return (T)ser;
                 }
@@ -100,7 +100,7 @@ namespace RedmineApi.Core.Internals
                         throw new RedmineException($"object '{typeof(T)}' should implement IJsonSerializable.");
                     }
 
-                    ser.Serialize(writer);
+                    ser.ReadJson(writer);
 
                     return sb.ToString();
                 }

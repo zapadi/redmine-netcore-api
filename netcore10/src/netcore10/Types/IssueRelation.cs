@@ -20,6 +20,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
@@ -27,7 +29,7 @@ namespace RedmineApi.Core.Types
     /// Availability 1.3
     /// </summary>
     [XmlRoot(RedmineKeys.RELATION)]
-    public class IssueRelation : Identifiable<IssueRelation>, IXmlSerializable, IEquatable<IssueRelation>
+    public class IssueRelation : Identifiable<IssueRelation>, IXmlSerializable, IEquatable<IssueRelation>, IJsonSerializable
     {
         /// <summary>
         /// Gets or sets the issue id.
@@ -57,6 +59,7 @@ namespace RedmineApi.Core.Types
         [XmlElement(RedmineKeys.DELAY, IsNullable = true)]
         public int? Delay { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -136,8 +139,33 @@ namespace RedmineApi.Core.Types
                 writer.WriteValueOrEmpty(Delay, RedmineKeys.DELAY);
             }
         }
+        #endregion
 
-        /// <summary>
+        #region Implementation of IJsonSerialization
+        public void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
+        // <summary>
         /// 
         /// </summary>
         /// <param name="other"></param>
@@ -169,6 +197,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 

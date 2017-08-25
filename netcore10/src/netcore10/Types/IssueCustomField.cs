@@ -22,6 +22,7 @@ using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace RedmineApi.Core.Types
 {
@@ -45,6 +46,7 @@ namespace RedmineApi.Core.Types
         [XmlAttribute(RedmineKeys.MULTIPLE)]
         public bool Multiple { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -91,7 +93,32 @@ namespace RedmineApi.Core.Types
                 writer.WriteElementString(RedmineKeys.VALUE, itemsCount > 0 ? Values[0].Info : null);
             }
         }
+#endregion
 
+        #region Implementation of IJsonSerialization
+        public override void ReadJson(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -124,15 +151,6 @@ namespace RedmineApi.Core.Types
         /// 
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return $"[IssueCustomField: {base.ToString()} Values={Values}, Multiple={Multiple}]";
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public override int GetHashCode()
         {
             unchecked
@@ -144,6 +162,16 @@ namespace RedmineApi.Core.Types
                 hashCode = HashCodeHelper.GetHashCode(Multiple, hashCode);
                 return hashCode;
             }
+        }
+        #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"[IssueCustomField: {base.ToString()} Values={Values}, Multiple={Multiple}]";
         }
 
         /// <summary>

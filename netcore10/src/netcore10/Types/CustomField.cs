@@ -20,6 +20,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using Newtonsoft.Json;
 
 namespace RedmineApi.Core.Types
 {
@@ -116,6 +117,7 @@ namespace RedmineApi.Core.Types
         [XmlArrayItem(RedmineKeys.ROLE)]
         public IList<CustomFieldRole> Roles { get; set; }
 
+        #region Implementation of IXmlSerializable
         /// <summary>
         /// 
         /// </summary>
@@ -175,7 +177,64 @@ namespace RedmineApi.Core.Types
         /// </summary>
         /// <param name="writer"></param>
         public override void WriteXml(XmlWriter writer) { }
+        #endregion
 
+        #region Implementation of IJsonSerialization
+        public override void WriteJson(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                {
+                    return;
+                }
+
+                if (reader.TokenType != JsonToken.PropertyName)
+                {
+                    continue;
+                }
+
+                switch (reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+
+                    case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
+
+                    case RedmineKeys.CUSTOMIZED_TYPE: CustomizedType = reader.ReadAsString(); break;
+
+                    case RedmineKeys.FIELD_FORMAT: FieldFormat = reader.ReadAsString(); break;
+
+                    case RedmineKeys.REGEXP: Regexp = reader.ReadAsString(); break;
+
+                    case RedmineKeys.MIN_LENGTH: MinLength = reader.ReadAsInt32(); break;
+
+                    case RedmineKeys.MAX_LENGTH: MaxLength = reader.ReadAsInt32(); break;
+
+                    case RedmineKeys.IS_REQUIRED: IsRequired = reader.ReadAsBool(); break;
+
+                    case RedmineKeys.IS_FILTER: IsFilter = reader.ReadAsBool(); break;
+
+                    case RedmineKeys.SEARCHABLE: Searchable = reader.ReadAsBool(); break;
+
+                    case RedmineKeys.VISIBLE: Visible = reader.ReadAsBool(); break;
+
+                    case RedmineKeys.DEFAULT_VALUE: DefaultValue = reader.ReadAsString(); break;
+
+                    case RedmineKeys.MULTIPLE: Multiple = reader.ReadAsBool(); break;
+
+                    case RedmineKeys.TRACKERS: Trackers = reader.ReadAsCollection<TrackerCustomField>(); break;
+
+                    case RedmineKeys.ROLES: Roles = reader.ReadAsCollection<CustomFieldRole>(); break;
+
+                    case RedmineKeys.POSSIBLE_VALUES: PossibleValues = reader.ReadAsCollection<CustomFieldPossibleValue>(); break;
+
+                    default: reader.Read(); break;
+                }
+            }
+        }
+        #endregion
+
+        #region Implementation of IEquatable<>
         /// <summary>
         /// 
         /// </summary>
@@ -259,12 +318,13 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+        #endregion
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-		public override string ToString()
+        public override string ToString()
         {
             return $"[CustomField: Id={Id}, Name={Name}, CustomizedType={CustomizedType}, FieldFormat={FieldFormat}, Regexp={Regexp}, MinLength={MinLength}, MaxLength={MaxLength}, IsRequired={IsRequired}, IsFilter={IsFilter}, Searchable={Searchable}, Multiple={Multiple}, DefaultValue={DefaultValue}, Visible={Visible}, PossibleValues={PossibleValues}, Trackers={Trackers}, Roles={Roles}]";
         }
