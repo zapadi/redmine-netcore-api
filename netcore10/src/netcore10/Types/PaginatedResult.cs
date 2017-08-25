@@ -29,12 +29,17 @@ namespace RedmineApi.Core.Types
 
         }
 
-        public PaginatedResult(List<T> items, int total, int offset)
+        public PaginatedResult(List<T> items, int total, int offset):this(items, total, offset,0)
         {
-            Items = items;
-            Total = total;
-            Offset = offset;
         }
+
+		public PaginatedResult(List<T> items, int total, int offset, int limit)
+		{
+			Items = items;
+			Total = total;
+			Offset = offset;
+            Limit = limit;
+		}
 
         /// <summary>
         /// 
@@ -49,9 +54,15 @@ namespace RedmineApi.Core.Types
         /// </summary>
         public int Offset { get; set; }
 
+        public int Limit
+        {
+            get;
+            set;
+        }
+
         public override string ToString()
         {
-            return $"Total: {Total}, Offset: {Offset}";
+            return $"Total: {Total}, Offset: {Offset}, Limit: {Limit}";
         }
     }
 }
