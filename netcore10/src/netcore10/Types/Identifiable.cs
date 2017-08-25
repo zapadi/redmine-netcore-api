@@ -34,7 +34,7 @@ namespace RedmineApi.Core.Types
         [XmlAttribute(RedmineKeys.ID)]
         public int Id { get; set; }
 
-        #region Implementation of IEquatable<>
+        #region Implementation of IEquatable<Identifiable>
         /// <summary>
         /// 
         /// </summary>

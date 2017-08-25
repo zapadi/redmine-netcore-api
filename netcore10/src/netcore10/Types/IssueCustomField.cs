@@ -98,8 +98,18 @@ namespace RedmineApi.Core.Types
         #region Implementation of IJsonSerialization
         public override void WriteJson(JsonWriter writer)
         {
-            //TODO: implement
-            throw new NotImplementedException();
+           if (Values == null) return ;
+            var itemsCount = Values.Count;
+
+            writer.WriteProperty(RedmineKeys.ID, Id);
+            if (itemsCount > 1)
+            {
+                writer.WriteProperty(RedmineKeys.VALUE, Values.Select(x => x.Info).ToArray());
+            }
+            else
+            {
+                writer.WriteProperty(RedmineKeys.VALUE, itemsCount > 0 ? Values[0].Info : null);
+            }
         }
 
         public override void ReadJson(JsonReader reader)
@@ -116,7 +126,16 @@ namespace RedmineApi.Core.Types
                     continue;
                 }
 
-                //TODO: implement
+                switch(reader.Value)
+                {
+                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
+                    case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
+                    case RedmineKeys.MULTIPLE: Multiple = reader.ReadAsBool(); break;
+                    case RedmineKeys.VALUE: 
+                    //TODO: can be array or single value.
+                     break;
+                    default :  reader.Read(); break;
+                }
             }
         }
         #endregion

@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -492,7 +493,7 @@ namespace RedmineApi.Core.Types
         }
         #endregion
 
-        #region Implementation of IEquatable<>
+        #region Implementation of IEquatable<Issue>
         /// <summary>
         /// 
         /// </summary>
@@ -507,33 +508,33 @@ namespace RedmineApi.Core.Types
 
             return (
                 Id == other.Id
-            && Project == other.Project
-            && Tracker == other.Tracker
-            && Status == other.Status
-            && Priority == other.Priority
-            && Author == other.Author
-            && Category == other.Category
-            && Subject == other.Subject
-            && Description == other.Description
-            && StartDate == other.StartDate
-            && DueDate == other.DueDate
-            && DoneRatio == other.DoneRatio
-            && EstimatedHours == other.EstimatedHours
-            && CustomFields == other.CustomFields
-            && CreatedOn == other.CreatedOn
-            && UpdatedOn == other.UpdatedOn
-            && AssignedTo == other.AssignedTo
-            && FixedVersion == other.FixedVersion
-            && Notes == other.Notes
-            && Watchers == other.Watchers
-            && ClosedOn == other.ClosedOn
-            && SpentHours == other.SpentHours
-            && PrivateNotes == other.PrivateNotes
-            && Attachments == other.Attachments
-            && Changesets == other.Changesets
-            && Children == other.Children
-            && Journals == other.Journals
-            && Relations == other.Relations
+                && Project == other.Project
+                && Tracker == other.Tracker
+                && Status == other.Status
+                && Priority == other.Priority
+                && Author == other.Author
+                && Category == other.Category
+                && Subject == other.Subject
+                && Description == other.Description
+                && StartDate == other.StartDate
+                && DueDate == other.DueDate
+                && DoneRatio == other.DoneRatio
+                && EstimatedHours == other.EstimatedHours
+                && CustomFields == other.CustomFields
+                && CreatedOn == other.CreatedOn
+                && UpdatedOn == other.UpdatedOn
+                && AssignedTo == other.AssignedTo
+                && FixedVersion == other.FixedVersion
+                && Notes == other.Notes
+                && Watchers == other.Watchers
+                && ClosedOn == other.ClosedOn
+                && SpentHours == other.SpentHours
+                && PrivateNotes == other.PrivateNotes
+                && Attachments == other.Attachments
+                && Changesets == other.Changesets
+                && Children == other.Children
+                && Journals == other.Journals
+                && Relations == other.Relations
             );
         }
 
@@ -588,7 +589,41 @@ namespace RedmineApi.Core.Types
 
         public void WriteJson(JsonWriter writer)
         {
-            throw new NotImplementedException();
+            using(new JsonObject(writer, RedmineKeys.ISSUE))
+            {
+                writer.WriteProperty(RedmineKeys.SUBJECT, Subject);
+                writer.WriteProperty(RedmineKeys.DESCRIPTION, Description);
+                writer.WriteProperty(RedmineKeys.NOTES, Notes);
+                if (Id != 0)
+                {
+                    writer.WriteProperty(RedmineKeys.PRIVATE_NOTES, PrivateNotes.ToString().ToLowerInvariant());
+                }
+                writer.WriteProperty(RedmineKeys.IS_PRIVATE, IsPrivate.ToString().ToLowerInvariant());
+                writer.WriteIdIfNotNull( RedmineKeys.PROJECT_ID,Project);
+                writer.WriteIdIfNotNull( RedmineKeys.PRIORITY_ID,Priority);
+                writer.WriteIdIfNotNull( RedmineKeys.STATUS_ID,Status);
+                writer.WriteIdIfNotNull( RedmineKeys.CATEGORY_ID,Category);
+                writer.WriteIdIfNotNull( RedmineKeys.TRACKER_ID,Tracker);
+                writer.WriteIdIfNotNull( RedmineKeys.ASSIGNED_TO_ID,AssignedTo);
+                writer.WriteIdIfNotNull( RedmineKeys.FIXED_VERSION_ID,FixedVersion);
+                writer.WriteValueOrEmpty(RedmineKeys.ESTIMATED_HOURS,EstimatedHours);
+
+                writer.WriteIdOrEmpty(RedmineKeys.PARENT_ISSUE_ID, ParentIssue);
+                writer.WriteDateOrEmpty( RedmineKeys.START_DATE,StartDate);
+                writer.WriteDateOrEmpty( RedmineKeys.DUE_DATE,DueDate);
+                writer.WriteDateOrEmpty( RedmineKeys.UPDATED_ON,UpdatedOn);
+
+                if (DoneRatio != null)
+                    writer.WriteProperty(RedmineKeys.DONE_RATIO, DoneRatio.Value.ToString(CultureInfo.InvariantCulture));
+
+                if (SpentHours != null)
+                    writer.WriteProperty(RedmineKeys.SPENT_HOURS, SpentHours.Value.ToString(CultureInfo.InvariantCulture));
+
+                writer.WriteArray(RedmineKeys.UPLOADS, Uploads);
+                writer.WriteArray(RedmineKeys.CUSTOM_FIELDS, CustomFields);
+
+                writer.WriteArrayIds(RedmineKeys.WATCHER_USER_IDS, Watchers);
+            }
         }
 
         public void ReadJson(JsonReader reader)

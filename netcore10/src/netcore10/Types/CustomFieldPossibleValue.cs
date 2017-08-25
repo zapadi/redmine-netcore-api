@@ -19,6 +19,7 @@ using System.Xml.Serialization;
 using RedmineApi.Core.Internals;
 using Newtonsoft.Json;
 using RedmineApi.Core.Serializers;
+using RedmineApi.Core.Extensions;
 
 namespace RedmineApi.Core.Types
 {
@@ -37,8 +38,7 @@ namespace RedmineApi.Core.Types
         #region IJsonSerialization
         public void WriteJson(JsonWriter writer)
         {
-            //TODO: implement
-            throw new NotImplementedException();
+            
         }
 
         public void ReadJson(JsonReader reader)

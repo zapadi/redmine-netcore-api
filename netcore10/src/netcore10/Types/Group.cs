@@ -102,8 +102,11 @@ namespace RedmineApi.Core.Types
         #region Implementation of IJsonSerialization
         public override void WriteJson(JsonWriter writer)
         {
-            writer.WriteProperty(RedmineKeys.NAME, Name);
-            writer.WriteArrayIds(RedmineKeys.USER_IDS, Users);
+            using(new JsonObject(writer,RedmineKeys.GROUP))
+            {
+                writer.WriteProperty(RedmineKeys.NAME, Name);
+                writer.WriteArrayIds(RedmineKeys.USER_IDS, Users);
+            }
         }
 
         public override void ReadJson(JsonReader reader)

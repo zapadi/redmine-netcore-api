@@ -99,7 +99,7 @@ namespace RedmineApi.Core.Types
 
 #endregion
         
-        #region Implementation of IEquatable<>
+        #region Implementation of IEquatable<IdentifiableName>
         /// <summary>
         /// 
         /// </summary>
@@ -133,10 +133,9 @@ namespace RedmineApi.Core.Types
         #region Implementation of IJsonSerializable
         public virtual void WriteJson(JsonWriter writer)
         {
-            //TODO: implement
-
-            writer.WriteProperty(RedmineKeys.ID, Id.ToString(CultureInfo.InvariantCulture));
-            writer.WriteProperty(RedmineKeys.NAME, Name);
+            writer.WriteIdIfNotNull(RedmineKeys.ID, this);
+            if(!string.IsNullOrWhiteSpace(Name))
+                writer.WriteProperty(RedmineKeys.NAME, Name);
         }
 
         public virtual void ReadJson(JsonReader reader)

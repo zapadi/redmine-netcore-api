@@ -122,8 +122,11 @@ namespace RedmineApi.Core.Types
         #region Implementation of IJsonSerialization
         public void WriteJson(JsonWriter writer)
         {
-            //TODO: implement
-            throw new NotImplementedException();
+            using(new JsonObject(writer, RedmineKeys.MEMBERSHIP))
+            {
+                writer.WriteIdIfNotNull(RedmineKeys.USER_ID, User);
+                writer.WriteArrayIds(RedmineKeys.ROLE_IDS, Roles);
+            }
         }
 
         public void ReadJson(JsonReader reader)

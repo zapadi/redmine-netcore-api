@@ -143,7 +143,7 @@ namespace RedmineApi.Core.Types
         }
         #endregion
 
-        #region Implementation of IEquatable<>
+        #region Implementation of IEquatable<Detail>
         /// <summary>
         /// 
         /// </summary>

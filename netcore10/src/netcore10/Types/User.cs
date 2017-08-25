@@ -229,8 +229,18 @@ namespace RedmineApi.Core.Types
         #region Implementation of IJsonSerialization
         public void WriteJson(JsonWriter writer)
         {
-            //TODO: implement
-            throw new NotImplementedException();
+            using(new JsonObject(writer, RedmineKeys.USER))
+            {
+                writer.WriteProperty(RedmineKeys.LOGIN, Login);
+                writer.WriteProperty(RedmineKeys.FIRSTNAME, FirstName);
+                writer.WriteProperty(RedmineKeys.LASTNAME, LastName);
+                writer.WriteProperty(RedmineKeys.MAIL, Email);
+                writer.WriteProperty(RedmineKeys.MAIL_NOTIFICATION, MailNotification);
+                writer.WriteProperty(RedmineKeys.PASSWORD, Password);
+                writer.WriteProperty(RedmineKeys.MUST_CHANGE_PASSWD, MustChangePassword.ToString().ToLowerInvariant());
+                writer.WriteValueOrEmpty(RedmineKeys.AUTH_SOURCE_ID, AuthenticationModeId);
+                writer.WriteArray(RedmineKeys.CUSTOM_FIELDS, CustomFields);
+            }
         }
 
         public void ReadJson(JsonReader reader)

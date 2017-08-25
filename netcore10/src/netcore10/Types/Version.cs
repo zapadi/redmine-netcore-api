@@ -148,8 +148,14 @@ namespace RedmineApi.Core.Types
         #region Implementation of IJsonSerialization
         public override void WriteJson(JsonWriter writer)
         {
-            //TODO: implement
-            throw new NotImplementedException();
+            using(new JsonObject(writer, RedmineKeys.VERSION))
+            {
+                writer.WriteProperty(RedmineKeys.NAME, Name);
+                writer.WriteProperty(RedmineKeys.STATUS, Status.ToString().ToLowerInvariant());
+                writer.WriteProperty(RedmineKeys.SHARING, Sharing.ToString().ToLowerInvariant());
+                writer.WriteProperty(RedmineKeys.DESCRIPTION, Description);
+                writer.WriteDateOrEmpty(RedmineKeys.DUE_DATE, DueDate);
+            }
         }
 
         public override void ReadJson(JsonReader reader)

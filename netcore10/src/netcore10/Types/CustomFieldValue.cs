@@ -19,6 +19,7 @@ using System.Xml.Serialization;
 using RedmineApi.Core.Internals;
 using Newtonsoft.Json;
 using RedmineApi.Core.Serializers;
+using RedmineApi.Core.Extensions;
 
 namespace RedmineApi.Core.Types
 {
@@ -35,11 +36,7 @@ namespace RedmineApi.Core.Types
         public string Info { get; set; }
 
         #region Implementation of IJsonSerialization
-        public void WriteJson(JsonWriter writer)
-        {
-            //TODO: implement
-            throw new NotImplementedException();
-        }
+        public void WriteJson(JsonWriter writer){}
 
         public void ReadJson(JsonReader reader)
         {
@@ -63,7 +60,7 @@ namespace RedmineApi.Core.Types
         }
         #endregion
 
-        #region Implementation of IEquatable<>
+        #region Implementation of IEquatable<CustomField>
         /// <summary>
         /// 
         /// </summary>

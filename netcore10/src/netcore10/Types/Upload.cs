@@ -20,6 +20,7 @@ using System.Xml.Serialization;
 using RedmineApi.Core.Internals;
 using Newtonsoft.Json;
 using RedmineApi.Core.Serializers;
+using RedmineApi.Core.Extensions;
 
 namespace RedmineApi.Core.Types
 {
@@ -69,8 +70,10 @@ namespace RedmineApi.Core.Types
         #region Implementation of IJsonSerialization
         public void WriteJson(JsonWriter writer)
         {
-            //TODO: implement
-            throw new NotImplementedException();
+                writer.WriteProperty(RedmineKeys.TOKEN, Token);
+                writer.WriteProperty(RedmineKeys.CONTENT_TYPE, ContentType);
+                writer.WriteProperty(RedmineKeys.FILENAME, FileName);
+                writer.WriteProperty(RedmineKeys.DESCRIPTION, Description);
         }
 
         public void ReadJson(JsonReader reader)
@@ -86,7 +89,15 @@ namespace RedmineApi.Core.Types
                 {
                     continue;
                 }
-                //TODO: implement
+                
+                switch(reader.Value)
+                {
+                    case RedmineKeys.CONTENT_TYPE:   ContentType = reader.ReadAsString();break;
+                    case    RedmineKeys.FILENAME:  FileName = reader.ReadAsString();break;
+                    case  RedmineKeys.TOKEN:    Token = reader.ReadAsString();break;
+                    case    RedmineKeys.DESCRIPTION:   Description = reader.ReadAsString();break;
+                    default: reader.Read(); break;
+                }
             }
         }
         #endregion

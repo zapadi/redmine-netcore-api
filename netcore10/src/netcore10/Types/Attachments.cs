@@ -15,14 +15,34 @@
 */
 
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using RedmineApi.Core.Extensions;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
     /// <summary>
     /// 
     /// </summary>
-    internal class Attachments : Dictionary<int, Attachment>
+    internal class Attachments : Dictionary<int, Attachment>, IJsonSerializable
     {
+        public void ReadJson(JsonReader reader)
+        {
+           
+        }
 
+        public void WriteJson(JsonWriter writer)
+        {
+            using(new JsonObject(writer, RedmineKeys.ATTACHMENTS))
+            {
+                writer.WriteStartArray();
+                foreach (var item in this)
+                {
+                    writer.WritePropertyName(item.Key.ToString());
+                    item.Value.WriteJson(writer);
+                }  
+                writer.WriteEndArray();
+            }
+        }
     }
 }

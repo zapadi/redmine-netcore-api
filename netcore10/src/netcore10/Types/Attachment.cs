@@ -135,7 +135,14 @@ namespace RedmineApi.Core.Types
 
         #region Implementation of IJsonSerializable
 
-        public void WriteJson(JsonWriter writer) { }
+        public void WriteJson(JsonWriter writer) 
+        {
+            using(new JsonObject(writer, RedmineKeys.ATTACHMENT))
+            {
+                writer.WriteProperty(RedmineKeys.FILENAME, FileName);
+                writer.WriteProperty(RedmineKeys.DESCRIPTION, Description);
+            }
+         }
 
         public void ReadJson(JsonReader reader)
         {
