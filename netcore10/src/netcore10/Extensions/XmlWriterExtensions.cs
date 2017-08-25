@@ -30,7 +30,6 @@ namespace RedmineApi.Core.Extensions
     /// </summary>
     public static partial class XmlExtensions
     {
-        private static readonly Dictionary<Type, XmlSerializer> typeSerializers = new Dictionary<Type, XmlSerializer>();
         /// <summary>
         /// Writes the id if not null.
         /// </summary>
