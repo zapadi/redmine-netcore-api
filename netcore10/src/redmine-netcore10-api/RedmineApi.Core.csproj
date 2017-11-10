@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.0</TargetFramework>
-    <DebugType>none</DebugType>
+    <DebugType>full</DebugType>
     <AssemblyName>RedmineApi.Core</AssemblyName>
     <PackageId>redmine-netcore10-api</PackageId>
     <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
@@ -22,6 +22,10 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
