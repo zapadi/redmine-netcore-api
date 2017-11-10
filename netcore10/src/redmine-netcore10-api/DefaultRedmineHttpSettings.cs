@@ -159,7 +159,7 @@ namespace Redmine.Net.Api
             if (handler.SupportsRedirectConfiguration)
             {
                 handler.AllowAutoRedirect = AllowAutoRedirect;
-                handler.MaxAutomaticRedirections = MaxAutomaticRedirections;
+                handler.MaxAutomaticRedirections = MaxAutomaticRedirections == 0 ? handler.MaxAutomaticRedirections : MaxAutomaticRedirections;
             }
 
             handler.UseCookies = UseCookies;
