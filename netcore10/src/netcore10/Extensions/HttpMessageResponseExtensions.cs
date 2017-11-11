@@ -22,6 +22,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Extensions
 {

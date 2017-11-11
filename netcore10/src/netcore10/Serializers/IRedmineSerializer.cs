@@ -16,8 +16,7 @@
 
 using RedmineApi.Core.Types;
 
-
-namespace RedmineApi.Core.Internals
+namespace RedmineApi.Core.Serializers
 {
     internal interface IRedmineSerializer
     {

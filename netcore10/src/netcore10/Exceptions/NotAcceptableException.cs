@@ -20,7 +20,7 @@ namespace RedmineApi.Core.Exceptions
 {
     /// <summary>
     /// </summary>
-    /// <seealso cref="Redmine.Net.Api.Exceptions.RedmineException" />
+    /// <seealso cref="RedmineApi.Core.Exceptions.RedmineException" />
     public class NotAcceptableException : RedmineException
     {
         /// <summary>

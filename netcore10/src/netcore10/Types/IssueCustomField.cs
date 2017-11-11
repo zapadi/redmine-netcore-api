@@ -101,15 +101,27 @@ namespace RedmineApi.Core.Types
            if (Values == null) return ;
             var itemsCount = Values.Count;
 
+            writer.WriteStartObject();
             writer.WriteProperty(RedmineKeys.ID, Id);
+            writer.WriteProperty(RedmineKeys.NAME, Name);
+
             if (itemsCount > 1)
             {
-                writer.WriteProperty(RedmineKeys.VALUE, Values.Select(x => x.Info).ToArray());
+                writer.WritePropertyName(RedmineKeys.VALUE);
+                writer.WriteStartArray();
+                foreach (var cfv in Values)
+                {
+                    writer.WriteValue(cfv.Info);
+                }
+                writer.WriteEndArray();
+
+                writer.WriteProperty(RedmineKeys.MULTIPLE, Multiple.ToString().ToLowerInvariant());
             }
             else
             {
                 writer.WriteProperty(RedmineKeys.VALUE, itemsCount > 0 ? Values[0].Info : null);
             }
+            writer.WriteEndObject();
         }
 
         public override void ReadJson(JsonReader reader)
@@ -131,8 +143,9 @@ namespace RedmineApi.Core.Types
                     case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
                     case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
                     case RedmineKeys.MULTIPLE: Multiple = reader.ReadAsBool(); break;
-                    case RedmineKeys.VALUE: 
-                    //TODO: can be array or single value.
+                    case RedmineKeys.VALUE:
+
+                        Values = reader.ReadAsArray<CustomFieldValue>();
                      break;
                     default :  reader.Read(); break;
                 }

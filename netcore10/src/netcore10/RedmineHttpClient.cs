@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using RedmineApi.Core.Serializers;
 using RedmineApi.Core.Types;
 
 namespace RedmineApi.Core
@@ -57,7 +58,7 @@ namespace RedmineApi.Core
         {
             httpClient.AddApiKeyIfSet(ApiKey);
             httpClient.AddImpersonationHeaderIfSet(ImpersonateUser);
-            httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.mimeTypes[mimeType]}");
+            httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
 
             using (var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false))
             {
@@ -71,7 +72,7 @@ namespace RedmineApi.Core
         {
             httpClient.AddApiKeyIfSet(ApiKey);
             httpClient.AddImpersonationHeaderIfSet(ImpersonateUser);
-            httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.mimeTypes[mimeType]}");
+            httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
 
             using (var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false))
             {
@@ -87,7 +88,7 @@ namespace RedmineApi.Core
 
             var serializedData = RedmineSerializer.Serialize(data, mimeType);
             serializedData = sanitizeRegex.Replace(serializedData, "\r\n");
-            var requestContent = new StringContent(serializedData, Encoding.UTF8, $"{APPLICATION}/{UrlBuilder.mimeTypes[mimeType]}");
+            var requestContent = new StringContent(serializedData, Encoding.UTF8, $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
 
             using (var responseMessage = await httpClient.PutAsync(uri.ToString(), requestContent).ConfigureAwait(false))
             {
@@ -113,7 +114,7 @@ namespace RedmineApi.Core
             httpClient.AddImpersonationHeaderIfSet(ImpersonateUser);
 
             var content = new StringContent(RedmineSerializer.Serialize(data, mimeType), Encoding.UTF8,
-                $"{APPLICATION}/{UrlBuilder.mimeTypes[mimeType]}");
+                $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
 
             using (var responseMessage = await httpClient.PostAsync(uri.ToString(), content).ConfigureAwait(false))
             {
@@ -163,7 +164,6 @@ namespace RedmineApi.Core
 
         public async Task<Upload> UploadFile(Uri uri, byte[] bytes, MimeType mimeType)
         {
-           
             httpClient.AddApiKeyIfSet(ApiKey);
             httpClient.AddImpersonationHeaderIfSet(ImpersonateUser);
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), "application/octet-stream");

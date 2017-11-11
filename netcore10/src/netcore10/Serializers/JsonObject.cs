@@ -1,21 +1,22 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using Newtonsoft.Json;
 
-namespace RedmineApi.Core.Extensions
+namespace RedmineApi.Core.Serializers
 {
     public class JsonObject : IDisposable
     {
         private static  JsonWriter Writer{ get; set; }
-        private bool hasRoot;
+        private readonly bool hasRoot;
 
         public JsonObject(JsonWriter writer, string root = null)
         {
             Writer = writer;
             Writer.WriteStartObject();
-            if (string.IsNullOrWhiteSpace(root))
+            if (!string.IsNullOrWhiteSpace(root))
             {
                 hasRoot = true;
                 Writer.WritePropertyName(root);
+                Writer.WriteStartObject();
             }
         }
 
@@ -25,6 +26,7 @@ namespace RedmineApi.Core.Extensions
             if(hasRoot)
             {
                 Writer.WriteEndObject();
+              
             }
         }
     }

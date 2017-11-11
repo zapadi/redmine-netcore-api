@@ -22,8 +22,7 @@ using RedmineApi.Core.Exceptions;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Types;
 
-
-namespace RedmineApi.Core.Internals
+namespace RedmineApi.Core.Serializers
 {
     internal sealed class RedmineXmlSerializer : IRedmineSerializer
     {

@@ -23,7 +23,7 @@ namespace RedmineApi.Core.Extensions
 {
     internal static class HttpClientExtensions
     {
-        private const string X_Redmine_Switch_User= "X-Redmine-Switch-User";
+        private const string X_REDMINE_SWITCH_USER= "X-Redmine-Switch-User";
         private const string X_REDMINE_API_KEY = "X-Redmine-API-Key";
 
         public static void EnsureValidHost(this string host)
@@ -48,12 +48,12 @@ namespace RedmineApi.Core.Extensions
         {
             if (string.IsNullOrWhiteSpace(impersonateUser))
             {
-                httpClient.DefaultRequestHeaders.Remove(X_Redmine_Switch_User);
+                httpClient.DefaultRequestHeaders.Remove(X_REDMINE_SWITCH_USER);
             }
             else
             {
-                httpClient.ClearHeaderIfExists(X_Redmine_Switch_User);
-                httpClient.DefaultRequestHeaders.Add(X_Redmine_Switch_User, impersonateUser);
+                httpClient.ClearHeaderIfExists(X_REDMINE_SWITCH_USER);
+                httpClient.DefaultRequestHeaders.Add(X_REDMINE_SWITCH_USER, impersonateUser);
             }
         }
 

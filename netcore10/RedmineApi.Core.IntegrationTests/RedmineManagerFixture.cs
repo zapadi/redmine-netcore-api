@@ -16,9 +16,8 @@
 
 using System;
 using System.Diagnostics;
-using RedmineApi.Core;
 
-namespace Tests
+namespace RedmineApi.Core.IntegrationTests
 {
     public class RedmineManagerFixture : IDisposable
     {

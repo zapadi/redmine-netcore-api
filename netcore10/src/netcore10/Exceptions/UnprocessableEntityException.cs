@@ -21,7 +21,7 @@ namespace RedmineApi.Core.Exceptions
     /// <summary>
     /// Thrown in case something went wrong while trying to login.
     /// </summary>
-    /// <seealso cref="Redmine.Net.Api.Exceptions.RedmineException" />
+    /// <seealso cref="RedmineApi.Core.Exceptions.RedmineException" />
     public class UnprocessableEntityException : RedmineException
     {
         /// <summary>

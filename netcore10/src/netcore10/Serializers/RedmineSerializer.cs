@@ -14,11 +14,11 @@
    limitations under the License.
 */
 
+using System;
 using System.Collections.Generic;
 using RedmineApi.Core.Types;
 
-
-namespace RedmineApi.Core.Internals
+namespace RedmineApi.Core.Serializers
 {
     internal static class RedmineSerializer
     {
@@ -35,10 +35,10 @@ namespace RedmineApi.Core.Internals
         /// <param name="obj">The object.</param>
         /// <param name="mimeFormat">The MIME format.</param>
         /// <returns></returns>
-        /// <exception cref="RedmineException">Serialization error</exception>
+        /// <exception cref="RedmineApi.Core.Exceptions.RedmineException">Serialization error</exception>
         public static string Serialize<T>(T obj, MimeType mimeFormat) where T : class, new()
         {
-            return serializers[mimeFormat].Serialize<T>(obj);
+            return serializers[mimeFormat].Serialize(obj);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace RedmineApi.Core.Internals
         /// <param name="response">The response.</param>
         /// <param name="mimeFormat">The MIME format.</param>
         /// <returns></returns>
-        /// <exception cref="RedmineException">
+        /// <exception cref="RedmineApi.Core.Exceptions.RedmineException">
         /// Could not deserialize null!
         /// or
         /// Deserialization error
@@ -68,7 +68,7 @@ namespace RedmineApi.Core.Internals
         /// <param name="response">The response.</param>
         /// <param name="mimeFormat">The MIME format.</param>
         /// <returns></returns>
-        /// <exception cref="RedmineException">
+        /// <exception cref="RedmineApi.Core.Exceptions.RedmineException">
         /// Could not deserialize null!
         /// or
         /// Deserialization error

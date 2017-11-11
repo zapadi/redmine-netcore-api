@@ -40,22 +40,14 @@ namespace RedmineApi.Core.Types
 
         public void ReadJson(JsonReader reader)
         {
-            while (reader.Read())
+            if(reader.TokenType == JsonToken.PropertyName)
             {
-                if (reader.TokenType == JsonToken.EndObject)
-                {
-                    return;
-                }
-
-                if (reader.TokenType != JsonToken.PropertyName)
-                {
-                    continue;
-                }
-
-                if (reader.Value as string == RedmineKeys.INFO)
-                {
-                    Info = reader.ReadAsString();
-                }
+                return;
+            }
+            
+            if (reader.TokenType == JsonToken.String)
+            {
+                Info = reader.Value as string;
             }
         }
         #endregion
@@ -68,7 +60,12 @@ namespace RedmineApi.Core.Types
         /// <returns></returns>
         public bool Equals(CustomFieldValue other)
         {
-            return Info.Equals(other.Info);
+			if (other == null)
+			{
+				return false;
+			}
+
+            return Info == other.Info;
         }
 
         /// <summary>

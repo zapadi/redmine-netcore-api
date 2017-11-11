@@ -16,7 +16,7 @@
 
 using Xunit;
 
-namespace Tests
+namespace RedmineApi.Core.IntegrationTests
 {
     [CollectionDefinition(Keywords.REDMINE_MANAGER_COLLECTION)]
     public class RedmineManagerCollection : ICollectionFixture<RedmineManagerFixture>

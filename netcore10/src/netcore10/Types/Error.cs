@@ -85,17 +85,23 @@ namespace RedmineApi.Core.Types
                     return;
                 }
 
-                if (reader.TokenType != JsonToken.PropertyName)
+                if(reader.TokenType == JsonToken.String)
                 {
+                    Info += $" {reader.Value},";
                     continue;
                 }
 
-                switch (reader.Value)
-                {
-                    case RedmineKeys.ERROR: Info = reader.ReadAsString(); break;
+                //if (reader.TokenType != JsonToken.PropertyName)
+                //{
+                //    continue;
+                //}
 
-                    default: reader.Read(); break;
-                }
+                //switch (reader.Value)
+                //{
+                //    case RedmineKeys.ERROR: Info += $", {reader.ReadAsString()}"; break;
+
+                //    default: reader.Read(); break;
+                //}
             }
         }
         #endregion

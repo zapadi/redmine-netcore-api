@@ -15,16 +15,15 @@
 */
 
 using System;
-using RedmineApi.Core.Types;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Text;
 using Newtonsoft.Json;
 using RedmineApi.Core.Exceptions;
-using RedmineApi.Core.Serializers;
 using RedmineApi.Core.Extensions;
+using RedmineApi.Core.Types;
 
-namespace RedmineApi.Core.Internals
+namespace RedmineApi.Core.Serializers
 {
     internal sealed class RedmineJsonSerializer : IRedmineSerializer
     {

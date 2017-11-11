@@ -18,12 +18,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
-using RedmineApi.Core;
 using RedmineApi.Core.Exceptions;
 using RedmineApi.Core.Types;
 using Xunit;
 
-namespace Tests
+namespace RedmineApi.Core.IntegrationTests
 {
     [Collection(Keywords.REDMINE_MANAGER_COLLECTION)]
     public class Tests
@@ -114,7 +113,7 @@ namespace Tests
            // await Assert.ThrowsAsync<RedmineException>(() => fixture.RedmineManager.Get<T>(id, null));
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Create_Project_With_All_Properties_Set()
         {
             var savedProject = await fixture.RedmineManager.Create(CreateTestProjectWithAllPropertiesSet());
@@ -125,7 +124,7 @@ namespace Tests
             Assert.True(savedProject.Name.Equals("Redmine Net Api Project Test All Properties"), "Project name is invalid.");
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Create_Project_With_Parent()
         {
             var parentProject = await fixture.RedmineManager.Create(new Project { Identifier = "parent-project", Name = "Parent project" });
@@ -135,7 +134,7 @@ namespace Tests
             Assert.True(savedProject.Parent.Id == parentProject.Id, "Parent project is invalid.");
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Create_Project_With_Required_Properties()
         {
             var savedProject = await fixture.RedmineManager.Create(CreateTestProjectWithRequiredPropertiesSet());
@@ -146,14 +145,14 @@ namespace Tests
             Assert.True(savedProject.Identifier.Equals(PROJECT_IDENTIFIER), "Project identifier is invalid.");
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Delete_Project_And_Parent_Project()
         {
             await Delete<Project>(NewProjectId);
             await Delete<Project>(NewParentProjectId);
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Delete_Project_With_All_Properties_Set()
         {
             Func<Task> t = () => Task.Run(() => fixture.RedmineManager.Delete<Project>("rnaptap"));
@@ -162,7 +161,7 @@ namespace Tests
             await Assert.ThrowsAsync<RedmineException>(() => fixture.RedmineManager.Get<Project>("rnaptap", null));
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Delete_Redmine_Net_Api_Project_Test_Project()
         {
             var exception = await Record.ExceptionAsync(() => fixture.RedmineManager.Delete<Project>(PROJECT_IDENTIFIER));
@@ -170,21 +169,21 @@ namespace Tests
             await Assert.ThrowsAsync<RedmineException>(() => fixture.RedmineManager.Get<Project>(PROJECT_IDENTIFIER, null));
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Get_All_Projects()
         {
             var projects = await fixture.RedmineManager.ListAll<Project>(null);
             Assert.NotNull(projects);
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Get_Paged_Projects()
         {
             var projects = await fixture.RedmineManager.List<Project>(new NameValueCollection { { RedmineKeys.LIMIT, "2" } });
             Assert.NotNull(projects);
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Get_Redmine_Net_Api_Project_Test_Project()
         {
             var project = await fixture.RedmineManager.Get<Project>(PROJECT_IDENTIFIER, null);
@@ -195,7 +194,7 @@ namespace Tests
             Assert.Equal(project.Name, PROJECT_NAME);
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Get_Test_Project_With_All_Properties_Set()
         {
             var project = await fixture.RedmineManager.Get<Project>("rnaptap", new NameValueCollection
@@ -220,25 +219,25 @@ namespace Tests
             Assert.All(project.EnabledModules, em => Assert.IsType<ProjectEnabledModule>(em));
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Throw_Exception_Create_Project_Invalid_Trackers()
         {
             await Assert.ThrowsAsync<UnprocessableEntityException>(() => fixture.RedmineManager.Create(CreateTestProjectWithInvalidTrackersId()));
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Throw_Exception_When_Create_Empty_Project()
         {
             await Assert.ThrowsAsync<UnprocessableEntityException>(() => fixture.RedmineManager.Create(new Project()));
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Throw_Exception_When_Project_Identifier_Is_Invalid()
         {
             await Assert.ThrowsAsync<RedmineException>(() => fixture.RedmineManager.Get<Project>("99999999", null));
         }
 
-        [Fact]
+        //[Fact]
         public async void Should_Update_Redmine_Net_Api_Project_Test_Project()
         {
             const string UPDATED_PROJECT_NAME = "Project created using API updated";

@@ -27,7 +27,7 @@ using System.Runtime.CompilerServices;
 using RedmineApi.Core.Authentication;
 using RedmineApi.Core.Types;
 
-[assembly: InternalsVisibleTo("RedmineApi.Core.Tests")]
+[assembly: InternalsVisibleTo("RedmineApi.Core.UnitTests")]
 
 namespace RedmineApi.Core
 {
@@ -77,6 +77,12 @@ namespace RedmineApi.Core
 
         public int PageSize { get; set; }
 
+		/// <summary>
+		/// Gets or sets the impersonate user.
+		/// This only works when using the API with an administrator account, this header will be ignored when using the API with a regular user account 
+        /// If the login specified with the X-Redmine-Switch-User header does not exist or is not active, you will receive a 412 error response.
+        /// </summary>
+        /// <value>The impersonate user.</value>
         public string ImpersonateUser
         {
             get => RedmineHttp.ImpersonateUser;
@@ -133,6 +139,12 @@ namespace RedmineApi.Core
             return response;
         }
 
+        /// <summary>
+        /// Lists all.
+        /// </summary>
+        /// <returns>The all.</returns>
+        /// <param name="parameters">Parameters.</param>
+        /// <typeparam name="TData">The 1st type parameter.</typeparam>
         public async Task<List<TData>> ListAll<TData>(NameValueCollection parameters)
             where TData : class, new()
         {
@@ -178,6 +190,15 @@ namespace RedmineApi.Core
             return resultList;
         }
 
+		/// <summary>
+		/// List the specified parameters.
+		/// </summary>
+		/// <returns>won't return all the objects available in your database. Redmine 1.1.0 introduces a common way to query such ressources using the following parameters:
+		/// offset: the offset of the first object to retrieve
+		/// limit: the number of items to be present in the response(default is 25, maximum is 100)
+        /// </returns>
+        /// <param name="parameters">Parameters.</param>
+   
         public async Task<PaginatedResult<TData>> List<TData>(NameValueCollection parameters)
             where TData : class, new()
         {

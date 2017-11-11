@@ -45,13 +45,50 @@ namespace RedmineApi.Core.Extensions
                 ser.ReadJson(reader);
 
                 T des = (T)ser;
-                if (des != default(T))
-                {
-                    col.Add(des);
-                }
+                
+                col.Add(des);
             }
 
             return col;
         }
+
+		public static List<T> ReadAsArray<T>(this JsonReader reader) where T : class, new()
+		{
+			List<T> col = new List<T>();
+
+			while (reader.Read())
+			{
+				if (reader.TokenType == JsonToken.StartArray)
+				{
+					continue;
+				}
+
+				if (reader.TokenType == JsonToken.EndArray)
+				{
+					break;
+				}
+
+				if (reader.TokenType == JsonToken.Pro)
+				{
+					break;
+				}
+
+				var obj = Activator.CreateInstance<T>();
+				var ser = obj as IJsonSerializable;
+
+				if (ser == null)
+				{
+					throw new RedmineException($"object '{typeof(T)}' should implement IJsonSerializable.");
+				}
+
+				ser.ReadJson(reader);
+
+				T des = (T)ser;
+
+				col.Add(des);
+			}
+
+			return col;
+		}
     }
 }

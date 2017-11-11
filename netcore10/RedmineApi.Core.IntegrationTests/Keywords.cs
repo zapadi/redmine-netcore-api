@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-namespace Tests
+namespace RedmineApi.Core.IntegrationTests
 {
     internal static class Keywords
     {

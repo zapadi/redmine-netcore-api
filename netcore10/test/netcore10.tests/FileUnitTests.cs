@@ -1,31 +1,12 @@
-﻿using RedmineApi.Core;
-using RedmineApi.Core.Exceptions;
-using RedmineApi.Core.Internals;
+﻿using System;
+using RedmineApi.Core.Serializers;
 using RedmineApi.Core.Types;
-using System;
 using Xunit;
 
-namespace Redmine.Api.Tests
+namespace RedmineApi.Core.UnitTests
 {
-    [CollectionDefinition("SerializationCollection")]
-    public class UnitTests
+    public class FileUnitTests
     {
-
-        [Fact]
-        public void Should_Deserialize_List_OfType_Issue_From_Json()
-        {
-            const string input = "{\"issues\":[{\"id\":116,\"project\":{\"id\":92,\"name\":\"Test\"},\"tracker\":{\"id\":5,\"name\":\"Test project tracker\"},\"status\":{\"id\":5,\"name\":\"Bug\"},\"priority\":{\"id\":9,\"name\":\"Normal\"},\"author\":{\"id\":8,\"name\":\"Alina Chitu\"},\"subject\":\"Mannually test\",\"description\":\"Description\",\"start_date\":\"2016-09-30\",\"done_ratio\":0,\"created_on\":\"2016-09-30T09:07:53Z\",\"updated_on\":\"2016-09-30T09:07:53Z\"},{\"id\":115,\"project\":{\"id\":92,\"name\":\"Test\"},\"tracker\":{\"id\":5,\"name\":\"Test project tracker\"},\"status\":{\"id\":5,\"name\":\"Bug\"},\"priority\":{\"id\":9,\"name\":\"Normal\"},\"author\":{\"id\":8,\"name\":\"Alina Chitu\"},\"subject\":\"Add support for .net core\",\"description\":\"Test\",\"start_date\":\"2016-09-30\",\"done_ratio\":0,\"created_on\":\"2016-09-30T09:04:34Z\",\"updated_on\":\"2016-09-30T09:07:31Z\"},{\"id\":114,\"project\":{\"id\":92,\"name\":\"Test\"},\"tracker\":{\"id\":5,\"name\":\"Test project tracker\"},\"status\":{\"id\":5,\"name\":\"Bug\"},\"priority\":{\"id\":9,\"name\":\"Normal\"},\"author\":{\"id\":8,\"name\":\"Alina Chitu\"},\"subject\":\"Test\",\"description\":\"Descriere de test\",\"start_date\":\"2016-09-29\",\"done_ratio\":0,\"created_on\":\"2016-09-29T18:01:59Z\",\"updated_on\":\"2016-09-29T18:01:59Z\"},{\"id\":113,\"project\":{\"id\":92,\"name\":\"Test\"},\"tracker\":{\"id\":5,\"name\":\"Test project tracker\"},\"status\":{\"id\":5,\"name\":\"Bug\"},\"priority\":{\"id\":9,\"name\":\"Normal\"},\"author\":{\"id\":8,\"name\":\"Alina Chitu\"},\"category\":{\"id\":19,\"name\":\"Issue category 1\"},\"subject\":\"Test\",\"description\":\"\",\"start_date\":\"2016-09-06\",\"done_ratio\":0,\"created_on\":\"2016-09-06T19:24:36Z\",\"updated_on\":\"2016-09-08T16:59:22Z\"}],\"total_count\":4,\"offset\":0,\"limit\":25}";
-
-            var result = RedmineSerializer.DeserializeList<Issue>(input, MimeType.Json);
-            Assert.NotNull(result.Items);
-            Assert.NotEmpty(result.Items);
-			Assert.True(result.Items.Count == 4);
-            Assert.True(result.Offset == 0);
-            Assert.True(result.Total == 4);
-            Assert.True(result.Limit == 25);
-
-        }
-
         [Fact]
         public void Should_Serialize_TypeOf_File_To_Json()
         {
@@ -50,7 +31,6 @@ namespace Redmine.Api.Tests
 
             Assert.True(actual.Equals(expected), "File type serialization failed.");
         }
-
 
         [Fact]
         public void Should_Deserialize_TypeOf_File_From_Json()
@@ -167,48 +147,7 @@ namespace Redmine.Api.Tests
             var actual = RedmineSerializer.Deserialize<File>(response, MimeType.Xml);
             Assert.True(actual.Equals(expected), "File deserialize error.");
         }
-
-        [Fact]
-        public void ShouldReturnGetFileUrl()
-        {
-            var localhost = "http://localhost";
-
-            var expected = $"{localhost}/projects/1/files.xml";
-
-            var actual = UrlBuilder
-                .Create(localhost, MimeType.Xml)
-                .ItemsUrl<File>(new System.Collections.Specialized.NameValueCollection() { { RedmineKeys.PROJECT_ID, "1" } })
-                .Build();
-
-            Assert.True(expected == actual);
-        }
-
-        [Fact]
-        public void ShouldReturnCreateFileUrl()
-        {
-            var localhost = "http://localhost";
-
-            var expected = $"{localhost}/projects/1/files.xml";
-
-            var actual = UrlBuilder
-                .Create(localhost, MimeType.Xml)
-                .CreateUrl<File>("1")
-                .Build();
-
-            Assert.True(expected == actual);
-        }
-
-        [Fact]
-        public void ThrowExceptionWhenCreateFileUrlWithout()
-        {
-            var localhost = "http://localhost";
-
-            var expected = $"{localhost}/projects/1/files.xml";
-
-            Assert.Throws<RedmineException>(() => UrlBuilder
-                .Create(localhost, MimeType.Xml)
-                .CreateUrl<File>(null)
-                .Build());
-        }
     }
+
+
 }
