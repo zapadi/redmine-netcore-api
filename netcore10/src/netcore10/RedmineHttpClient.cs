@@ -177,5 +177,18 @@ namespace RedmineApi.Core
                 return await tc.Task;
             }
         }
+
+        public async Task<Upload> UploadAttachment(Uri uri, string attachmentContent, MimeType mimeType)
+        {
+            httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
+            httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
+
+            var content = new StringContent(attachmentContent, Encoding.UTF8, $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
+            using (var responseMessage = await httpClient.PatchAsync(uri.ToString(), content).ConfigureAwait(false))
+            {
+                var tc = await responseMessage.CreateTaskCompletionSource<Upload>(mimeType).ConfigureAwait(false);
+                return await tc.Task;
+            }
+        }
     }
 }

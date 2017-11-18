@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using RedmineApi.Core.Authentication;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
+using RedmineApi.Core.Serializers;
 using RedmineApi.Core.Types;
 
 [assembly: InternalsVisibleTo("RedmineApi.Core.UnitTests")]
@@ -244,6 +245,34 @@ namespace RedmineApi.Core
                 .Build();
 
             var response = await RedmineHttp.Delete(new Uri(uri), MimeType).ConfigureAwait(false);
+            return response;
+        }
+
+        public async Task<Upload> UploadFile(byte[] fileBytes)
+        {
+            var uri = UrlBuilder.Create(Host, MimeType)
+                .UploadFileUrl()
+                .Build();
+
+            var response = await RedmineHttp.UploadFile(new Uri(uri), fileBytes, MimeType).ConfigureAwait(false);
+            return response;
+        }
+
+        public async Task UploadAttachment(int issueId, Attachment attachment)
+        {
+            var uri = UrlBuilder.Create(Host, MimeType)
+                .AttachmentUpdateUrl(issueId)
+                .Build();
+
+            var attachments = new Attachments { { attachment.Id, attachment } };
+            var data = RedmineSerializer.Serialize(attachments, MimeType);
+
+            await RedmineHttp.UploadAttachment(new Uri(uri), data, MimeType).ConfigureAwait(false);
+        }
+
+        public async Task<byte[]> DownloadFile(string address)
+        {
+            var response = await RedmineHttp.DownloadFile(new Uri(address), MimeType).ConfigureAwait(false);
             return response;
         }
 
