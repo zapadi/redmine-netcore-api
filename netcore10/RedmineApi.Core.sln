@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedmineApi.Core", "src\netcore10\RedmineApi.Core.csproj", "{0AECCFAB-5307-4963-BD6E-790A78CED42E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedmineApi.Core.Tests", "test\netcore10.tests\RedmineApi.Core.Tests.csproj", "{F6D32337-1752-4438-ADA0-6500C6273528}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedmineApi.Core.IntegrationTests", "RedmineApi.Core.IntegrationTests\RedmineApi.Core.IntegrationTests.csproj", "{8976946D-5521-4D2B-AA54-E88F04151FC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,12 +26,6 @@ Global
 		{F6D32337-1752-4438-ADA0-6500C6273528}.DebugJson|Any CPU.Build.0 = Debug|Any CPU
 		{F6D32337-1752-4438-ADA0-6500C6273528}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6D32337-1752-4438-ADA0-6500C6273528}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8976946D-5521-4D2B-AA54-E88F04151FC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8976946D-5521-4D2B-AA54-E88F04151FC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8976946D-5521-4D2B-AA54-E88F04151FC3}.DebugJson|Any CPU.ActiveCfg = DebugJson|Any CPU
-		{8976946D-5521-4D2B-AA54-E88F04151FC3}.DebugJson|Any CPU.Build.0 = DebugJson|Any CPU
-		{8976946D-5521-4D2B-AA54-E88F04151FC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8976946D-5521-4D2B-AA54-E88F04151FC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -34,9 +34,8 @@ namespace RedmineApi.Core.Serializers
                 using (JsonReader reader = new JsonTextReader(sr))
                 {
                     var obj = Activator.CreateInstance<T>();
-                    var ser = obj as IJsonSerializable;
 
-                    if (ser == null)
+                    if (!(obj is IJsonSerializable ser))
                     {
                         throw new RedmineException($"object '{typeof(T)}' should implement IJsonSerializable.");
                     }
@@ -46,7 +45,7 @@ namespace RedmineApi.Core.Serializers
                         reader.Read();
                         ser.ReadJson(reader);
                     }
-                    return (T)ser;
+                    return (T) ser;
                 }
             }
         }
@@ -57,25 +56,30 @@ namespace RedmineApi.Core.Serializers
             {
                 using (JsonReader reader = new JsonTextReader(sr))
                 {
-                    int total = 0;
-                    int offset = 0;
-                    int limit = 0;
+                    var total = 0;
+                    var offset = 0;
+                    var limit = 0;
                     List<T> list = null;
 
                     while (reader.Read())
-                    {
                         if (reader.TokenType == JsonToken.PropertyName)
                         {
                             switch (reader.Value)
                             {
-                                case RedmineKeys.TOTAL_COUNT: total = reader.ReadAsInt32().GetValueOrDefault(); break;
-                                case RedmineKeys.OFFSET: offset = reader.ReadAsInt32().GetValueOrDefault(); break;
-                                case RedmineKeys.LIMIT: limit = reader.ReadAsInt32().GetValueOrDefault(); break;
+                                case RedmineKeys.TOTAL_COUNT:
+                                    total = reader.ReadAsInt32().GetValueOrDefault();
+                                    break;
+                                case RedmineKeys.OFFSET:
+                                    offset = reader.ReadAsInt32().GetValueOrDefault();
+                                    break;
+                                case RedmineKeys.LIMIT:
+                                    limit = reader.ReadAsInt32().GetValueOrDefault();
+                                    break;
                                 default:
-                                    list = reader.ReadAsCollection<T>(); break;
+                                    list = reader.ReadAsCollection<T>();
+                                    break;
                             }
                         }
-                    }
                     return new PaginatedResult<T>(list, total, offset, limit);
                 }
             }
@@ -91,10 +95,8 @@ namespace RedmineApi.Core.Serializers
                 {
                     writer.Formatting = Formatting.Indented;
                     writer.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-                    
-                    var ser = obj as IJsonSerializable;
 
-                    if (ser == null)
+                    if (!(obj is IJsonSerializable ser))
                     {
                         throw new RedmineException($"object '{typeof(T)}' should implement IJsonSerializable.");
                     }
@@ -104,7 +106,6 @@ namespace RedmineApi.Core.Serializers
                     return sb.ToString();
                 }
             }
-
         }
     }
 }

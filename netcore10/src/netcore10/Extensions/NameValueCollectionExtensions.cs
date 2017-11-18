@@ -19,12 +19,11 @@ using System.Collections.Specialized;
 namespace RedmineApi.Core.Extensions
 {
     /// <summary>
-    /// 
     /// </summary>
     public static class NameValueCollectionExtensions
     {
         /// <summary>
-        /// Gets the parameter value.
+        ///     Gets the parameter value.
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <param name="parameterName">Name of the parameter.</param>

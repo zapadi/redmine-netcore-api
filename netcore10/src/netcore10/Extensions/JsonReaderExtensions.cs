@@ -1,18 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using RedmineApi.Core.Exceptions;
 using RedmineApi.Core.Serializers;
-using System;
-using System.Collections.Generic;
 
 namespace RedmineApi.Core.Extensions
 {
     public static partial class JsonExtensions
     {
-
         public static int ReadAsInt(this JsonReader reader)
         {
             return reader.ReadAsInt32().GetValueOrDefault();
         }
+
         public static bool ReadAsBool(this JsonReader reader)
         {
             return reader.ReadAsBoolean().GetValueOrDefault();
@@ -20,75 +20,73 @@ namespace RedmineApi.Core.Extensions
 
         public static List<T> ReadAsCollection<T>(this JsonReader reader) where T : class, new()
         {
-            List<T> col = new List<T>();
+            var col = new List<T>();
 
             while (reader.Read())
             {
-                if (reader.TokenType == JsonToken.StartArray)
-                {
-                    continue;
-                }
-
                 if (reader.TokenType == JsonToken.EndArray)
                 {
                     break;
                 }
 
-                var obj = Activator.CreateInstance<T>();
-                var ser = obj as IJsonSerializable;
+                if (reader.TokenType == JsonToken.StartArray)
+                {
+                    continue;
+                }
 
-                if (ser == null)
+                var obj = Activator.CreateInstance<T>();
+
+                if (!(obj is IJsonSerializable ser))
                 {
                     throw new RedmineException($"object '{typeof(T)}' should implement IJsonSerializable.");
                 }
 
                 ser.ReadJson(reader);
 
-                T des = (T)ser;
-                
+                var des = (T) ser;
+
                 col.Add(des);
             }
 
             return col;
         }
 
-		public static List<T> ReadAsArray<T>(this JsonReader reader) where T : class, new()
-		{
-			List<T> col = new List<T>();
+        public static List<T> ReadAsArray<T>(this JsonReader reader) where T : class, new()
+        {
+            var col = new List<T>();
 
-			while (reader.Read())
-			{
-				if (reader.TokenType == JsonToken.StartArray)
-				{
-					continue;
-				}
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndArray)
+                {
+                    break;
+                }
 
-				if (reader.TokenType == JsonToken.EndArray)
-				{
-					break;
-				}
+                if (reader.TokenType == JsonToken.PropertyName)
+                {
+                    break;
+                }
 
-				if (reader.TokenType == JsonToken.Pro)
-				{
-					break;
-				}
+                if (reader.TokenType == JsonToken.StartArray)
+                {
+                    continue;
+                }
 
-				var obj = Activator.CreateInstance<T>();
-				var ser = obj as IJsonSerializable;
+                var obj = Activator.CreateInstance<T>();
 
-				if (ser == null)
-				{
-					throw new RedmineException($"object '{typeof(T)}' should implement IJsonSerializable.");
-				}
+                if (!(obj is IJsonSerializable ser))
+                {
+                    throw new RedmineException($"object '{typeof(T)}' should implement IJsonSerializable.");
+                }
 
-				ser.ReadJson(reader);
+                ser.ReadJson(reader);
 
-				T des = (T)ser;
+                var des = (T) ser;
 
-				col.Add(des);
-			}
+                col.Add(des);
+            }
 
-			return col;
-		}
+            return col;
+        }
     }
 }

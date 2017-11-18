@@ -31,6 +31,10 @@ namespace RedmineApi.Core
             DecompressionMethods = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
         }
 
+        public bool VerifyServerCertificate { get; } = true;
+
+        public Func<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> ServerCertificateCustomValidationCallback { get; private set; }
+
         public IWebProxy WebProxy { get; private set; }
         public AuthenticationHeaderValue Authentication { get; private set; }
         public AuthenticationHeaderValue ProxyAuthentication { get; private set; }
@@ -43,14 +47,6 @@ namespace RedmineApi.Core
         public bool UseDefaultCredentials { get; private set; }
         public bool UseCookies { get; private set; }
         public bool PreAuthenticate { get; private set; }
-
-        public bool VerifyServerCertificate { get; private set; } = true;
-
-        public Func<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> ServerCertificateCustomValidationCallback
-        {
-            get;
-            private set;
-        }
 
         public bool AllowAutoRedirect { get; private set; }
 
@@ -125,14 +121,6 @@ namespace RedmineApi.Core
         public IRedmineHttpSettings SetPreAuthenticate(bool preAuthenticate)
         {
             PreAuthenticate = preAuthenticate;
-            return this;
-        }
-
-
-        public IRedmineHttpSettings Set(Func<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool>
-                serverCertificateCustomValidationCallback)
-        {
-            ServerCertificateCustomValidationCallback = serverCertificateCustomValidationCallback;
             return this;
         }
 
@@ -227,6 +215,14 @@ namespace RedmineApi.Core
             }
 
             return handler;
+        }
+
+
+        public IRedmineHttpSettings Set(Func<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool>
+            serverCertificateCustomValidationCallback)
+        {
+            ServerCertificateCustomValidationCallback = serverCertificateCustomValidationCallback;
+            return this;
         }
 
         public static DefaultRedmineHttpSettings Create()

@@ -21,7 +21,7 @@ namespace RedmineApi.Core.Exceptions
     /// <summary>
     /// </summary>
     /// <seealso cref="RedmineApi.Core.Exceptions.RedmineException" />
-    public class NameResolutionFailureException : RedmineException
+    public sealed class NameResolutionFailureException : RedmineException
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="NameResolutionFailureException" /> class.
@@ -69,7 +69,5 @@ namespace RedmineApi.Core.Exceptions
             : base(string.Format(format, args), innerException)
         {
         }
-
-       
     }
 }

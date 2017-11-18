@@ -19,20 +19,20 @@ using System;
 namespace RedmineApi.Core.Exceptions
 {
     /// <summary>
-    /// Thrown in case something went wrong in Redmine
+    ///     Thrown in case something went wrong in Redmine
     /// </summary>
     /// <seealso cref="System.Exception" />
     public class RedmineException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedmineException"/> class.
+        ///     Initializes a new instance of the <see cref="RedmineException" /> class.
         /// </summary>
         public RedmineException()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedmineException"/> class.
+        ///     Initializes a new instance of the <see cref="RedmineException" /> class.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         public RedmineException(string message)
@@ -41,7 +41,7 @@ namespace RedmineApi.Core.Exceptions
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedmineException"/> class.
+        ///     Initializes a new instance of the <see cref="RedmineException" /> class.
         /// </summary>
         /// <param name="format">The format.</param>
         /// <param name="args">The arguments.</param>
@@ -51,17 +51,20 @@ namespace RedmineApi.Core.Exceptions
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedmineException"/> class.
+        ///     Initializes a new instance of the <see cref="RedmineException" /> class.
         /// </summary>
         /// <param name="message">The error message that explains the reason for the exception.</param>
-        /// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        /// <param name="innerException">
+        ///     The exception that is the cause of the current exception, or a null reference (Nothing in
+        ///     Visual Basic) if no inner exception is specified.
+        /// </param>
         public RedmineException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedmineException" /> class.
+        ///     Initializes a new instance of the <see cref="RedmineException" /> class.
         /// </summary>
         /// <param name="format">The format.</param>
         /// <param name="innerException">The inner exception.</param>
@@ -70,7 +73,5 @@ namespace RedmineApi.Core.Exceptions
             : base(string.Format(format, args), innerException)
         {
         }
-
-        
     }
 }

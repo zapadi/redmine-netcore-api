@@ -19,10 +19,10 @@ using System;
 namespace RedmineApi.Core.Exceptions
 {
     /// <summary>
-    /// Thrown in case the objects requested for could not be found.
+    ///     Thrown in case the objects requested for could not be found.
     /// </summary>
     /// <seealso cref="RedmineApi.Core.Exceptions.RedmineException" />
-    public class NotFoundException : RedmineException
+    public sealed class NotFoundException : RedmineException
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="NotFoundException" /> class.
@@ -70,7 +70,5 @@ namespace RedmineApi.Core.Exceptions
             : base(string.Format(format, args), innerException)
         {
         }
-
-       
     }
 }

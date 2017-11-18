@@ -21,7 +21,7 @@ namespace RedmineApi.Core.Exceptions
     /// <summary>
     /// </summary>
     /// <seealso cref="RedmineApi.Core.Exceptions.RedmineException" />
-    public class ConflictException : RedmineException
+    public sealed class ConflictException : RedmineException
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConflictException" /> class.
@@ -69,7 +69,5 @@ namespace RedmineApi.Core.Exceptions
             : base(string.Format(format, args), innerException)
         {
         }
-
-      
     }
 }

@@ -19,46 +19,39 @@ using System.Collections.Generic;
 namespace RedmineApi.Core.Types
 {
     /// <summary>
-    /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class PaginatedResult<T>
+    public sealed class PaginatedResult<T>
     {
         public PaginatedResult()
         {
-
         }
 
-        public PaginatedResult(List<T> items, int total, int offset):this(items, total, offset,0)
+        public PaginatedResult(List<T> items, int total, int offset) : this(items, total, offset, 0)
         {
         }
 
-		public PaginatedResult(List<T> items, int total, int offset, int limit)
-		{
-			Items = items;
-			Total = total;
-			Offset = offset;
+        public PaginatedResult(List<T> items, int total, int offset, int limit)
+        {
+            Items = items;
+            Total = total;
+            Offset = offset;
             Limit = limit;
-		}
+        }
 
         /// <summary>
-        /// 
         /// </summary>
         public List<T> Items { get; set; }
+
         /// <summary>
-        /// 
         /// </summary>
         public int Total { get; set; }
+
         /// <summary>
-        /// 
         /// </summary>
         public int Offset { get; set; }
 
-        public int Limit
-        {
-            get;
-            set;
-        }
+        public int Limit { get; set; }
 
         public override string ToString()
         {

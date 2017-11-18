@@ -14,12 +14,12 @@
    limitations under the License.
 */
 
-using Xunit;
+//using Xunit;
 
 namespace RedmineApi.Core.IntegrationTests
 {
-    [CollectionDefinition(Keywords.REDMINE_MANAGER_COLLECTION)]
-    public class RedmineManagerCollection : ICollectionFixture<RedmineManagerFixture>
-    {
-    }
+    //[CollectionDefinition(Keywords.REDMINE_MANAGER_COLLECTION)]
+    //public class RedmineManagerCollection : ICollectionFixture<RedmineManagerFixture>
+    //{
+    //}
 }

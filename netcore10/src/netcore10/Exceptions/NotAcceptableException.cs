@@ -21,7 +21,7 @@ namespace RedmineApi.Core.Exceptions
     /// <summary>
     /// </summary>
     /// <seealso cref="RedmineApi.Core.Exceptions.RedmineException" />
-    public class NotAcceptableException : RedmineException
+    public sealed class NotAcceptableException : RedmineException
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="NotAcceptableException" /> class.
@@ -69,7 +69,5 @@ namespace RedmineApi.Core.Exceptions
             : base(string.Format(format, args), innerException)
         {
         }
-
-       
     }
 }

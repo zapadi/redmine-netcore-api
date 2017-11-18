@@ -22,7 +22,7 @@ var outputDir = Directory(binDir) + Directory(configuration);
 //
 var outputPackDir = "../nupkgs";
 
-var version = "1.0.1";
+var version = "2.0.0";
 var revision = "";
 
 var buildSettings = new DotNetCoreBuildSettings

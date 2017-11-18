@@ -23,8 +23,7 @@ namespace RedmineApi.Core.Extensions
 {
     internal static class HttpClientExtensions
     {
-        private const string X_REDMINE_SWITCH_USER= "X-Redmine-Switch-User";
-        private const string X_REDMINE_API_KEY = "X-Redmine-API-Key";
+        
 
         public static void EnsureValidHost(this string host)
         {
@@ -41,38 +40,46 @@ namespace RedmineApi.Core.Extensions
 
         public static void AddRequestHeader(this HttpClient httpClient, string key, string value)
         {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            httpClient.ClearHeaderIfExists(key);
             httpClient.DefaultRequestHeaders.Add(key, value);
         }
 
-        public static void AddImpersonationHeaderIfSet(this HttpClient httpClient, string impersonateUser)
-        {
-            if (string.IsNullOrWhiteSpace(impersonateUser))
-            {
-                httpClient.DefaultRequestHeaders.Remove(X_REDMINE_SWITCH_USER);
-            }
-            else
-            {
-                httpClient.ClearHeaderIfExists(X_REDMINE_SWITCH_USER);
-                httpClient.DefaultRequestHeaders.Add(X_REDMINE_SWITCH_USER, impersonateUser);
-            }
-        }
+        //public static void AddImpersonationHeaderIfSet(this HttpClient httpClient, string impersonateUser)
+        //{
+        //    if (string.IsNullOrWhiteSpace(impersonateUser))
+        //    {
+        //        httpClient.DefaultRequestHeaders.Remove(X_REDMINE_SWITCH_USER);
+        //    }
+        //    else
+        //    {
+        //        httpClient.ClearHeaderIfExists(X_REDMINE_SWITCH_USER);
+        //        httpClient.DefaultRequestHeaders.Add(X_REDMINE_SWITCH_USER, impersonateUser);
+        //    }
+        //}
 
-        public static void AddApiKeyIfSet(this HttpClient httpClient, string apiKey)
-        {
-            if (string.IsNullOrWhiteSpace(apiKey))
-            {
-                httpClient.DefaultRequestHeaders.Remove(X_REDMINE_API_KEY);
-            }
-            else
-            {
-                httpClient.ClearHeaderIfExists(X_REDMINE_API_KEY);
-                httpClient.DefaultRequestHeaders.Add(X_REDMINE_API_KEY, apiKey);
-            }
-        }
+        //public static void AddApiKeyIfSet(this HttpClient httpClient, string apiKey)
+        //{
+        //    if (string.IsNullOrWhiteSpace(apiKey))
+        //    {
+        //        httpClient.DefaultRequestHeaders.Remove(X_REDMINE_API_KEY);
+        //    }
+        //    else
+        //    {
+        //        httpClient.ClearHeaderIfExists(X_REDMINE_API_KEY);
+        //        httpClient.DefaultRequestHeaders.Add(X_REDMINE_API_KEY, apiKey);
+        //    }
+        //}
 
         public static void AddContentType(this HttpClient httpClient, string contentType)
         {
-            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), contentType);
+            var contentTypeKey = HttpRequestHeader.ContentType.ToString();
+            httpClient.ClearHeaderIfExists(contentTypeKey);
+            httpClient.DefaultRequestHeaders.Add(contentTypeKey, contentType);
         }
 
         private static void ClearHeaderIfExists(this HttpClient httpClient, string headerName)

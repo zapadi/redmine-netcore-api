@@ -45,7 +45,7 @@ namespace RedmineApi.Core.Internals
             [MimeType.Xml] = MimeType.Xml.ToString().ToLowerInvariant()
         };
 
-        internal static Dictionary<Type, string> TypePath = new Dictionary<Type, string>
+        private static readonly Dictionary<Type, string> TypePath = new Dictionary<Type, string>
         {
             [typeof(Issue)] = "issues",
             [typeof(Project)] = "projects",
@@ -70,13 +70,13 @@ namespace RedmineApi.Core.Internals
             [typeof(File)] = "files"
         };
 
-        private NameValueCollection Parameters { get; set; }
-
-        private string Url { get; set; }
-
         private UrlBuilder()
         {
         }
+
+        private NameValueCollection Parameters { get; set; }
+
+        private string Url { get; set; }
 
         private string Host { get; set; }
         private MimeType MimeType { get; set; }
@@ -92,8 +92,8 @@ namespace RedmineApi.Core.Internals
             if (Parameters != null)
             {
                 var array = from key in Parameters.AllKeys
-                            from value in Parameters.GetValues(key)
-                            select string.Format("{0}={1}", WebUtility.UrlEncode(key), WebUtility.UrlEncode(value));
+                    from value in Parameters.GetValues(key)
+                    select string.Format("{0}={1}", WebUtility.UrlEncode(key), WebUtility.UrlEncode(value));
 
                 Url += "?" + string.Join("&", array);
             }
@@ -103,7 +103,7 @@ namespace RedmineApi.Core.Internals
 
         public static UrlBuilder Create(string host, MimeType mimeType)
         {
-            var b = new UrlBuilder { Host = host, MimeType = mimeType };
+            var b = new UrlBuilder {Host = host, MimeType = mimeType};
             return b;
         }
 

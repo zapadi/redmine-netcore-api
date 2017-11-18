@@ -24,12 +24,11 @@ using System.Xml.Serialization;
 namespace RedmineApi.Core.Extensions
 {
     /// <summary>
-    /// 
     /// </summary>
     public static partial class XmlExtensions
     {
         /// <summary>
-        /// Reads the attribute as int.
+        ///     Reads the attribute as int.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -37,7 +36,7 @@ namespace RedmineApi.Core.Extensions
         public static int ReadAttributeAsInt(this XmlReader reader, string attributeName)
         {
             var attribute = reader.GetAttribute(attributeName);
-            if (string.IsNullOrEmpty(attribute) || !int.TryParse(attribute, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out int result))
+            if (string.IsNullOrEmpty(attribute) || !int.TryParse(attribute, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out var result))
             {
                 return default(int);
             }
@@ -46,7 +45,7 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Reads the attribute as nullable int.
+        ///     Reads the attribute as nullable int.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -54,7 +53,7 @@ namespace RedmineApi.Core.Extensions
         public static int? ReadAttributeAsNullableInt(this XmlReader reader, string attributeName)
         {
             var attribute = reader.GetAttribute(attributeName);
-            if (string.IsNullOrEmpty(attribute) || !int.TryParse(attribute, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out int result))
+            if (string.IsNullOrEmpty(attribute) || !int.TryParse(attribute, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out var result))
             {
                 return default(int?);
             }
@@ -63,7 +62,7 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Reads the attribute as boolean.
+        ///     Reads the attribute as boolean.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="attributeName">Name of the attribute.</param>
@@ -71,7 +70,7 @@ namespace RedmineApi.Core.Extensions
         public static bool ReadAttributeAsBoolean(this XmlReader reader, string attributeName)
         {
             var attribute = reader.GetAttribute(attributeName);
-            if (string.IsNullOrEmpty(attribute) || !bool.TryParse(attribute, out bool result))
+            if (string.IsNullOrEmpty(attribute) || !bool.TryParse(attribute, out var result))
             {
                 return false;
             }
@@ -80,14 +79,14 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Reads the element content as nullable date time.
+        ///     Reads the element content as nullable date time.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <returns></returns>
         public static DateTime? ReadElementContentAsNullableDateTime(this XmlReader reader)
         {
             var str = reader.ReadElementContentAsString();
-            if (string.IsNullOrEmpty(str) || !DateTime.TryParse(str, out DateTime result))
+            if (string.IsNullOrEmpty(str) || !DateTime.TryParse(str, out var result))
             {
                 return null;
             }
@@ -96,14 +95,14 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Reads the element content as nullable float.
+        ///     Reads the element content as nullable float.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <returns></returns>
         public static float? ReadElementContentAsNullableFloat(this XmlReader reader)
         {
             var str = reader.ReadElementContentAsString();
-            if (string.IsNullOrEmpty(str) || !float.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out float result))
+            if (string.IsNullOrEmpty(str) || !float.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out var result))
             {
                 return null;
             }
@@ -112,14 +111,14 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Reads the element content as nullable int.
+        ///     Reads the element content as nullable int.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <returns></returns>
         public static int? ReadElementContentAsNullableInt(this XmlReader reader)
         {
             var str = reader.ReadElementContentAsString();
-            if (string.IsNullOrEmpty(str) || !int.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out int result))
+            if (string.IsNullOrEmpty(str) || !int.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out var result))
             {
                 return null;
             }
@@ -128,14 +127,14 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Reads the element content as nullable decimal.
+        ///     Reads the element content as nullable decimal.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <returns></returns>
         public static decimal? ReadElementContentAsNullableDecimal(this XmlReader reader)
         {
             var str = reader.ReadElementContentAsString();
-            if (string.IsNullOrEmpty(str) || !decimal.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out decimal result))
+            if (string.IsNullOrEmpty(str) || !decimal.TryParse(str, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out var result))
             {
                 return null;
             }
@@ -144,7 +143,7 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Reads the element content as collection.
+        ///     Reads the element content as collection.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="reader">The reader.</param>

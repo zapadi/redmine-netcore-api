@@ -29,7 +29,7 @@ namespace RedmineApi.Core.Serializers
         };
 
         /// <summary>
-        /// Serializes the specified type T and writes the XML document to a string.
+        ///     Serializes the specified type T and writes the XML document to a string.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="obj">The object.</param>
@@ -42,16 +42,16 @@ namespace RedmineApi.Core.Serializers
         }
 
         /// <summary>
-        /// Deserializes the XML document contained by the specific System.String.
+        ///     Deserializes the XML document contained by the specific System.String.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="response">The response.</param>
         /// <param name="mimeFormat">The MIME format.</param>
         /// <returns></returns>
         /// <exception cref="RedmineApi.Core.Exceptions.RedmineException">
-        /// Could not deserialize null!
-        /// or
-        /// Deserialization error
+        ///     Could not deserialize null!
+        ///     or
+        ///     Deserialization error
         /// </exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
@@ -62,16 +62,16 @@ namespace RedmineApi.Core.Serializers
         }
 
         /// <summary>
-        /// Deserializes the list.
+        ///     Deserializes the list.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="response">The response.</param>
         /// <param name="mimeFormat">The MIME format.</param>
         /// <returns></returns>
         /// <exception cref="RedmineApi.Core.Exceptions.RedmineException">
-        /// Could not deserialize null!
-        /// or
-        /// Deserialization error
+        ///     Could not deserialize null!
+        ///     or
+        ///     Deserialization error
         /// </exception>
         public static PaginatedResult<T> DeserializeList<T>(string response, MimeType mimeFormat)
             where T : class, new()

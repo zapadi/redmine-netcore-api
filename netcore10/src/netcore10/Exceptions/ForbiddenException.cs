@@ -21,7 +21,7 @@ namespace RedmineApi.Core.Exceptions
     /// <summary>
     /// </summary>
     /// <seealso cref="RedmineApi.Core.Exceptions.RedmineException" />
-    public class ForbiddenException : RedmineException
+    public sealed class ForbiddenException : RedmineException
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="ForbiddenException" /> class.
@@ -69,7 +69,5 @@ namespace RedmineApi.Core.Exceptions
             : base(string.Format(format, args), innerException)
         {
         }
-
-       
     }
 }

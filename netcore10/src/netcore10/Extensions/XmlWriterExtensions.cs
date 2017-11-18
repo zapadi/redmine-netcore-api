@@ -22,16 +22,14 @@ using System.Xml;
 using System.Xml.Serialization;
 using RedmineApi.Core.Types;
 
-
 namespace RedmineApi.Core.Extensions
 {
     /// <summary>
-    /// 
     /// </summary>
     public static partial class XmlExtensions
     {
         /// <summary>
-        /// Writes the id if not null.
+        ///     Writes the id if not null.
         /// </summary>
         /// <param name="writer">The writer.</param>
         /// <param name="ident">The ident.</param>
@@ -45,7 +43,7 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Writes the array.
+        ///     Writes the array.
         /// </summary>
         /// <param name="writer">The writer.</param>
         /// <param name="collection">The collection.</param>
@@ -63,15 +61,13 @@ namespace RedmineApi.Core.Extensions
             var serializer = new XmlSerializer(typeof(T));
 
             foreach (var item in collection)
-            {
                 serializer.Serialize(writer, item);
-            }
 
             writer.WriteEndElement();
         }
 
         /// <summary>
-        /// Writes the array ids.
+        ///     Writes the array ids.
         /// </summary>
         /// <param name="writer">The writer.</param>
         /// <param name="collection">The collection.</param>
@@ -99,7 +95,7 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Writes the array.
+        ///     Writes the array.
         /// </summary>
         /// <param name="writer">The writer.</param>
         /// <param name="collection">The collection.</param>
@@ -131,7 +127,7 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Writes the array string element.
+        ///     Writes the array string element.
         /// </summary>
         /// <param name="writer">The writer.</param>
         /// <param name="collection">The collection.</param>
@@ -155,7 +151,7 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Writes the list elements.
+        ///     Writes the list elements.
         /// </summary>
         /// <param name="xmlWriter">The XML writer.</param>
         /// <param name="collection">The collection.</param>
@@ -174,7 +170,7 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Writes the identifier or empty.
+        ///     Writes the identifier or empty.
         /// </summary>
         /// <param name="writer">The writer.</param>
         /// <param name="ident">The ident.</param>
@@ -185,7 +181,7 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Writes if not default or null.
+        ///     Writes if not default or null.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="writer">The writer.</param>
@@ -205,7 +201,7 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Writes string empty if T has default value or null.
+        ///     Writes string empty if T has default value or null.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="writer">The writer.</param>
@@ -224,7 +220,7 @@ namespace RedmineApi.Core.Extensions
         }
 
         /// <summary>
-        /// Writes the date or empty.
+        ///     Writes the date or empty.
         /// </summary>
         /// <param name="writer">The writer.</param>
         /// <param name="val">The value.</param>

@@ -19,18 +19,17 @@ using System.Collections.Generic;
 namespace RedmineApi.Core.Internals
 {
     /// <summary>
-    /// 
     /// </summary>
     internal static class HashCodeHelper
     {
         /// <summary>
-        /// Returns a hash code for the list.
+        ///     Returns a hash code for the list.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list">The list.</param>
         /// <param name="hash">The hash.</param>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        ///     A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public static int GetHashCode<T>(IList<T> list, int hash)
         {
@@ -39,8 +38,8 @@ namespace RedmineApi.Core.Internals
                 var hashCode = hash;
                 if (list != null)
                 {
-                    hashCode = (hashCode * 13) + list.Count;
-                    foreach (T t in list)
+                    hashCode = hashCode * 13 + list.Count;
+                    foreach (var t in list)
                     {
                         hashCode *= 13;
                         if (t != null)
@@ -55,13 +54,13 @@ namespace RedmineApi.Core.Internals
         }
 
         /// <summary>
-        /// Returns a hash code for this instance.
+        ///     Returns a hash code for this instance.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="entity">The entity.</param>
         /// <param name="hash">The hash.</param>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        ///     A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public static int GetHashCode<T>(T entity, int hash)
         {

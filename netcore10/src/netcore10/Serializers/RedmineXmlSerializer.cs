@@ -35,7 +35,7 @@ namespace RedmineApi.Core.Serializers
 
             try
             {
-               return FromXML<T>(response);
+                return FromXML<T>(response);
             }
             catch (Exception ex)
             {
@@ -60,9 +60,9 @@ namespace RedmineApi.Core.Serializers
             }
         }
 
-        public string Serialize<T>(T obj) where T: class
+        public string Serialize<T>(T obj) where T : class
         {
-            if(obj == default(T))
+            if (obj == default(T))
             {
                 throw new RedmineException("Could not serialize null object.");
             }
@@ -78,7 +78,7 @@ namespace RedmineApi.Core.Serializers
         }
 
         /// <summary>
-        /// XMLs the deserialize list.
+        ///     XMLs the deserialize list.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="response">The response.</param>
@@ -101,18 +101,18 @@ namespace RedmineApi.Core.Serializers
         }
 
         /// <summary>
-        /// Serializes the specified System.Object and writes the XML document to a string.
+        ///     Serializes the specified System.Object and writes the XML document to a string.
         /// </summary>
         /// <typeparam name="T">The type of objects to serialize.</typeparam>
         /// <param name="obj">The object to serialize.</param>
         /// <returns>
-        /// The System.String that contains the XML document.
+        ///     The System.String that contains the XML document.
         /// </returns>
         /// <exception cref="InvalidOperationException"></exception>
         // ReSharper disable once InconsistentNaming
         private static string ToXML<T>(T obj) where T : class
         {
-            var xws = new XmlWriterSettings { OmitXmlDeclaration = true };
+            var xws = new XmlWriterSettings {OmitXmlDeclaration = true};
             using (var stringWriter = new StringWriter())
             {
                 using (var xmlWriter = XmlWriter.Create(stringWriter, xws))
@@ -125,15 +125,17 @@ namespace RedmineApi.Core.Serializers
         }
 
         /// <summary>
-        /// Deserializes the XML document contained by the specific System.String.
+        ///     Deserializes the XML document contained by the specific System.String.
         /// </summary>
         /// <typeparam name="T">The type of objects to deserialize.</typeparam>
         /// <param name="xml">The System.String that contains the XML document to deserialize.</param>
         /// <returns>
-        /// The T object being deserialized.
+        ///     The T object being deserialized.
         /// </returns>
-        /// <exception cref="System.InvalidOperationException">An error occurred during deserialization. The original exception is available
-        /// using the System.Exception.InnerException property.</exception>
+        /// <exception cref="System.InvalidOperationException">
+        ///     An error occurred during deserialization. The original exception is available
+        ///     using the System.Exception.InnerException property.
+        /// </exception>
         // ReSharper disable once InconsistentNaming
         private static T FromXML<T>(string xml) where T : class
         {

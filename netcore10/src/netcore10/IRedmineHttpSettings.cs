@@ -23,21 +23,21 @@ namespace RedmineApi.Core
 {
     public interface IRedmineHttpSettings
     {
-        IWebProxy WebProxy { get;  }
-        AuthenticationHeaderValue Authentication { get;  }
-        AuthenticationHeaderValue ProxyAuthentication { get;  }
-        CookieContainer CookieContainer { get;  }
-        ICredentials DefaultCredentials { get;  }
+        IWebProxy WebProxy { get; }
+        AuthenticationHeaderValue Authentication { get; }
+        AuthenticationHeaderValue ProxyAuthentication { get; }
+        CookieContainer CookieContainer { get; }
+        ICredentials DefaultCredentials { get; }
         ICredentials ProxyCredentials { get; }
-        SslProtocols SslProtocols { get;  }
+        SslProtocols SslProtocols { get; }
         bool AllowAutoRedirect { get; }
-        bool UseProxy { get;  }
+        bool UseProxy { get; }
         bool UseDefaultCredentials { get; }
-        bool UseCookies { get;  }
-        bool PreAuthenticate { get;  }
+        bool UseCookies { get; }
+        bool PreAuthenticate { get; }
         int MaxAutomaticRedirections { get; }
 
-        DecompressionMethods DecompressionMethods { get;  }
+        DecompressionMethods DecompressionMethods { get; }
 
         IRedmineHttpSettings SetWebProxy(IWebProxy webProxy);
 

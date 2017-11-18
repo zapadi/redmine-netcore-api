@@ -19,7 +19,7 @@ using System;
 namespace RedmineApi.Core.Exceptions
 {
     /// <summary>
-    /// Thrown in case something went wrong while trying to login.
+    ///     Thrown in case something went wrong while trying to login.
     /// </summary>
     /// <seealso cref="RedmineApi.Core.Exceptions.RedmineException" />
     public class UnauthorizedException : RedmineException
@@ -73,5 +73,5 @@ namespace RedmineApi.Core.Exceptions
             : base(string.Format(format, args), innerException)
         {
         }
-        }
+    }
 }

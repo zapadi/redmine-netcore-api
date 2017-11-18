@@ -22,7 +22,7 @@ namespace RedmineApi.Core.Exceptions
     /// Thrown in case something went wrong while trying to login.
     /// </summary>
     /// <seealso cref="RedmineApi.Core.Exceptions.RedmineException" />
-    public class UnprocessableEntityException : RedmineException
+    public sealed class UnprocessableEntityException : RedmineException
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="UnauthorizedException" /> class.

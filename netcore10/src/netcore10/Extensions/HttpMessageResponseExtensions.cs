@@ -14,23 +14,22 @@
    limitations under the License.
 */
 
-using RedmineApi.Core.Exceptions;
-using RedmineApi.Core.Internals;
-using RedmineApi.Core.Types;
 using System;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using RedmineApi.Core.Exceptions;
 using RedmineApi.Core.Serializers;
+using RedmineApi.Core.Types;
 
 namespace RedmineApi.Core.Extensions
 {
     internal static class HttpResponseMessageExtensions
     {
-        internal static async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, MimeType mimeType) where T : class, new()
+        internal static  Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, MimeType mimeType) where T : class, new()
         {
-            return await CreateTaskCompletionSource<T>(responseMessage, null, mimeType).ConfigureAwait(false);
+            return  CreateTaskCompletionSource<T>(responseMessage, null, mimeType);
         }
 
         internal static async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, Func<string, T> func, MimeType mimeType) where T : class, new()
@@ -70,7 +69,7 @@ namespace RedmineApi.Core.Extensions
             var byteArray = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             var responseString = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
 
-            var statusCode = (int)responseMessage.StatusCode;
+            var statusCode = (int) responseMessage.StatusCode;
             string exceptionMessage;
             switch (statusCode)
             {
@@ -87,7 +86,7 @@ namespace RedmineApi.Core.Extensions
                     return new UnprocessableEntityException(exceptionMessage);
 
                 default:
-                    exceptionMessage = $"Request to {responseMessage.RequestMessage.RequestUri.AbsoluteUri} failed with status code {(int)responseMessage.StatusCode} ({responseMessage.ReasonPhrase}).";
+                    exceptionMessage = $"Request to {responseMessage.RequestMessage.RequestUri.AbsoluteUri} failed with status code {(int) responseMessage.StatusCode} ({responseMessage.ReasonPhrase}).";
                     return new RedmineException(exceptionMessage);
             }
         }

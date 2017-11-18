@@ -17,23 +17,22 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
-using System.Linq;
-using Newtonsoft.Json;
 
 namespace RedmineApi.Core.Types
 {
     /// <summary>
-    /// 
     /// </summary>
     [XmlRoot(RedmineKeys.CUSTOM_FIELD)]
     public class IssueCustomField : IdentifiableName, IEquatable<IssueCustomField>
     {
         /// <summary>
-        /// Gets or sets the value.
+        ///     Gets or sets the value.
         /// </summary>
         /// <value>The value.</value>
         [XmlArray(RedmineKeys.VALUE)]
@@ -41,14 +40,30 @@ namespace RedmineApi.Core.Types
         public IList<CustomFieldValue> Values { get; set; }
 
         /// <summary>
-        /// 
         /// </summary>
         [XmlAttribute(RedmineKeys.MULTIPLE)]
         public bool Multiple { get; set; }
 
-        #region Implementation of IXmlSerializable
         /// <summary>
-        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"[IssueCustomField: {base.ToString()} Values={Values}, Multiple={Multiple}]";
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public string GetValue(object item)
+        {
+            return ((CustomFieldValue) item).Info;
+        }
+
+        #region Implementation of IXmlSerializable
+
+        /// <summary>
         /// </summary>
         /// <param name="reader"></param>
         public override void ReadXml(XmlReader reader)
@@ -61,7 +76,7 @@ namespace RedmineApi.Core.Types
 
             if (string.IsNullOrEmpty(reader.GetAttribute("type")))
             {
-                Values = new List<CustomFieldValue> { new CustomFieldValue { Info = reader.ReadElementContentAsString() } };
+                Values = new List<CustomFieldValue> {new CustomFieldValue {Info = reader.ReadElementContentAsString()}};
             }
             else
             {
@@ -71,7 +86,6 @@ namespace RedmineApi.Core.Types
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="writer"></param>
         public override void WriteXml(XmlWriter writer)
@@ -93,12 +107,17 @@ namespace RedmineApi.Core.Types
                 writer.WriteElementString(RedmineKeys.VALUE, itemsCount > 0 ? Values[0].Info : null);
             }
         }
+
         #endregion
 
         #region Implementation of IJsonSerialization
+
         public override void WriteJson(JsonWriter writer)
         {
-           if (Values == null) return ;
+            if (Values == null)
+            {
+                return;
+            }
             var itemsCount = Values.Count;
 
             writer.WriteStartObject();
@@ -110,9 +129,7 @@ namespace RedmineApi.Core.Types
                 writer.WritePropertyName(RedmineKeys.VALUE);
                 writer.WriteStartArray();
                 foreach (var cfv in Values)
-                {
                     writer.WriteValue(cfv.Info);
-                }
                 writer.WriteEndArray();
 
                 writer.WriteProperty(RedmineKeys.MULTIPLE, Multiple.ToString().ToLowerInvariant());
@@ -133,29 +150,39 @@ namespace RedmineApi.Core.Types
                     return;
                 }
 
-                if (reader.TokenType != JsonToken.PropertyName)
+                switch (reader.Value)
                 {
-                    continue;
-                }
-
-                switch(reader.Value)
-                {
-                    case RedmineKeys.ID: Id = reader.ReadAsInt(); break;
-                    case RedmineKeys.NAME: Name = reader.ReadAsString(); break;
-                    case RedmineKeys.MULTIPLE: Multiple = reader.ReadAsBool(); break;
+                    case RedmineKeys.ID:
+                        Id = reader.ReadAsInt();
+                        break;
+                    case RedmineKeys.NAME:
+                        Name = reader.ReadAsString();
+                        break;
+                    case RedmineKeys.MULTIPLE:
+                        Multiple = reader.ReadAsBool();
+                        break;
                     case RedmineKeys.VALUE:
+                        reader.Read();
+                        if (reader.TokenType == JsonToken.StartArray)
+                        {
+                            Values = reader.ReadAsArray<CustomFieldValue>();
+                        }
+                        else
+                        {
+                            Values = new List<CustomFieldValue> {new CustomFieldValue {Info = reader.Value as string}};
+                        }
+                        break;
 
-                        Values = reader.ReadAsArray<CustomFieldValue>();
-                     break;
-                    default :  reader.Read(); break;
+                    default: break;
                 }
             }
         }
+
         #endregion
 
         #region Implementation of IEquatable<>
+
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -166,24 +193,22 @@ namespace RedmineApi.Core.Types
                 return false;
             }
 
-            return (Id == other.Id
-                && Name == other.Name
-                && Multiple == other.Multiple
-                && Values == other.Values);
+            return Id == other.Id
+                   && Name == other.Name
+                   && Multiple == other.Multiple
+                   && Equals(Values, other.Values);
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         public IssueCustomField Clone()
         {
-            var issueCustomField = new IssueCustomField { Multiple = Multiple, Values = Values.Select(x => x.Clone()).ToList() };
+            var issueCustomField = new IssueCustomField {Multiple = Multiple, Values = Values.Select(x => x.Clone()).ToList()};
             return issueCustomField;
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
@@ -198,25 +223,7 @@ namespace RedmineApi.Core.Types
                 return hashCode;
             }
         }
+
         #endregion
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return $"[IssueCustomField: {base.ToString()} Values={Values}, Multiple={Multiple}]";
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public string GetValue(object item)
-        {
-            return ((CustomFieldValue)item).Info;
-        }
     }
 }
