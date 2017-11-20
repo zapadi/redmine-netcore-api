@@ -27,7 +27,7 @@ var revision = "";
 
 var buildSettings = new DotNetCoreBuildSettings
     {
-        Framework = "netcoreapp2.0",
+        Framework = "netstandard2.0",
         Configuration = configuration,
         ArgumentCustomization = args => args.Append(String.Concat("/p:SemVer=", version))
     };
