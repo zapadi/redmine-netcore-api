@@ -15,6 +15,8 @@
     <PackageIconUrl>https://github.com/zapadi/redmine-net-api/raw/master/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/zapadi/redmine-net-api</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/zapadi/redmine-net-api/blob/master/LICENSE</PackageLicenseUrl>
+    <Title>Redmine .NETCore Api</Title>
+    
     <Version>$(SemVer)</Version>
     <VersionPrefix>$(SemVer)</VersionPrefix>
     <VersionSuffix>$(VersionSuffix)</VersionSuffix>
