@@ -1,42 +1,16 @@
 ﻿using System;
 using RedmineApi.Core.Serializers;
 using RedmineApi.Core.Types;
-
-//using Xunit;
+using Xunit;
 
 namespace RedmineApi.Core.UnitTests
 {
-    public class FileUnitTests
+    public sealed class FileUnitTests
     {
-        // [Fact]
-        public void Should_Serialize_TypeOf_File_To_Json()
-        {
-            const string expected = @"{
-  ""file"": {
-    ""token"": ""21.01a1d7b1c2ffcbbc9ecf14debeec27d8"",
-    ""version_id"": 2,
-    ""filename"": ""foo-1.0-src.tar.tgz"",
-    ""description"": ""Foo App source code""
-  }
-}";
-
-            var file = new File
-            {
-                Token = "21.01a1d7b1c2ffcbbc9ecf14debeec27d8",
-                Version = new IdentifiableName {Id = 2},
-                Filename = "foo-1.0-src.tar.tgz",
-                Description = "Foo App source code"
-            };
-
-            var actual = RedmineSerializer.Serialize(file, MimeType.Json);
-
-            // Assert.True(actual.Equals(expected), "File type serialization failed.");
-        }
-
-        // [Fact]
+        [Fact]
         public void Should_Deserialize_TypeOf_File_From_Json()
         {
-            const string input = @"{
+            const string INPUT = @"{
             ""file"":{
                 ""id"":12,
                 ""filename"": ""foo-1.0-setup.exe"",
@@ -67,14 +41,21 @@ namespace RedmineApi.Core.UnitTests
                 Description = "Foo App for Windows"
             };
 
-            var actual = RedmineSerializer.Deserialize<File>(input, MimeType.Json);
-            // Assert.True(actual.GetHashCode() == expected.GetHashCode(), "File deserialize error.");
+            var actual = RedmineSerializer.Deserialize<File>(INPUT, MimeType.Json);
+            Assert.True(actual.GetHashCode() == expected.GetHashCode(), "File deserialize error.");
         }
 
-        // [Fact]
-        public void ShouldSerializeFileXml()
+        [Fact]
+        public void Should_Serialize_TypeOf_File_To_Json()
         {
-            const string expected = @"<file><token>21.01a1d7b1c2ffcbbc9ecf14debeec27d8</token><version_id>2</version_id><filename>foo-1.0-src.tar.tgz</filename><description>Foo App source code</description></file>";
+            const string EXPECTED = @"{
+  ""file"": {
+    ""token"": ""21.01a1d7b1c2ffcbbc9ecf14debeec27d8"",
+    ""version_id"": 2,
+    ""filename"": ""foo-1.0-src.tar.tgz"",
+    ""description"": ""Foo App source code""
+  }
+}";
 
             var file = new File
             {
@@ -84,15 +65,15 @@ namespace RedmineApi.Core.UnitTests
                 Description = "Foo App source code"
             };
 
-            var actual = RedmineSerializer.Serialize(file, MimeType.Xml);
+            var actual = RedmineSerializer.Serialize(file, MimeType.Json);
 
-            //  Assert.True(actual.Equals(expected), "File type serialization failed.");
+            Assert.True(actual.Equals(EXPECTED), "File type serialization failed.");
         }
 
-        // [Fact]
+        [Fact]
         public void ShouldDeserializeFileXml()
         {
-            const string response = @"
+            const string RESPONSE = @"
             <file>
                 <id>12</id>
                 <filename>foo-1.0-setup.exe</filename>
@@ -122,14 +103,14 @@ namespace RedmineApi.Core.UnitTests
                 Description = "Foo App for Windows"
             };
 
-            var actual = RedmineSerializer.Deserialize<File>(response, MimeType.Xml);
-            //  Assert.True(actual.GetHashCode() == expected.GetHashCode(), "File deserialize error.");
+            var actual = RedmineSerializer.Deserialize<File>(RESPONSE, MimeType.Xml);
+            Assert.True(actual.GetHashCode() == expected.GetHashCode(), "File deserialize error.");
         }
 
-        //  [Fact]
+        [Fact]
         public void ShouldDeserializePartialFileXml()
         {
-            const string response = @"
+            const string RESPONSE = @"
             <file>
               <token>21.01a1d7b1c2ffcbbc9ecf14debeec27d8</token>
               <version_id>2</version_id>
@@ -145,8 +126,26 @@ namespace RedmineApi.Core.UnitTests
                 Description = "Foo App source code"
             };
 
-            var actual = RedmineSerializer.Deserialize<File>(response, MimeType.Xml);
-            //   Assert.True(actual.Equals(expected), "File deserialize error.");
+            var actual = RedmineSerializer.Deserialize<File>(RESPONSE, MimeType.Xml);
+            Assert.True(actual.Equals(expected), "File deserialize error.");
+        }
+
+        [Fact]
+        public void ShouldSerializeFileXml()
+        {
+            const string EXPECTED = @"<file><token>21.01a1d7b1c2ffcbbc9ecf14debeec27d8</token><version_id>2</version_id><filename>foo-1.0-src.tar.tgz</filename><description>Foo App source code</description></file>";
+
+            var file = new File
+            {
+                Token = "21.01a1d7b1c2ffcbbc9ecf14debeec27d8",
+                Version = new IdentifiableName {Id = 2},
+                Filename = "foo-1.0-src.tar.tgz",
+                Description = "Foo App source code"
+            };
+
+            var actual = RedmineSerializer.Serialize(file, MimeType.Xml);
+
+            Assert.True(actual.Equals(EXPECTED), "File type serialization failed.");
         }
     }
 }
