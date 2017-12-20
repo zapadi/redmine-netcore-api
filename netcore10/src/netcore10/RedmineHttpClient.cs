@@ -38,7 +38,6 @@ namespace RedmineApi.Core
 
         private readonly HttpClient httpClient;
 
-
         public RedmineHttpClient(HttpClientHandler clientHandler)
         {
             this.clientHandler = clientHandler;
@@ -52,7 +51,7 @@ namespace RedmineApi.Core
         public void Dispose()
         {
             httpClient.CancelPendingRequests();
-            clientHandler.Dispose();
+            clientHandler?.Dispose();
             httpClient.Dispose();
         }
 
@@ -65,7 +64,6 @@ namespace RedmineApi.Core
             using (var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false))
             {
                 var tc = await responseMessage.CreateTaskCompletionSource<T>(mimeType).ConfigureAwait(false);
-
                 return await tc.Task;
             }
         }
