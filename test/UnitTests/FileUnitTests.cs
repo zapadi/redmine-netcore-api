@@ -1,4 +1,5 @@
 ﻿using System;
+
 using RedmineApi.Core.Serializers;
 using RedmineApi.Core.Types;
 using Xunit;

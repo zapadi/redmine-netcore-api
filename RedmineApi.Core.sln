@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedmineApi.Core", "src\netcore10\RedmineApi.Core.csproj", "{0AECCFAB-5307-4963-BD6E-790A78CED42E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedmineApi.Core", "src\RedmineApi.Core.csproj", "{0AECCFAB-5307-4963-BD6E-790A78CED42E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedmineApi.Core.Tests", "test\netcore10.tests\RedmineApi.Core.Tests.csproj", "{F6D32337-1752-4438-ADA0-6500C6273528}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedmineApi.Core.Tests", "test\UnitTests\RedmineApi.Core.Tests.csproj", "{F6D32337-1752-4438-ADA0-6500C6273528}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
