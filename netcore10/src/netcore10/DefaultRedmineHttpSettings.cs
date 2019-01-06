@@ -1,3 +1,4 @@
+
 ﻿/*
    Copyright 2016 - 2017 Adrian Popescu.
 
@@ -230,4 +231,5 @@ namespace RedmineApi.Core
             return new DefaultRedmineHttpSettings();
         }
     }
+
 }

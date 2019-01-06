@@ -82,7 +82,7 @@ namespace RedmineApi.Core.Extensions
                         message = errors.Items.Aggregate(message, (current, error) => $"{current}{error.Info}{Environment.NewLine}");
                     }
 
-                    exceptionMessage = $"Request to {responseMessage.RequestMessage.RequestUri.AbsoluteUri} failed with {message}";
+                    exceptionMessage = $"Request to {responseMessage.RequestMessage.RequestUri.AbsoluteUri} failed with {message ?? responseString ?? responseMessage.ReasonPhrase}";
                     return new UnprocessableEntityException(exceptionMessage);
 
                 default:

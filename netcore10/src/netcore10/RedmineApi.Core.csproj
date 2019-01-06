@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+
     <TargetFramework>netstandard2.0</TargetFramework>
+
     <DebugType>full</DebugType>
     <AssemblyName>RedmineApi.Core</AssemblyName>
     <PackageId>redmine-netcore10-api</PackageId>
@@ -26,9 +28,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
+
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Internals\DataHelper.cs" />
   </ItemGroup>
