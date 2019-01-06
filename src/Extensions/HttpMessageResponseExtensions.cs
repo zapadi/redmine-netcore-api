@@ -16,6 +16,7 @@
 
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,13 +33,28 @@ namespace RedmineApi.Core.Extensions
             return  CreateTaskCompletionSource<T>(responseMessage, null, mimeType);
         }
 
-        internal static async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, Func<string, T> func, MimeType mimeType) where T : class, new()
+        internal static async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, Func<string, T> func, MimeType mimeType) where T :  new()
         {
             var tc = new TaskCompletionSource<T>();
             if (responseMessage.IsSuccessStatusCode)
             {
                 var content = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                 tc.SetResult(func != null ? func.Invoke(content) : RedmineSerializer.Deserialize<T>(content, mimeType));
+            }
+            else
+            {
+                tc.SetException(await CreateExceptionAsync(responseMessage, mimeType).ConfigureAwait(false));
+            }
+
+            return tc;
+        }
+
+        internal static async Task<TaskCompletionSource<HttpStatusCode>> CreateDeleteTaskCompletionSource(this HttpResponseMessage responseMessage,  MimeType mimeType) 
+        {
+            var tc = new TaskCompletionSource<HttpStatusCode>();
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                tc.SetResult(responseMessage.StatusCode);
             }
             else
             {

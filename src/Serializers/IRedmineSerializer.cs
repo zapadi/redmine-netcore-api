@@ -21,7 +21,9 @@ namespace RedmineApi.Core.Serializers
     internal interface IRedmineSerializer
     {
         string Serialize<T>(T obj) where T : class;
-        T Deserialize<T>(string response) where T : class;
+        T Deserialize<T>(string response) where T : new();
         PaginatedResult<T> DeserializeList<T>(string response) where T : class, new();
+
+        int Count<T>(string response) where T :  new();
     }
 }

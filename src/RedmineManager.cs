@@ -20,6 +20,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using RedmineApi.Core.Authentication;
 using RedmineApi.Core.Extensions;
@@ -110,34 +111,34 @@ namespace RedmineApi.Core
             Dispose(false);
         }
 
-        public async Task<TData> Create<TData>(TData data)
+        public async Task<TData> Create<TData>(TData data, CancellationToken cancellationToken)
             where TData : class, new()
         {
-            return await Create(null, data).ConfigureAwait(false);
+            return await Create(null, data, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<TData> Create<TData>(string ownerId, TData data)
+        public async Task<TData> Create<TData>(string ownerId, TData data, CancellationToken cancellationToken)
             where TData : class, new()
         {
             var uri = UrlBuilder
-                .Create(Host, MimeType)
-                .CreateUrl<TData>(ownerId)
-                .Build();
+               .Create(Host, MimeType)
+               .CreateUrl<TData>(ownerId)
+               .Build();
 
-            var response = await RedmineHttp.Post(new Uri(uri), data, MimeType).ConfigureAwait(false);
+            var response = await RedmineHttp.PostAsync(new Uri(uri), data, MimeType, cancellationToken).ConfigureAwait(false);
             return response;
         }
 
-        public async Task<TData> Get<TData>(string id, NameValueCollection parameters)
+        public async Task<TData> Get<TData>(string id, NameValueCollection parameters, CancellationToken cancellationToken)
             where TData : class, new()
         {
             var uri = UrlBuilder
-                .Create(Host, MimeType)
-                .GetUrl<TData>(id)
-                .SetParameters(parameters)
-                .Build();
+               .Create(Host, MimeType)
+               .GetUrl<TData>(id)
+               .SetParameters(parameters)
+               .Build();
 
-            var response = await RedmineHttp.Get<TData>(new Uri(uri), MimeType).ConfigureAwait(false);
+            var response = await RedmineHttp.GetAsync<TData>(new Uri(uri), MimeType, cancellationToken).ConfigureAwait(false);
             return response;
         }
 
@@ -147,7 +148,7 @@ namespace RedmineApi.Core
         /// <returns>The all.</returns>
         /// <param name="parameters">Parameters.</param>
         /// <typeparam name="TData">The 1st type parameter.</typeparam>
-        public async Task<List<TData>> ListAll<TData>(NameValueCollection parameters)
+        public async Task<List<TData>> ListAll<TData>(NameValueCollection parameters, CancellationToken cancellationToken)
             where TData : class, new()
         {
             int totalCount = 0, pageSize = 0, offset = 0;
@@ -163,6 +164,7 @@ namespace RedmineApi.Core
                 isLimitSet = int.TryParse(parameters[RedmineKeys.LIMIT], out pageSize);
                 int.TryParse(parameters[RedmineKeys.OFFSET], out offset);
             }
+
             if (pageSize == default(int))
             {
                 pageSize = PageSize > 0 ? PageSize : DEFAULT_PAGE_SIZE_VALUE;
@@ -172,7 +174,7 @@ namespace RedmineApi.Core
             do
             {
                 parameters.Set(RedmineKeys.OFFSET, offset.ToString(CultureInfo.InvariantCulture));
-                var tempResult = await List<TData>(parameters).ConfigureAwait(false);
+                var tempResult = await List<TData>(parameters, cancellationToken).ConfigureAwait(false);
                 if (tempResult != null)
                 {
                     if (resultList == null)
@@ -198,81 +200,81 @@ namespace RedmineApi.Core
         /// </summary>
         /// <returns>
         ///     won't return all the objects available in your database. Redmine 1.1.0 introduces a common way to query such
-        ///     ressources using the following parameters:
+        ///     resources using the following parameters:
         ///     offset: the offset of the first object to retrieve
         ///     limit: the number of items to be present in the response(default is 25, maximum is 100)
         /// </returns>
         /// <param name="parameters">Parameters.</param>
-        public async Task<PaginatedResult<TData>> List<TData>(NameValueCollection parameters)
+        public async Task<PaginatedResult<TData>> List<TData>(NameValueCollection parameters, CancellationToken cancellationToken)
             where TData : class, new()
         {
             var uri = UrlBuilder.Create(Host, MimeType)
-                .ItemsUrl<TData>(parameters)
-                .SetParameters(parameters)
-                .Build();
+               .ItemsUrl<TData>(parameters)
+               .SetParameters(parameters)
+               .Build();
 
-            var response = await RedmineHttp.List<TData>(new Uri(uri), MimeType).ConfigureAwait(false);
+            var response = await RedmineHttp.ListAsync<TData>(new Uri(uri), MimeType, cancellationToken).ConfigureAwait(false);
 
             return response;
         }
 
-        public async Task<TData> Update<TData>(string id, TData data) where TData : class, new()
+        public async Task<TData> Update<TData>(string id, TData data, CancellationToken cancellationToken) where TData : class, new()
         {
-            return await Update(id, data, null).ConfigureAwait(false);
+            return await Update(id, data, null, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<TData> Update<TData>(string id, TData data, string projectId) where TData : class, new()
+        public async Task<TData> Update<TData>(string id, TData data, string projectId, CancellationToken cancellationToken) where TData : class, new()
         {
             var uri = UrlBuilder
-                .Create(Host, MimeType)
-                .UploadUrl(id, data, projectId)
-                .Build();
+               .Create(Host, MimeType)
+               .UploadUrl(id, data, projectId)
+               .Build();
 
-            var response = await RedmineHttp.Put(new Uri(uri), data, MimeType).ConfigureAwait(false);
+            var response = await RedmineHttp.PutAsync(new Uri(uri), data, MimeType, cancellationToken).ConfigureAwait(false);
             return response;
         }
 
-        public async Task<HttpStatusCode> Delete<T>(string id) where T : class, new()
+        public async Task<HttpStatusCode> Delete<T>(string id, CancellationToken cancellationToken) where T : class, new()
         {
-            return await Delete<T>(id, null).ConfigureAwait(false);
+            return await Delete<T>(id, null, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<HttpStatusCode> Delete<T>(string id, string reasignedId) where T : class, new()
+        public async Task<HttpStatusCode> Delete<T>(string id, string reassignedId, CancellationToken cancellationToken) where T : class, new()
         {
             var uri = UrlBuilder
-                .Create(Host, MimeType)
-                .DeleteUrl<T>(id, reasignedId)
-                .Build();
+               .Create(Host, MimeType)
+               .DeleteUrl<T>(id, reassignedId)
+               .Build();
 
-            var response = await RedmineHttp.Delete(new Uri(uri), MimeType).ConfigureAwait(false);
+            var response = await RedmineHttp.DeleteAsync(new Uri(uri), MimeType, cancellationToken).ConfigureAwait(false);
             return response;
         }
 
-        public async Task<Upload> UploadFile(byte[] fileBytes)
+        public async Task<Upload> UploadFile(byte[] fileBytes, CancellationToken cancellationToken)
         {
             var uri = UrlBuilder.Create(Host, MimeType)
-                .UploadFileUrl()
-                .Build();
+               .UploadFileUrl()
+               .Build();
 
-            var response = await RedmineHttp.UploadFile(new Uri(uri), fileBytes, MimeType).ConfigureAwait(false);
+            var response = await RedmineHttp.UploadFileAsync(new Uri(uri), fileBytes, MimeType, cancellationToken).ConfigureAwait(false);
             return response;
         }
 
-        public async Task UploadAttachment(int issueId, Attachment attachment)
+        public async Task UploadAttachment(int issueId, Attachment attachment, CancellationToken cancellationToken)
         {
             var uri = UrlBuilder.Create(Host, MimeType)
-                .AttachmentUpdateUrl(issueId)
-                .Build();
+               .AttachmentUpdateUrl(issueId)
+               .Build();
 
-            var attachments = new Attachments { { attachment.Id, attachment } };
+            var attachments = new Attachments {{attachment.Id, attachment}};
             var data = RedmineSerializer.Serialize(attachments, MimeType);
 
-            await RedmineHttp.UploadAttachment(new Uri(uri), data, MimeType).ConfigureAwait(false);
+            await RedmineHttp.UploadAttachmentAsync(new Uri(uri), data, MimeType, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<byte[]> DownloadFile(string address)
+        public async Task<byte[]> DownloadFile(string address, CancellationToken cancellationToken)
         {
-            var response = await RedmineHttp.DownloadFile(new Uri(address), MimeType).ConfigureAwait(false);
+            var response = await RedmineHttp.DownloadFileAsync(new Uri(address), MimeType, cancellationToken).ConfigureAwait(false);
             return response;
         }
 

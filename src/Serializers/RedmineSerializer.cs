@@ -42,7 +42,7 @@ namespace RedmineApi.Core.Serializers
         }
 
         /// <summary>
-        ///     Deserializes the XML document contained by the specific System.String.
+        ///     Deserializes the XML/JSON document contained by the specific System.String.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="response">The response.</param>
@@ -56,7 +56,7 @@ namespace RedmineApi.Core.Serializers
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public static T Deserialize<T>(string response, MimeType mimeFormat) where T : class, new()
+        public static T Deserialize<T>(string response, MimeType mimeFormat) where T :  new()
         {
             return serializers[mimeFormat].Deserialize<T>(response);
         }
@@ -77,6 +77,12 @@ namespace RedmineApi.Core.Serializers
             where T : class, new()
         {
             return serializers[mimeFormat].DeserializeList<T>(response);
+        }
+
+        public static int Count<T>(string response, MimeType mimeFormat)
+            where T :  new()
+        {
+            return serializers[mimeFormat].Count<T>(response);
         }
     }
 }

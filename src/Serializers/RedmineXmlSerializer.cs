@@ -26,7 +26,7 @@ namespace RedmineApi.Core.Serializers
 {
     internal sealed class RedmineXmlSerializer : IRedmineSerializer
     {
-        public T Deserialize<T>(string response) where T : class
+        public T Deserialize<T>(string response) where T : new()
         {
             if (string.IsNullOrEmpty(response))
             {
@@ -53,6 +53,34 @@ namespace RedmineApi.Core.Serializers
                 }
 
                 return XmlDeserializeList<T>(response);
+            }
+            catch (Exception ex)
+            {
+                throw new RedmineException("Deserialization error", ex);
+            }
+        }
+
+        public int Count<T>(string response) where T :  new()
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(response))
+                {
+                    throw new RedmineException("Could not deserialize empty response!");
+                }
+
+                using (TextReader stringReader = new StringReader(response))
+                {
+                    using (var xmlReader = XmlReader.Create(stringReader))
+                    {
+                        xmlReader.Read();
+                        xmlReader.Read();
+
+                        var totalItems = xmlReader.ReadAttributeAsInt(RedmineKeys.TOTAL_COUNT);
+                       
+                        return totalItems;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -137,12 +165,18 @@ namespace RedmineApi.Core.Serializers
         ///     using the System.Exception.InnerException property.
         /// </exception>
         // ReSharper disable once InconsistentNaming
-        private static T FromXML<T>(string xml) where T : class
+        private static T FromXML<T>(string xml) where T :  new()
         {
             using (var text = new StringReader(xml))
             {
                 var sr = new XmlSerializer(typeof(T));
-                return sr.Deserialize(text) as T;
+                var obj = sr.Deserialize(text);
+                if (obj is T)
+                {
+                    return (T) obj;
+                }
+
+                return default(T);
             }
         }
     }

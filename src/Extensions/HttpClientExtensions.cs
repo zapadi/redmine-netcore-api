@@ -18,6 +18,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RedmineApi.Core.Extensions
@@ -91,7 +92,7 @@ namespace RedmineApi.Core.Extensions
             }
         }
 
-        public static Task<HttpResponseMessage> PatchAsync(this HttpClient client, string requestUri, HttpContent content)
+        public static Task<HttpResponseMessage> PatchAsync(this HttpClient client, string requestUri, HttpContent content, CancellationToken cancellationToken)
         {
             HttpRequestMessage request = new HttpRequestMessage
             {
@@ -100,7 +101,7 @@ namespace RedmineApi.Core.Extensions
                 Content = content,
             };
 
-            return client.SendAsync(request);
+            return client.SendAsync(request, cancellationToken);
         }
     }
 }

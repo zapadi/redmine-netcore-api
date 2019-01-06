@@ -19,6 +19,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
@@ -27,7 +28,7 @@ using RedmineApi.Core.Types;
 
 namespace RedmineApi.Core
 {
-    internal sealed class RedmineHttpClient : IDisposable
+    internal sealed class RedmineHttpClient : IRedmineHttpClient
     {
         private const string APPLICATION = "application";
         private const string X_REDMINE_SWITCH_USER = "X-Redmine-Switch-User";
@@ -44,9 +45,9 @@ namespace RedmineApi.Core
             httpClient = new HttpClient(clientHandler, true);
         }
 
-        public string ImpersonateUser { get; set; }
+        public string ImpersonateUser { get; internal set; }
 
-        public string ApiKey { get; set; }
+        public string ApiKey { get; internal set; }
 
         public void Dispose()
         {
@@ -55,33 +56,33 @@ namespace RedmineApi.Core
             httpClient.Dispose();
         }
 
-        public async Task<T> Get<T>(Uri uri, MimeType mimeType) where T : class, new()
+        public async Task<T> GetAsync<T>(Uri uri, MimeType mimeType, CancellationToken cancellationToken) where T : class, new()
         {
             SetHeaders();
 
             httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
 
-            using (var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false))
+            using (var responseMessage = await httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
             {
                 var tc = await responseMessage.CreateTaskCompletionSource<T>(mimeType).ConfigureAwait(false);
                 return await tc.Task;
             }
         }
 
-        public async Task<PaginatedResult<T>> List<T>(Uri uri, MimeType mimeType) where T : class, new()
+        public async Task<PaginatedResult<T>> ListAsync<T>(Uri uri, MimeType mimeType, CancellationToken cancellationToken) where T : class, new()
         {
             SetHeaders();
 
             httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
 
-            using (var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false))
+            using (var responseMessage = await httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
             {
                 var tc = await responseMessage.CreateTaskCompletionSource(c => RedmineSerializer.DeserializeList<T>(c, mimeType), mimeType).ConfigureAwait(false);
                 return await tc.Task;
             }
         }
 
-        public async Task<T> Put<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
+        public async Task<T> PutAsync<T>(Uri uri, T data, MimeType mimeType, CancellationToken cancellationToken) where T : class, new()
         {
             SetHeaders();
 
@@ -89,98 +90,97 @@ namespace RedmineApi.Core
             serializedData = sanitizeRegex.Replace(serializedData, "\r\n");
             var requestContent = new StringContent(serializedData, Encoding.UTF8, $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
 
-            using (var responseMessage = await httpClient.PutAsync(uri.ToString(), requestContent).ConfigureAwait(false))
+            using (var responseMessage = await httpClient.PutAsync(uri.ToString(), requestContent, cancellationToken).ConfigureAwait(false))
             {
                 var tc = new TaskCompletionSource<T>();
                 if (responseMessage.IsSuccessStatusCode)
                 {
                     var responseContent = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                     tc.SetResult(string.IsNullOrWhiteSpace(responseContent)
-                        ? data
-                        : RedmineSerializer.Deserialize<T>(responseContent, mimeType));
+                                     ? data
+                                     : RedmineSerializer.Deserialize<T>(responseContent, mimeType));
                 }
                 else
                 {
                     tc.SetException(await responseMessage.CreateExceptionAsync(mimeType).ConfigureAwait(false));
                 }
+
                 return await tc.Task;
             }
         }
 
-        public async Task<T> Post<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
+        public async Task<T> PostAsync<T>(Uri uri, T data, MimeType mimeType, CancellationToken cancellationToken) where T : class, new()
         {
             SetHeaders();
 
             var content = new StringContent(RedmineSerializer.Serialize(data, mimeType), Encoding.UTF8,
-                $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
+                                            $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
 
-            using (var responseMessage = await httpClient.PostAsync(uri.ToString(), content).ConfigureAwait(false))
+            using (var responseMessage = await httpClient.PostAsync(uri.ToString(), content, cancellationToken).ConfigureAwait(false))
             {
                 var tc = await responseMessage.CreateTaskCompletionSource<T>(mimeType).ConfigureAwait(false);
                 return await tc.Task;
             }
         }
 
-        public async Task<HttpStatusCode> Delete(Uri uri, MimeType mimeType)
-        {
-            var tc = new TaskCompletionSource<HttpStatusCode>();
-            try
-            {
-                SetHeaders();
-
-                using (var responseMessage = await httpClient.DeleteAsync(uri.ToString()).ConfigureAwait(false))
-                {
-                    if (responseMessage.IsSuccessStatusCode)
-                    {
-                        tc.SetResult(responseMessage.StatusCode);
-                    }
-                    else
-                    {
-                        tc.SetException(await responseMessage.CreateExceptionAsync(mimeType).ConfigureAwait(false));
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                tc.SetException(exception);
-            }
-            return await tc.Task;
-        }
-
-        public async Task<byte[]> DownloadFile(Uri uri, MimeType mimeType)
+        public async Task<HttpStatusCode> DeleteAsync(Uri uri, MimeType mimeType, CancellationToken cancellationToken)
         {
             SetHeaders();
 
-            using (var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false))
+            using (var responseMessage = await httpClient.DeleteAsync(uri.ToString(), cancellationToken).ConfigureAwait(false))
+            {
+                var tc = await responseMessage.CreateDeleteTaskCompletionSource(mimeType).ConfigureAwait(false);
+                return await tc.Task;
+            }
+        }
+
+        public async Task<byte[]> DownloadFileAsync(Uri uri, MimeType mimeType, CancellationToken cancellationToken)
+        {
+            SetHeaders();
+
+            using (var responseMessage = await httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
             {
                 var tc = await responseMessage.CreateFileDownloadTaskCompletionSource(mimeType).ConfigureAwait(false);
                 return await tc.Task;
             }
         }
 
-        public async Task<Upload> UploadFile(Uri uri, byte[] bytes, MimeType mimeType)
+        public async Task<Upload> UploadFileAsync(Uri uri, byte[] bytes, MimeType mimeType, CancellationToken cancellationToken)
         {
             SetHeaders();
 
             httpClient.AddContentType("application/octet-stream");
 
             var content = new ByteArrayContent(bytes);
-            using (var responseMessage = await httpClient.PutAsync(uri.ToString(), content).ConfigureAwait(false))
+            using (var responseMessage = await httpClient.PutAsync(uri.ToString(), content, cancellationToken).ConfigureAwait(false))
             {
                 var tc = await responseMessage.CreateTaskCompletionSource<Upload>(mimeType).ConfigureAwait(false);
                 return await tc.Task;
             }
         }
 
-        public async Task<Upload> UploadAttachment(Uri uri, string attachmentContent, MimeType mimeType)
+        public async Task<Upload> UploadAttachmentAsync(Uri uri, string attachmentContent, MimeType mimeType, CancellationToken cancellationToken)
         {
             SetHeaders();
 
             var content = new StringContent(attachmentContent, Encoding.UTF8, $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
 
-            using (var responseMessage = await httpClient.PatchAsync(uri.ToString(), content).ConfigureAwait(false))
+            using (var responseMessage = await httpClient.PatchAsync(uri.ToString(), content, cancellationToken).ConfigureAwait(false))
             {
                 var tc = await responseMessage.CreateTaskCompletionSource<Upload>(mimeType).ConfigureAwait(false);
+                return await tc.Task;
+            }
+        }
+
+        public async Task<int> CountAsync<T>(Uri uri, MimeType mimeType, CancellationToken cancellationToken) where T : new()
+        {
+            SetHeaders();
+
+            httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
+
+            using (var responseMessage = await httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
+            {
+                var tc = await responseMessage.CreateTaskCompletionSource(c => RedmineSerializer.Count<T>(c, mimeType), mimeType).ConfigureAwait(false);
                 return await tc.Task;
             }
         }

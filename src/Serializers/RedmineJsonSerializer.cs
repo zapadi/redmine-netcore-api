@@ -27,7 +27,7 @@ namespace RedmineApi.Core.Serializers
 {
     internal sealed class RedmineJsonSerializer : IRedmineSerializer
     {
-        public T Deserialize<T>(string response) where T : class
+        public T Deserialize<T>(string response) where T : new()
         {
             using (var sr = new StringReader(response))
             {
@@ -45,6 +45,7 @@ namespace RedmineApi.Core.Serializers
                         reader.Read();
                         ser.ReadJson(reader);
                     }
+
                     return (T) ser;
                 }
             }
@@ -80,7 +81,34 @@ namespace RedmineApi.Core.Serializers
                                     break;
                             }
                         }
+
                     return new PaginatedResult<T>(list, total, offset, limit);
+                }
+            }
+        }
+
+        public int Count<T>(string response) where T :  new()
+        {
+            using (var sr = new StringReader(response))
+            {
+                using (JsonReader reader = new JsonTextReader(sr))
+                {
+                    var total = 0;
+
+                    while (reader.Read())
+                    {
+                        if (reader.TokenType == JsonToken.PropertyName)
+                        {
+                            switch (reader.Value)
+                            {
+                                case RedmineKeys.TOTAL_COUNT:
+                                    total = reader.ReadAsInt32().GetValueOrDefault();
+                                    return total;
+                            }
+                        }
+                    }
+
+                    return total;
                 }
             }
         }
