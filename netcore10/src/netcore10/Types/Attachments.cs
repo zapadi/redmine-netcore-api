@@ -21,8 +21,8 @@ using RedmineApi.Core.Serializers;
 
 namespace RedmineApi.Core.Types
 {
+    
     /// <summary>
-    /// 
     /// </summary>
     internal class Attachments : Dictionary<int, Attachment>, IJsonSerializable
     {

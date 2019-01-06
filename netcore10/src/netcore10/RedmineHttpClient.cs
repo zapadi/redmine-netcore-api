@@ -57,8 +57,8 @@ namespace RedmineApi.Core
 
         public async Task<T> Get<T>(Uri uri, MimeType mimeType) where T : class, new()
         {
-            httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
-            httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
+            SetHeaders();
+
             httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
 
             using (var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false))
@@ -70,8 +70,8 @@ namespace RedmineApi.Core
 
         public async Task<PaginatedResult<T>> List<T>(Uri uri, MimeType mimeType) where T : class, new()
         {
-            httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
-            httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
+            SetHeaders();
+
             httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
 
             using (var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false))
@@ -83,8 +83,7 @@ namespace RedmineApi.Core
 
         public async Task<T> Put<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
         {
-            httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
-            httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
+            SetHeaders();
 
             var serializedData = RedmineSerializer.Serialize(data, mimeType);
             serializedData = sanitizeRegex.Replace(serializedData, "\r\n");
@@ -110,8 +109,7 @@ namespace RedmineApi.Core
 
         public async Task<T> Post<T>(Uri uri, T data, MimeType mimeType) where T : class, new()
         {
-            httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
-            httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
+            SetHeaders();
 
             var content = new StringContent(RedmineSerializer.Serialize(data, mimeType), Encoding.UTF8,
                 $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
@@ -128,8 +126,7 @@ namespace RedmineApi.Core
             var tc = new TaskCompletionSource<HttpStatusCode>();
             try
             {
-                httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
-                httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
+                SetHeaders();
 
                 using (var responseMessage = await httpClient.DeleteAsync(uri.ToString()).ConfigureAwait(false))
                 {
@@ -152,8 +149,7 @@ namespace RedmineApi.Core
 
         public async Task<byte[]> DownloadFile(Uri uri, MimeType mimeType)
         {
-            httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
-            httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
+            SetHeaders();
 
             using (var responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false))
             {
@@ -164,8 +160,8 @@ namespace RedmineApi.Core
 
         public async Task<Upload> UploadFile(Uri uri, byte[] bytes, MimeType mimeType)
         {
-            httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
-            httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
+            SetHeaders();
+
             httpClient.AddContentType("application/octet-stream");
 
             var content = new ByteArrayContent(bytes);
@@ -178,15 +174,21 @@ namespace RedmineApi.Core
 
         public async Task<Upload> UploadAttachment(Uri uri, string attachmentContent, MimeType mimeType)
         {
-            httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
-            httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
+            SetHeaders();
 
             var content = new StringContent(attachmentContent, Encoding.UTF8, $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
+
             using (var responseMessage = await httpClient.PatchAsync(uri.ToString(), content).ConfigureAwait(false))
             {
                 var tc = await responseMessage.CreateTaskCompletionSource<Upload>(mimeType).ConfigureAwait(false);
                 return await tc.Task;
             }
+        }
+
+        private void SetHeaders()
+        {
+            httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
+            httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
         }
     }
 }

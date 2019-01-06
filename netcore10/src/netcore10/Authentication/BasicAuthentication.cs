@@ -41,7 +41,7 @@ namespace RedmineApi.Core.Authentication
             return new AuthenticationHeaderValue(AUTHENTICATION_BASIC, value);
         }
 
-        public static BasicAuthentication Create(string username, string password)
+        public static IAuthentication Create(string username, string password)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
