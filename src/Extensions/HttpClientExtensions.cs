@@ -51,32 +51,6 @@ namespace RedmineApi.Core.Extensions
             httpClient.DefaultRequestHeaders.Add(key, value);
         }
 
-        //public static void AddImpersonationHeaderIfSet(this HttpClient httpClient, string impersonateUser)
-        //{
-        //    if (string.IsNullOrWhiteSpace(impersonateUser))
-        //    {
-        //        httpClient.DefaultRequestHeaders.Remove(X_REDMINE_SWITCH_USER);
-        //    }
-        //    else
-        //    {
-        //        httpClient.ClearHeaderIfExists(X_REDMINE_SWITCH_USER);
-        //        httpClient.DefaultRequestHeaders.Add(X_REDMINE_SWITCH_USER, impersonateUser);
-        //    }
-        //}
-
-        //public static void AddApiKeyIfSet(this HttpClient httpClient, string apiKey)
-        //{
-        //    if (string.IsNullOrWhiteSpace(apiKey))
-        //    {
-        //        httpClient.DefaultRequestHeaders.Remove(X_REDMINE_API_KEY);
-        //    }
-        //    else
-        //    {
-        //        httpClient.ClearHeaderIfExists(X_REDMINE_API_KEY);
-        //        httpClient.DefaultRequestHeaders.Add(X_REDMINE_API_KEY, apiKey);
-        //    }
-        //}
-
         public static void AddContentType(this HttpClient httpClient, string contentType)
         {
             var contentTypeKey = HttpRequestHeader.ContentType.ToString();
