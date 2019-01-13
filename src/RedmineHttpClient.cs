@@ -60,7 +60,7 @@ namespace RedmineApi.Core
         {
             SetHeaders();
 
-            httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
+            httpClient.AddContentType($"{APPLICATION}/{Mime.GetStringRepresentation(mimeType)}");
 
             using (var responseMessage = await httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
             {
@@ -73,7 +73,7 @@ namespace RedmineApi.Core
         {
             SetHeaders();
 
-            httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
+            httpClient.AddContentType($"{APPLICATION}/{Mime.GetStringRepresentation(mimeType)}");
 
             using (var responseMessage = await httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
             {
@@ -88,7 +88,7 @@ namespace RedmineApi.Core
 
             var serializedData = RedmineSerializer.Serialize(data, mimeType);
             serializedData = sanitizeRegex.Replace(serializedData, "\r\n");
-            var requestContent = new StringContent(serializedData, Encoding.UTF8, $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
+            var requestContent = new StringContent(serializedData, Encoding.UTF8, $"{APPLICATION}/{Mime.GetStringRepresentation(mimeType)}");
 
             using (var responseMessage = await httpClient.PutAsync(uri.ToString(), requestContent, cancellationToken).ConfigureAwait(false))
             {
@@ -114,7 +114,7 @@ namespace RedmineApi.Core
             SetHeaders();
 
             var content = new StringContent(RedmineSerializer.Serialize(data, mimeType), Encoding.UTF8,
-                                            $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
+                                            $"{APPLICATION}/{Mime.GetStringRepresentation(mimeType)}");
 
             using (var responseMessage = await httpClient.PostAsync(uri.ToString(), content, cancellationToken).ConfigureAwait(false))
             {
@@ -163,7 +163,7 @@ namespace RedmineApi.Core
         {
             SetHeaders();
 
-            var content = new StringContent(attachmentContent, Encoding.UTF8, $"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
+            var content = new StringContent(attachmentContent, Encoding.UTF8, $"{APPLICATION}/{Mime.GetStringRepresentation(mimeType)}");
 
             using (var responseMessage = await httpClient.PatchAsync(uri.ToString(), content, cancellationToken).ConfigureAwait(false))
             {
@@ -176,7 +176,7 @@ namespace RedmineApi.Core
         {
             SetHeaders();
 
-            httpClient.AddContentType($"{APPLICATION}/{UrlBuilder.MimeTypes[mimeType]}");
+            httpClient.AddContentType($"{APPLICATION}/{Mime.GetStringRepresentation(mimeType)}");
 
             using (var responseMessage = await httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
             {

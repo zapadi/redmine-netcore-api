@@ -225,7 +225,8 @@ namespace RedmineApi.Core.Extensions
         /// <param name="writer">The writer.</param>
         /// <param name="val">The value.</param>
         /// <param name="tag">The tag.</param>
-        public static void WriteDateOrEmpty(this XmlWriter writer, DateTime? val, string tag)
+        /// <param name="dateFormat">default: yyyy-MM-dd</param>
+        public static void WriteDateOrEmpty(this XmlWriter writer, DateTime? val, string tag, string dateFormat = "yyyy-MM-dd")
         {
             if (!val.HasValue || val.Value.Equals(default(DateTime)))
             {
@@ -233,7 +234,7 @@ namespace RedmineApi.Core.Extensions
             }
             else
             {
-                writer.WriteElementString(tag, string.Format(NumberFormatInfo.InvariantInfo, "{0}", val.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)));
+                writer.WriteElementString(tag, string.Format(NumberFormatInfo.InvariantInfo, "{0}", val.Value.ToString(dateFormat, CultureInfo.InvariantCulture)));
             }
         }
     }
