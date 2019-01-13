@@ -35,7 +35,7 @@ namespace RedmineApi.Core.Serializers
             }
         }
 
-        private static JsonWriter Writer { get; set; }
+        private JsonWriter Writer { get; set; }
 
         public void Dispose()
         {
