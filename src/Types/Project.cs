@@ -64,14 +64,14 @@ namespace RedmineApi.Core.Types
         /// </summary>
         /// <value>The created on.</value>
         [XmlElement(RedmineKeys.CREATED_ON, IsNullable = true)]
-        public DateTime? CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; private set; }
 
         /// <summary>
         /// Gets or sets the updated on.
         /// </summary>
         /// <value>The updated on.</value>
         [XmlElement(RedmineKeys.UPDATED_ON, IsNullable = true)]
-        public DateTime? UpdatedOn { get; set; }
+        public DateTime? UpdatedOn { get; private set; }
 
         /// <summary>
         /// Gets or sets the status.
@@ -80,7 +80,7 @@ namespace RedmineApi.Core.Types
         /// The status.
         /// </value>
         [XmlElement(RedmineKeys.STATUS)]
-        public ProjectStatus Status { get; set; }
+        public ProjectStatus Status { get; private set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this project is public.
@@ -109,7 +109,7 @@ namespace RedmineApi.Core.Types
         /// </value>
         [XmlArray(RedmineKeys.TRACKERS)]
         [XmlArrayItem(RedmineKeys.TRACKER)]
-        public IList<ProjectTracker> Trackers { get; set; }
+        public IList<ProjectTracker> Trackers { get; private set; }
 
         /// <summary>
         /// Gets or sets the custom fields.
@@ -129,7 +129,7 @@ namespace RedmineApi.Core.Types
         /// </value>
         [XmlArray(RedmineKeys.ISSUE_CATEGORIES)]
         [XmlArrayItem(RedmineKeys.ISSUE_CATEGORY)]
-        public IList<ProjectIssueCategory> IssueCategories { get; set; }
+        public IList<ProjectIssueCategory> IssueCategories { get; private set; }
 
         /// <summary>
         /// since 2.6.0
@@ -143,7 +143,7 @@ namespace RedmineApi.Core.Types
 
         [XmlArray(RedmineKeys.TIME_ENTRY_ACTIVITIES)]
         [XmlArrayItem(RedmineKeys.TIME_ENTRY_ACTIVITY)]
-        public IList<TimeEntryActivity> TimeEntryActivities { get; set; }
+        public IList<TimeEntryActivity> TimeEntryActivities { get; private set; }
 
         #region Implementation of IXmlSerializable
         /// <summary>
@@ -213,8 +213,8 @@ namespace RedmineApi.Core.Types
             writer.WriteIdOrEmpty(Parent, RedmineKeys.PARENT_ID);
             writer.WriteElementString(RedmineKeys.HOMEPAGE, HomePage);
 
-            writer.WriteListElements(Trackers as List<IValue>, RedmineKeys.TRACKER_IDS);
-            writer.WriteListElements(EnabledModules as List<IValue>, RedmineKeys.ENABLED_MODULE_NAMES);
+            writer.WriteListElements(Trackers as IList<IValue>, RedmineKeys.TRACKER_IDS);
+            writer.WriteListElements(EnabledModules as IList<IValue>, RedmineKeys.ENABLED_MODULE_NAMES);
 
             if (Id == 0)
             {
