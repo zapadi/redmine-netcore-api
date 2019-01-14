@@ -25,21 +25,6 @@ namespace RedmineApi.Core.Extensions
 {
     internal static class HttpClientExtensions
     {
-        
-
-        public static void EnsureValidHost(this string host)
-        {
-            if (string.IsNullOrWhiteSpace(host))
-            {
-                throw new UriFormatException("Host is not define!");
-            }
-
-            if (!Uri.IsWellFormedUriString(host, UriKind.RelativeOrAbsolute))
-            {
-                throw new UriFormatException($"Host '{host}' is not valid!");
-            }
-        }
-
         public static void AddRequestHeader(this HttpClient httpClient, string key, string value)
         {
             if (string.IsNullOrWhiteSpace(key))
@@ -70,9 +55,7 @@ namespace RedmineApi.Core.Extensions
         {
             HttpRequestMessage request = new HttpRequestMessage
             {
-                Method = new HttpMethod("PATCH"),
-                RequestUri = new Uri(requestUri),
-                Content = content,
+                Method = new HttpMethod("PATCH"), RequestUri = new Uri(requestUri), Content = content,
             };
 
             return client.SendAsync(request, cancellationToken);

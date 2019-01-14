@@ -23,7 +23,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using RedmineApi.Core.Authentication;
-using RedmineApi.Core.Extensions;
 using RedmineApi.Core.Internals;
 using RedmineApi.Core.Serializers;
 using RedmineApi.Core.Types;
@@ -39,14 +38,14 @@ namespace RedmineApi.Core
         public RedmineManager(string host, string apiKey, MimeType mimeType = MimeType.Xml,
             IRedmineHttpSettings httpClientHandler = null)
         {
-            host.EnsureValidHost();
+            EnsureValidHost(host);
             Host = host;
             MimeType = mimeType;
 
             var clientHandler = httpClientHandler != null
                 ? httpClientHandler.Build()
                 : DefaultRedmineHttpSettings.Create().Build();
-            RedmineHttp = new RedmineHttpClient(clientHandler);
+            RedmineHttp = new RedmineHttpClient(clientHandler, mimeType);
 
             ApiKey = apiKey;
         }
@@ -54,7 +53,7 @@ namespace RedmineApi.Core
         public RedmineManager(string host, IAuthentication authentication, MimeType mimeType = MimeType.Xml,
             IRedmineHttpSettings httpClientHandler = null)
         {
-            host.EnsureValidHost();
+            EnsureValidHost(host);
 
             if (authentication == null)
             {
@@ -69,7 +68,7 @@ namespace RedmineApi.Core
             var clientHandler = httpClientHandler != null
                 ? httpClientHandler.SetAuthentication(auth).Build()
                 : DefaultRedmineHttpSettings.Create().SetAuthentication(auth).Build();
-            RedmineHttp = new RedmineHttpClient(clientHandler);
+            RedmineHttp = new RedmineHttpClient(clientHandler, mimeType);
         }
 
         public MimeType MimeType { get; }
@@ -125,7 +124,7 @@ namespace RedmineApi.Core
                .CreateUrl<TData>(ownerId)
                .Build();
 
-            var response = await RedmineHttp.PostAsync(new Uri(uri), data, MimeType, cancellationToken).ConfigureAwait(false);
+            var response = await RedmineHttp.PostAsync(new Uri(uri), data, cancellationToken).ConfigureAwait(false);
             return response;
         }
 
@@ -138,7 +137,7 @@ namespace RedmineApi.Core
                .SetParameters(parameters)
                .Build();
 
-            var response = await RedmineHttp.GetAsync<TData>(new Uri(uri), MimeType, cancellationToken).ConfigureAwait(false);
+            var response = await RedmineHttp.GetAsync<TData>(new Uri(uri), cancellationToken).ConfigureAwait(false);
             return response;
         }
 
@@ -147,6 +146,7 @@ namespace RedmineApi.Core
         /// </summary>
         /// <returns>The all.</returns>
         /// <param name="parameters">Parameters.</param>
+        /// <param name="cancellationToken"></param>
         /// <typeparam name="TData">The 1st type parameter.</typeparam>
         public async Task<List<TData>> ListAll<TData>(NameValueCollection parameters, CancellationToken cancellationToken)
             where TData : class, new()
@@ -205,6 +205,7 @@ namespace RedmineApi.Core
         ///     limit: the number of items to be present in the response(default is 25, maximum is 100)
         /// </returns>
         /// <param name="parameters">Parameters.</param>
+        /// <param name="cancellationToken"></param>
         public async Task<PaginatedResult<TData>> List<TData>(NameValueCollection parameters, CancellationToken cancellationToken)
             where TData : class, new()
         {
@@ -213,7 +214,7 @@ namespace RedmineApi.Core
                .SetParameters(parameters)
                .Build();
 
-            var response = await RedmineHttp.ListAsync<TData>(new Uri(uri), MimeType, cancellationToken).ConfigureAwait(false);
+            var response = await RedmineHttp.ListAsync<TData>(new Uri(uri), cancellationToken).ConfigureAwait(false);
 
             return response;
         }
@@ -230,7 +231,7 @@ namespace RedmineApi.Core
                .UploadUrl(id, data, projectId)
                .Build();
 
-            var response = await RedmineHttp.PutAsync(new Uri(uri), data, MimeType, cancellationToken).ConfigureAwait(false);
+            var response = await RedmineHttp.PutAsync(new Uri(uri), data, cancellationToken).ConfigureAwait(false);
             return response;
         }
 
@@ -246,7 +247,7 @@ namespace RedmineApi.Core
                .DeleteUrl<T>(id, reassignedId)
                .Build();
 
-            var response = await RedmineHttp.DeleteAsync(new Uri(uri), MimeType, cancellationToken).ConfigureAwait(false);
+            var response = await RedmineHttp.DeleteAsync(new Uri(uri), cancellationToken).ConfigureAwait(false);
             return response;
         }
 
@@ -256,11 +257,11 @@ namespace RedmineApi.Core
                .UploadFileUrl()
                .Build();
 
-            var response = await RedmineHttp.UploadFileAsync(new Uri(uri), fileBytes, MimeType, cancellationToken).ConfigureAwait(false);
+            var response = await RedmineHttp.UploadFileAsync(new Uri(uri), fileBytes, cancellationToken).ConfigureAwait(false);
             return response;
         }
 
-        public async Task UploadAttachment(int issueId, Attachment attachment, CancellationToken cancellationToken)
+        public async Task<Upload> UploadAttachment(int issueId, Attachment attachment, CancellationToken cancellationToken)
         {
             var uri = UrlBuilder.Create(Host, MimeType)
                .AttachmentUpdateUrl(issueId)
@@ -269,12 +270,13 @@ namespace RedmineApi.Core
             var attachments = new Attachments {{attachment.Id, attachment}};
             var data = RedmineSerializer.Serialize(attachments, MimeType);
 
-            await RedmineHttp.UploadAttachmentAsync(new Uri(uri), data, MimeType, cancellationToken).ConfigureAwait(false);
+            var response =await RedmineHttp.UploadAttachmentAsync(new Uri(uri), data, cancellationToken).ConfigureAwait(false);
+            return response;
         }
 
         public async Task<byte[]> DownloadFile(string address, CancellationToken cancellationToken)
         {
-            var response = await RedmineHttp.DownloadFileAsync(new Uri(address), MimeType, cancellationToken).ConfigureAwait(false);
+            var response = await RedmineHttp.DownloadFileAsync(new Uri(address), cancellationToken).ConfigureAwait(false);
             return response;
         }
 
@@ -288,6 +290,19 @@ namespace RedmineApi.Core
             if (disposing)
             {
                 RedmineHttp?.Dispose();
+            }
+        }
+
+        private static void EnsureValidHost(string host)
+        {
+            if (string.IsNullOrWhiteSpace(host))
+            {
+                throw new UriFormatException("Host is not define!");
+            }
+
+            if (!Uri.IsWellFormedUriString(host, UriKind.RelativeOrAbsolute))
+            {
+                throw new UriFormatException($"Host '{host}' is not valid!");
             }
         }
     }

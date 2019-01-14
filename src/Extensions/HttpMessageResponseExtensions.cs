@@ -28,12 +28,12 @@ namespace RedmineApi.Core.Extensions
 {
     internal static class HttpResponseMessageExtensions
     {
-        internal static  Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, MimeType mimeType) where T : class, new()
+        internal static Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, MimeType mimeType) where T : class, new()
         {
-            return  CreateTaskCompletionSource<T>(responseMessage, null, mimeType);
+            return CreateTaskCompletionSource<T>(responseMessage, null, mimeType);
         }
 
-        internal static async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, Func<string, T> func, MimeType mimeType) where T :  new()
+        internal static async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, Func<string, T> func, MimeType mimeType) where T : new()
         {
             var tc = new TaskCompletionSource<T>();
             if (responseMessage.IsSuccessStatusCode)
@@ -49,7 +49,7 @@ namespace RedmineApi.Core.Extensions
             return tc;
         }
 
-        internal static async Task<TaskCompletionSource<HttpStatusCode>> CreateDeleteTaskCompletionSource(this HttpResponseMessage responseMessage,  MimeType mimeType) 
+        internal static async Task<TaskCompletionSource<HttpStatusCode>> DeleteTaskCompletionSource(this HttpResponseMessage responseMessage, MimeType mimeType)
         {
             var tc = new TaskCompletionSource<HttpStatusCode>();
             if (responseMessage.IsSuccessStatusCode)
@@ -64,7 +64,7 @@ namespace RedmineApi.Core.Extensions
             return tc;
         }
 
-        internal static async Task<TaskCompletionSource<byte[]>> CreateFileDownloadTaskCompletionSource(this HttpResponseMessage responseMessage, MimeType mimeType)
+        internal static async Task<TaskCompletionSource<byte[]>> FileDownloadTaskCompletionSource(this HttpResponseMessage responseMessage, MimeType mimeType)
         {
             var tc = new TaskCompletionSource<byte[]>();
             if (responseMessage.IsSuccessStatusCode)
@@ -80,7 +80,7 @@ namespace RedmineApi.Core.Extensions
             return tc;
         }
 
-        internal static async Task<Exception> CreateExceptionAsync(this HttpResponseMessage responseMessage, MimeType mimeFormat)
+        private static async Task<Exception> CreateExceptionAsync(this HttpResponseMessage responseMessage, MimeType mimeFormat)
         {
             var byteArray = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             var responseString = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
@@ -98,7 +98,7 @@ namespace RedmineApi.Core.Extensions
                         message = errors.Items.Aggregate(message, (current, error) => $"{current}{error.Info}{Environment.NewLine}");
                     }
 
-                    exceptionMessage = $"Request to {responseMessage.RequestMessage.RequestUri.AbsoluteUri} failed with {message ?? responseString ?? responseMessage.ReasonPhrase}";
+                    exceptionMessage = $"Request to {responseMessage.RequestMessage.RequestUri.AbsoluteUri} failed with {message ?? (responseString + Environment.NewLine + responseMessage.ReasonPhrase)}";
                     return new UnprocessableEntityException(exceptionMessage);
 
                 default:
