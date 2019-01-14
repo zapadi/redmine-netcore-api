@@ -280,6 +280,12 @@ namespace RedmineApi.Core
             return response;
         }
 
+        public async Task<int> CountAsync<T>(Uri uri, CancellationToken cancellationToken) where T : new()
+        {
+            var response = await RedmineHttp.CountAsync<T>(uri, cancellationToken).ConfigureAwait(false);
+            return response;
+        }
+
         private void ReleaseUnmanagedResources()
         {
         }
