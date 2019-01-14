@@ -20,6 +20,7 @@ namespace RedmineApi.Core
     /// </summary>
     public static class RedmineKeys
     {
+        
         /// <summary>
         ///     The activity
         /// </summary>
@@ -104,6 +105,11 @@ namespace RedmineApi.Core
         /// <summary>
         /// </summary>
         public const string CREATED_ON = "created_on";
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CURRENT_USER = "current";
 
         /// <summary>
         /// </summary>
