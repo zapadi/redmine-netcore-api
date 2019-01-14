@@ -42,17 +42,15 @@ namespace RedmineApi.Core.Internals
         private const string ADD_WATCHER_TO_ISSUE_FORMAT = "{0}/{1}/{2}/watchers.{3}";
         private const string REMOVE_WATCHER_FROM_ISSUE_FORMAT = "{0}/{1}/{2}/watchers/{3}.{4}";
 
+        private string url;
+        private string host;
+        private string mimeType;
+
         private UrlBuilder()
         {
         }
 
         private NameValueCollection parameters;
-
-        private string url;
-
-        private string host;
-
-        private string mimeType;
 
         public IUrlBuild SetParameters(NameValueCollection parameters)
         {
@@ -117,7 +115,7 @@ namespace RedmineApi.Core.Internals
 
             if (type == typeof(Version) || type == typeof(IssueCategory) || type == typeof(ProjectMembership))
             {
-                EnsureIdIsDefined(ownerId,"project");
+                EnsureIdIsDefined(ownerId, "project");
 
                 url = string.Format(ENTITY_WITH_PARENT_URL_FORMAT, host, RedmineKeys.PROJECTS, ownerId, path, mimeType);
             }
@@ -125,7 +123,7 @@ namespace RedmineApi.Core.Internals
             {
                 if (type == typeof(IssueRelation))
                 {
-                    EnsureIdIsDefined(ownerId,"issue");
+                    EnsureIdIsDefined(ownerId, "issue");
 
                     url = string.Format(ENTITY_WITH_PARENT_URL_FORMAT, host, RedmineKeys.ISSUES, ownerId, path, mimeType);
                 }
@@ -133,7 +131,7 @@ namespace RedmineApi.Core.Internals
                 {
                     if (type == typeof(File))
                     {
-                        EnsureIdIsDefined(ownerId,"project");
+                        EnsureIdIsDefined(ownerId, "project");
 
                         url = string.Format(FILE_URL_FORMAT, host, ownerId, mimeType);
                     }
@@ -262,8 +260,7 @@ namespace RedmineApi.Core.Internals
         /// <param name="pageName">Name of the page.</param>
         /// <param name="version">The version.</param>
         /// <returns></returns>
-        public IUrlBuild WikiPageUrl(string projectId, string pageName,
-            uint version = 0)
+        public IUrlBuild WikiPageUrl(string projectId, string pageName, uint version = 0)
         {
             url = version == 0
                 ? string.Format(WIKI_PAGE_URL_FORMAT, host, projectId, pageName, mimeType)

@@ -30,7 +30,7 @@ namespace RedmineApi.Core.Serializers
         {
             if (string.IsNullOrEmpty(response))
             {
-                throw new RedmineException("Could not deserialize null!");
+                throw new RedmineException("Could not deserialize empty string.");
             }
 
             try
@@ -39,7 +39,7 @@ namespace RedmineApi.Core.Serializers
             }
             catch (Exception ex)
             {
-                throw new RedmineException("Deserialization error", ex);
+                throw new RedmineException("Deserialization error.", ex);
             }
         }
 
@@ -49,14 +49,14 @@ namespace RedmineApi.Core.Serializers
             {
                 if (string.IsNullOrWhiteSpace(response))
                 {
-                    throw new RedmineException("Could not deserialize empty response!");
+                    throw new RedmineException("Could not deserialize empty response.");
                 }
 
                 return XmlDeserializeList<T>(response);
             }
             catch (Exception ex)
             {
-                throw new RedmineException("Deserialization error", ex);
+                throw new RedmineException("Deserialization error.", ex);
             }
         }
 
@@ -66,7 +66,7 @@ namespace RedmineApi.Core.Serializers
             {
                 if (string.IsNullOrWhiteSpace(response))
                 {
-                    throw new RedmineException("Could not deserialize empty response!");
+                    throw new RedmineException("Could not deserialize empty response.");
                 }
 
                 using (TextReader stringReader = new StringReader(response))
@@ -84,7 +84,7 @@ namespace RedmineApi.Core.Serializers
             }
             catch (Exception ex)
             {
-                throw new RedmineException("Deserialization error", ex);
+                throw new RedmineException("Deserialization error.", ex);
             }
         }
 
@@ -101,7 +101,7 @@ namespace RedmineApi.Core.Serializers
             }
             catch (Exception ex)
             {
-                throw new RedmineException("Serialization error", ex);
+                throw new RedmineException("Serialization error.", ex);
             }
         }
 

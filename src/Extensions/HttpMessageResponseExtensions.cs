@@ -28,28 +28,28 @@ namespace RedmineApi.Core.Extensions
 {
     internal static class HttpResponseMessageExtensions
     {
-        internal static Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, MimeType mimeType) where T : class, new()
+        internal static Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, IRedmineSerializer serializer) where T : class, new()
         {
-            return CreateTaskCompletionSource<T>(responseMessage, null, mimeType);
+            return CreateTaskCompletionSource<T>(responseMessage, null,serializer);
         }
 
-        internal static async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, Func<string, T> func, MimeType mimeType) where T : new()
+        internal static async Task<TaskCompletionSource<T>> CreateTaskCompletionSource<T>(this HttpResponseMessage responseMessage, Func<string, T> func, IRedmineSerializer serializer) where T : new()
         {
             var tc = new TaskCompletionSource<T>();
             if (responseMessage.IsSuccessStatusCode)
             {
                 var content = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                tc.SetResult(func != null ? func.Invoke(content) : RedmineSerializer.Deserialize<T>(content, mimeType));
+                tc.SetResult(func != null ? func.Invoke(content) : serializer.Deserialize<T>(content));
             }
             else
             {
-                tc.SetException(await CreateExceptionAsync(responseMessage, mimeType).ConfigureAwait(false));
+                tc.SetException(await CreateExceptionAsync(responseMessage, serializer).ConfigureAwait(false));
             }
 
             return tc;
         }
 
-        internal static async Task<TaskCompletionSource<HttpStatusCode>> DeleteTaskCompletionSource(this HttpResponseMessage responseMessage, MimeType mimeType)
+        internal static async Task<TaskCompletionSource<HttpStatusCode>> DeleteTaskCompletionSource(this HttpResponseMessage responseMessage, IRedmineSerializer serializer)
         {
             var tc = new TaskCompletionSource<HttpStatusCode>();
             if (responseMessage.IsSuccessStatusCode)
@@ -58,13 +58,13 @@ namespace RedmineApi.Core.Extensions
             }
             else
             {
-                tc.SetException(await CreateExceptionAsync(responseMessage, mimeType).ConfigureAwait(false));
+                tc.SetException(await CreateExceptionAsync(responseMessage, serializer).ConfigureAwait(false));
             }
 
             return tc;
         }
 
-        internal static async Task<TaskCompletionSource<byte[]>> FileDownloadTaskCompletionSource(this HttpResponseMessage responseMessage, MimeType mimeType)
+        internal static async Task<TaskCompletionSource<byte[]>> FileDownloadTaskCompletionSource(this HttpResponseMessage responseMessage, IRedmineSerializer serializer)
         {
             var tc = new TaskCompletionSource<byte[]>();
             if (responseMessage.IsSuccessStatusCode)
@@ -74,13 +74,13 @@ namespace RedmineApi.Core.Extensions
             }
             else
             {
-                tc.SetException(await CreateExceptionAsync(responseMessage, mimeType).ConfigureAwait(false));
+                tc.SetException(await CreateExceptionAsync(responseMessage, serializer).ConfigureAwait(false));
             }
 
             return tc;
         }
 
-        private static async Task<Exception> CreateExceptionAsync(this HttpResponseMessage responseMessage, MimeType mimeFormat)
+        private static async Task<Exception> CreateExceptionAsync(this HttpResponseMessage responseMessage, IRedmineSerializer serializer)
         {
             var byteArray = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             var responseString = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
@@ -90,7 +90,7 @@ namespace RedmineApi.Core.Extensions
             switch (statusCode)
             {
                 case 422:
-                    var errors = RedmineSerializer.DeserializeList<Error>(responseString, mimeFormat);
+                    var errors = serializer.DeserializeList<Error>(responseString);
 
                     var message = string.Empty;
                     if (errors.Items != null)

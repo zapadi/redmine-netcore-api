@@ -1,5 +1,4 @@
-
-﻿/*
+/*
    Copyright 2016 - 2019 Adrian Popescu.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,9 +47,7 @@ namespace RedmineApi.Core
         public bool UseDefaultCredentials { get; private set; }
         public bool UseCookies { get; private set; }
         public bool PreAuthenticate { get; private set; }
-
         public bool AllowAutoRedirect { get; private set; }
-
         public int MaxAutomaticRedirections { get; private set; }
 
         public IRedmineHttpSettings SetWebProxy(IWebProxy webProxy)
@@ -218,7 +215,6 @@ namespace RedmineApi.Core
             return handler;
         }
 
-
         public IRedmineHttpSettings Set(Func<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool>
             serverCertificateCustomValidationCallback)
         {
@@ -231,5 +227,4 @@ namespace RedmineApi.Core
             return new DefaultRedmineHttpSettings();
         }
     }
-
 }

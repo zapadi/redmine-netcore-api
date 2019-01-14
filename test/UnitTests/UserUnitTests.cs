@@ -10,7 +10,7 @@ namespace RedmineApi.Core.UnitTests
         {
             const string response = "{\"errors\":[\"First name can't be blank\",\"Email is invalid\"]}";
 
-            var actual = RedmineApi.Core.Serializers.RedmineSerializer.Deserialize<Error>(response, MimeType.Json);
+           // var actual = RedmineApi.Core.Serializers.RedmineSerializer.Deserialize<Error>(response, MimeType.Json);
         }
     }
 }
