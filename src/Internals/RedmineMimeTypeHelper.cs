@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 namespace RedmineApi.Core.Internals
 {
-    public static class Mime
+    public static class RedmineMimeTypeHelper
     {
         private static readonly Dictionary<MimeType, string> types = new Dictionary<MimeType, string>
         {

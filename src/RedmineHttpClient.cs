@@ -44,7 +44,7 @@ namespace RedmineApi.Core
         public RedmineHttpClient(HttpClientHandler clientHandler, MimeType mimeType, bool disposeHandler = false)
         {
             MimeType = mimeType;
-            mediaType = $"{APPLICATION}/{Mime.GetStringRepresentation(mimeType)}";
+            mediaType = $"{APPLICATION}/{RedmineMimeTypeHelper.GetStringRepresentation(mimeType)}";
 
             httpClient = new HttpClient(clientHandler, disposeHandler);
 

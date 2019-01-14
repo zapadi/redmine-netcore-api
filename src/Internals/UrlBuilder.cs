@@ -74,7 +74,7 @@ namespace RedmineApi.Core.Internals
 
         public static UrlBuilder Create(string host, MimeType mimeType)
         {
-            return new UrlBuilder {host = host, mimeType = Mime.GetStringRepresentation(mimeType)};
+            return new UrlBuilder {host = host, mimeType = RedmineMimeTypeHelper.GetStringRepresentation(mimeType)};
         }
 
         /// <summary>
