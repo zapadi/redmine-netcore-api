@@ -17,6 +17,7 @@
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -61,6 +62,8 @@ namespace RedmineApi.Core
         public string ImpersonateUser { get; internal set; }
 
         public string ApiKey { get; internal set; }
+
+        internal AuthenticationHeaderValue Authentication { private get; set; }
 
         public void Dispose()
         {
@@ -190,7 +193,14 @@ namespace RedmineApi.Core
 
         private void SetHeaders()
         {
-            httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
+            if (!string.IsNullOrEmpty(ApiKey))
+            {
+                httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey); 
+            }
+            else
+            {
+                httpClient.AddAuthentcation(Authentication);
+            }
             httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
         }
     }
