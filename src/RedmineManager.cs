@@ -68,6 +68,7 @@ namespace RedmineApi.Core
                 ? httpClientHandler.SetAuthentication(auth).Build()
                 : DefaultRedmineHttpSettings.Create().SetAuthentication(auth).Build();
             redmineHttp = new RedmineHttpClient(clientHandler, mimeType);
+            redmineHttp.Authentication = auth;
         }
 
         public MimeType MimeType { get; }

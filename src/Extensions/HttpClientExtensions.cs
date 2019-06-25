@@ -18,6 +18,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -49,6 +50,11 @@ namespace RedmineApi.Core.Extensions
             {
                 httpClient.DefaultRequestHeaders.Remove(headerName);
             }
+        }
+
+        public static void AddAuthentcation(this HttpClient httpClient, AuthenticationHeaderValue authenticationHeaderValue)
+        {
+            httpClient.DefaultRequestHeaders.Authorization = authenticationHeaderValue;
         }
 
         public static Task<HttpResponseMessage> PatchAsync(this HttpClient client, string requestUri, HttpContent content, CancellationToken cancellationToken)
