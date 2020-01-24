@@ -156,7 +156,7 @@ namespace RedmineApi.Core
             httpClient.AddContentType("application/octet-stream");
 
             var content = new ByteArrayContent(bytes);
-            using (var responseMessage = await httpClient.PutAsync(uri.ToString(), content, cancellationToken).ConfigureAwait(false))
+            using (var responseMessage = await httpClient.PostAsync(uri, content, cancellationToken).ConfigureAwait(false))
             {
                 var tc = await responseMessage.CreateTaskCompletionSource<Upload>(serializer).ConfigureAwait(false);
                 return await tc.Task;
