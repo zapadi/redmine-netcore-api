@@ -75,7 +75,7 @@ namespace RedmineApi.Core
         {
             SetHeaders();
 
-            httpClient.AddContentType(mediaType);
+            httpClient.AddAcceptHeader(mediaType);
 
             using (var responseMessage = await httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
             {
@@ -88,7 +88,7 @@ namespace RedmineApi.Core
         {
             SetHeaders();
 
-            httpClient.AddContentType(mediaType);
+            httpClient.AddAcceptHeader(mediaType);
 
             using (var responseMessage = await httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
             {
@@ -153,9 +153,8 @@ namespace RedmineApi.Core
         {
             SetHeaders();
 
-            httpClient.AddContentType("application/octet-stream");
-
             var content = new ByteArrayContent(bytes);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
             using (var responseMessage = await httpClient.PostAsync(uri, content, cancellationToken).ConfigureAwait(false))
             {
                 var tc = await responseMessage.CreateTaskCompletionSource<Upload>(serializer).ConfigureAwait(false);
@@ -182,7 +181,7 @@ namespace RedmineApi.Core
         {
             SetHeaders();
 
-            httpClient.AddContentType(mediaType);
+            httpClient.AddAcceptHeader(mediaType);
 
             using (var responseMessage = await httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
             {

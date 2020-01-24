@@ -16,7 +16,6 @@
 
 using System;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -37,11 +36,9 @@ namespace RedmineApi.Core.Extensions
             httpClient.DefaultRequestHeaders.Add(key, value);
         }
 
-        public static void AddContentType(this HttpClient httpClient, string contentType)
+        public static void AddAcceptHeader(this HttpClient httpClient, string contentType)
         {
-            var contentTypeKey = HttpRequestHeader.ContentType.ToString();
-            httpClient.ClearHeaderIfExists(contentTypeKey);
-            httpClient.DefaultRequestHeaders.Add(contentTypeKey, contentType);
+            httpClient.AddRequestHeader("Accept", contentType);
         }
 
         private static void ClearHeaderIfExists(this HttpClient httpClient, string headerName)
