@@ -29,8 +29,8 @@ namespace RedmineApi.Core.Types
 {
     /// <summary>
     /// Available as of 1.1 :
-    ///include: fetch associated data (optional). 
-    ///Possible values: children, attachments, relations, changesets and journals. To fetch multiple associations use comma (e.g ?include=relations,journals). 
+    ///include: fetch associated data (optional).
+    ///Possible values: children, attachments, relations, changesets and journals. To fetch multiple associations use comma (e.g ?include=relations,journals).
     /// See Issue journals for more information.
     /// </summary>
     [XmlRoot(RedmineKeys.ISSUE)]
@@ -239,7 +239,7 @@ namespace RedmineApi.Core.Types
         /// </value>
         [XmlArray(RedmineKeys.CHANGESETS)]
         [XmlArrayItem(RedmineKeys.CHANGESET)]
-        public IList<ChangeSet> Changesets { get; set; }
+        public IList<ChangeSet>? Changesets { get; set; }
 
         /// <summary>
         /// Gets or sets the attachments.
@@ -283,7 +283,7 @@ namespace RedmineApi.Core.Types
         public IList<Upload> Uploads { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [XmlArray(RedmineKeys.WATCHERS)]
         [XmlArrayItem(RedmineKeys.WATCHER)]
@@ -291,7 +291,7 @@ namespace RedmineApi.Core.Types
 
         #region Implementation of IXmlSerializable
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public XmlSchema GetSchema()
@@ -300,7 +300,7 @@ namespace RedmineApi.Core.Types
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="reader"></param>
         public void ReadXml(XmlReader reader)
@@ -453,7 +453,7 @@ namespace RedmineApi.Core.Types
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="writer"></param>
         public void WriteXml(XmlWriter writer)
@@ -495,7 +495,7 @@ namespace RedmineApi.Core.Types
 
         #region Implementation of IEquatable<Issue>
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -539,7 +539,7 @@ namespace RedmineApi.Core.Types
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
@@ -780,7 +780,7 @@ namespace RedmineApi.Core.Types
         #endregion
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public override string ToString()

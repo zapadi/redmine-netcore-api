@@ -315,8 +315,8 @@ namespace RedmineApi.Core.Types
 
             return (
                 Id == other.Id
-                && Identifier.Equals(other.Identifier)
-                && Description.Equals(other.Description)
+                && Identifier == other.Identifier
+                && Description == other.Description
                 && Parent == other.Parent
                 && HomePage == other.HomePage
                 && CreatedOn == other.CreatedOn
@@ -324,10 +324,10 @@ namespace RedmineApi.Core.Types
                 && Status == other.Status
                 && IsPublic == other.IsPublic
                 && InheritMembers == other.InheritMembers
-                && Trackers == other.Trackers
-                && CustomFields == other.CustomFields
-                && IssueCategories == other.IssueCategories
-                && EnabledModules == other.EnabledModules
+                && ReferenceEquals(Trackers, other.Trackers)
+                && ReferenceEquals(CustomFields, other.CustomFields)
+                && ReferenceEquals(IssueCategories, other.IssueCategories)
+                && ReferenceEquals(EnabledModules, other.EnabledModules)
             );
         }
 

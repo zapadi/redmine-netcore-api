@@ -1,0 +1,42 @@
+<Project>
+  <!--#if (AuthoringMode)-->
+  <PropertyGroup>
+    <!-- Workaround to build this project: https://github.com/dotnet/templating/issues/1438 -->
+    <DotnetFramework>false</DotnetFramework>
+    <EditorConfig>true</EditorConfig>
+    <MIT>true</MIT>
+    <Nullable>true</Nullable>
+    <StyleCop>true</StyleCop>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <!--#endif-->
+
+  <PropertyGroup Label="Build">
+    <LangVersion>latest</LangVersion>
+    <EnforceCodeStyleInBuild Condition="'$(EditorConfig)' == 'true'">true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <Nullable Condition="'$(Nullable)' == 'true'">enable</Nullable>
+    <TreatWarningsAsErrors Condition="'$(TreatWarningsAsErrors)' == 'true'">true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package">
+    <Authors>PROJECT-AUTHOR-XML</Authors>
+    <Company>PROJECT-AUTHOR-XML</Company>
+    <Copyright>Copyright © PROJECT-AUTHOR-XML. All rights Reserved</Copyright>
+    <PackageRequireLicenseAcceptance Condition="'$(License)' != 'None'">true</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression Condition="'$(MIT)' == 'true'">MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/GITHUB-USERNAME/GITHUB-PROJECT</PackageProjectUrl>
+    <PackageIcon>Icon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/GITHUB-USERNAME/GITHUB-PROJECT.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>https://github.com/GITHUB-USERNAME/GITHUB-PROJECT/releases</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup Label="Package References">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="all" Version="1.0.0" Condition="'$(DotnetFramework)' == 'true'" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" PrivateAssets="all" Version="16.9.60" />
+    <PackageReference Include="MinVer" PrivateAssets="all" Version="2.5.0" />
+    <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all" Version="1.2.0-beta.321" Condition="'$(StyleCop)' == 'true'" />
+  </ItemGroup>
+
+</Project>

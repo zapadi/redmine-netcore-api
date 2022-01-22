@@ -20,7 +20,7 @@ namespace RedmineApi.Core.Exceptions
 {
     /// <summary>
     /// </summary>
-    /// <seealso cref="RedmineApi.Core.Exceptions.RedmineException" />
+    /// <seealso cref="Zapadi.Redmine.Api.Exceptions.RedmineException" />
     public sealed class NameResolutionFailureException : RedmineException
     {
         /// <summary>

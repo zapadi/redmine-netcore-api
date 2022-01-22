@@ -26,7 +26,7 @@ using RedmineApi.Core.Authentication;
 using RedmineApi.Core.Internals;
 using RedmineApi.Core.Types;
 
-[assembly: InternalsVisibleTo("RedmineApi.Core.UnitTests")]
+[assembly: InternalsVisibleTo("Zapadi.Redmine.Api.UnitTests")]
 
 namespace RedmineApi.Core
 {

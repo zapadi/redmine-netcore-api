@@ -78,30 +78,14 @@ namespace RedmineApi.Core.Types
 
         public void ReadJson(JsonReader reader)
         {
-            while (reader.Read())
+            if (reader.TokenType == JsonToken.PropertyName)
             {
-                if (reader.TokenType == JsonToken.EndObject)
-                {
-                    return;
-                }
+                reader.Read();
+            }
 
-                if(reader.TokenType == JsonToken.String)
-                {
-                    Info += $" {reader.Value},";
-                    continue;
-                }
-
-                //if (reader.TokenType != JsonToken.PropertyName)
-                //{
-                //    continue;
-                //}
-
-                //switch (reader.Value)
-                //{
-                //    case RedmineKeys.ERROR: Info += $", {reader.ReadAsString()}"; break;
-
-                //    default: reader.Read(); break;
-                //}
+            if (reader.TokenType == JsonToken.String)
+            {
+                Info = (string)reader.Value;
             }
         }
         #endregion

@@ -34,6 +34,9 @@ namespace RedmineApi.Core.Types
         /// </summary>
         [XmlElement(RedmineKeys.VALUE)]
         public string Value { get; set; }
+        
+        [XmlElement(RedmineKeys.LABEL)]
+        public string Label { get; set; }
 
         #region IJsonSerialization
         public void WriteJson(JsonWriter writer)
@@ -55,9 +58,16 @@ namespace RedmineApi.Core.Types
                     continue;
                 }
 
-                if(reader.Value as string == RedmineKeys.VALUE)
+                switch (reader.Value)
                 {
-                    Value = reader.ReadAsString();
+                    case RedmineKeys.LABEL:
+                        Label = reader.ReadAsString(); break;
+
+                    case RedmineKeys.VALUE:
+
+                        Value = reader.ReadAsString(); break;
+                    default:
+                        reader.Read(); break;
                 }
             }
         }

@@ -17,6 +17,7 @@
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -33,7 +34,7 @@ namespace RedmineApi.Core
         public MimeType MimeType { get; }
         private const string APPLICATION = "application";
         private const string X_REDMINE_SWITCH_USER = "X-Redmine-Switch-User";
-        private const string X_REDMINE_API_KEY = "X-Redmine-API-Key";
+
 
         private static readonly Regex sanitizeRegex = new Regex(@"\r\n|\r|\n", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
@@ -150,10 +151,10 @@ namespace RedmineApi.Core
         {
             SetHeaders();
 
-            httpClient.AddContentType("application/octet-stream");
-
             var content = new ByteArrayContent(bytes);
-            using (var responseMessage = await httpClient.PutAsync(uri.ToString(), content, cancellationToken).ConfigureAwait(false))
+            content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
+
+            using (var responseMessage = await httpClient.PostAsync(uri.ToString(), content, cancellationToken).ConfigureAwait(false))
             {
                 var tc = await responseMessage.CreateTaskCompletionSource<Upload>(serializer).ConfigureAwait(false);
                 return await tc.Task;
@@ -190,7 +191,7 @@ namespace RedmineApi.Core
 
         private void SetHeaders()
         {
-            httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
+          //  httpClient.AddRequestHeader(X_REDMINE_API_KEY, ApiKey);
             httpClient.AddRequestHeader(X_REDMINE_SWITCH_USER, ImpersonateUser);
         }
     }

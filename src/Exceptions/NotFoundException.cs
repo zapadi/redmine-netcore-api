@@ -21,7 +21,7 @@ namespace RedmineApi.Core.Exceptions
     /// <summary>
     ///     Thrown in case the objects requested for could not be found.
     /// </summary>
-    /// <seealso cref="RedmineApi.Core.Exceptions.RedmineException" />
+    /// <seealso cref="Zapadi.Redmine.Api.Exceptions.RedmineException" />
     public sealed class NotFoundException : RedmineException
     {
         /// <summary>

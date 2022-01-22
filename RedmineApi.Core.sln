@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedmineApi.Core", "src\RedmineApi.Core.csproj", "{0AECCFAB-5307-4963-BD6E-790A78CED42E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zapadi.Redmine.Api", "src\Zapadi.Redmine.Api.csproj", "{0AECCFAB-5307-4963-BD6E-790A78CED42E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedmineApi.Core.Tests", "test\UnitTests\RedmineApi.Core.Tests.csproj", "{F6D32337-1752-4438-ADA0-6500C6273528}"
 EndProject
@@ -27,6 +27,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Others", "Others", "{B38AF3
 		LICENSE = LICENSE
 		README.md = README.md
 		redmineapi.core.nuspec = redmineapi.core.nuspec
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		Directory.Build.target = Directory.Build.target
+		dotnet-tools.json = dotnet-tools.json
+		global.json = global.json
+		Directory.Build.props = Directory.Build.props
+		appveyor.yaml = appveyor.yaml
 	EndProjectSection
 EndProject
 Global

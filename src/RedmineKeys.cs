@@ -336,6 +336,11 @@ namespace RedmineApi.Core
         public const string LAST_LOGIN_ON = "last_login_on";
 
         /// <summary>
+        /// 
+        /// </summary>
+        public const string LABEL = "label";
+        
+        /// <summary>
         /// </summary>
         public const string LIMIT = "limit";
 

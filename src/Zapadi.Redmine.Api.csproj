@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
+  <PropertyGroup Label="Build">
 
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 
     <DebugType>full</DebugType>
-    <AssemblyName>RedmineApi.Core</AssemblyName>
     <PackageId>redmine-netcore10-api</PackageId>
+    <LangVersion>latest</LangVersion>
     <!-- <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion> -->
   
     <Authors>Adrian Popescu</Authors>
@@ -22,6 +22,7 @@
     <Version>$(SemVer)</Version>
     <VersionPrefix>$(SemVer)</VersionPrefix>
     <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+    <RootNamespace>RedmineApi.Core</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugXml|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugJson|AnyCPU'" />
@@ -38,6 +39,6 @@
     <Compile Remove="Internals\DataHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 </Project>

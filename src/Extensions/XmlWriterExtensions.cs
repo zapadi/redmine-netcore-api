@@ -48,7 +48,7 @@ namespace RedmineApi.Core.Extensions
         /// <param name="writer">The writer.</param>
         /// <param name="collection">The collection.</param>
         /// <param name="elementName">Name of the element.</param>
-        public static void WriteArray<T>(this XmlWriter writer, IEnumerable<T> collection, string elementName)
+        public static void WriteArray<T>(this XmlWriter writer, IEnumerable<T> collection, string elementName) where T: class
         {
             if (collection == null)
             {
@@ -196,7 +196,7 @@ namespace RedmineApi.Core.Extensions
 
             if (!EqualityComparer<T>.Default.Equals(val.Value, default(T)))
             {
-                writer.WriteElementString(tag, string.Format(NumberFormatInfo.InvariantInfo, "{0}", val.Value));
+                writer.WriteElementString(tag, string.Format(NumberFormatInfo.InvariantInfo, "{0}", val.Value.ToString()));
             }
         }
 
@@ -215,7 +215,7 @@ namespace RedmineApi.Core.Extensions
             }
             else
             {
-                writer.WriteElementString(tag, string.Format(NumberFormatInfo.InvariantInfo, "{0}", val.Value));
+                writer.WriteElementString(tag, string.Format(NumberFormatInfo.InvariantInfo, "{0}", val.Value.ToString()));
             }
         }
 

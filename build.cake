@@ -1,86 +1,85 @@
-const string BUILD = "Build";
+var target = Argument("target", "Default");
+var slackApiKey = EnvironmentVariable("slack_api_key");
+var branch = EnvironmentVariable("APPVEYOR_REPO_BRANCH");
+var isWindows = true;
+var shouldNotify = false;
 
-const string PACK = "Package";
-const string TEST = "Test";
-const string RESTORE = "Restore";
-const string CLEAN = "Clean";
+Task("Add-NuGet-Feed")
+  .WithCriteria(!NuGetHasSource("https://somedomain/nuget/v3/index.json"))
+  .Does(() =>
+{
+  Information("Adding NuGet Source...");
+});
 
-const string DEFAULT = "Default";
-const string RELEASE = "Release";
+Task("NuGet-Restore")
+  .IsDependentOn("Add-NuGet-Feed")
+  .Does(() =>
+{
+  Information("Restoring Packages...");
+});
 
-var target = Argument("target", DEFAULT);
-var configuration = Argument("configuration", RELEASE);
+Task("Build-Windows")
+  .WithCriteria(isWindows)
+  .IsDependentOn("NuGet-Restore")
+  .Does(() =>
+{
+  Information("Building for Windows...");
+});
 
-//  Project Directory
-var projDir = "./src/netcore10/";      
-// Solution file if needed
-var solutionFile = "RedmineApi.Core.sln"; 
-// Destination Binary File Directory name i.e. bin
-var binDir = String.Concat(projDir,"bin");
-// The output directory the build artefacts saved too
-var outputDir = Directory(binDir) + Directory(configuration);  
-//
-var outputPackDir = "../nupkgs";
+Task("Build-Linux")
+  .WithCriteria(!isWindows)
+  .IsDependentOn("NuGet-Restore")
+  .Does(() =>
+{
+  Information("Building for Linux...");
+});
 
-var version = "2.0.1";
-var revision = "";
-
-var buildSettings = new DotNetCoreBuildSettings
-    {
-        Framework = "netstandard2.0",
-        Configuration = configuration,
-        ArgumentCustomization = args => args.Append(String.Concat("/p:SemVer=", version))
-    };
-
-
-Task(CLEAN)
-    .Does(()=>
-    {
-        CleanDirectory(outputDir);
-        CleanDirectory(outputPackDir);
-    });
-
-Task(RESTORE)
-    .Does(() =>
-    {
-        //"src/\" \"test/\" - 
-        DotNetCoreRestore(projDir);
-    });
-
-Task(BUILD)
-    .IsDependentOn(CLEAN)
-    .IsDependentOn(RESTORE)
-    .Does(() =>
-    {
-        DotNetCoreBuild(solutionFile, buildSettings);
-    });
+Task("Build")
+  .IsDependentOn("Build-Windows")
+  .IsDependentOn("Build-Linux");
 
 
-Task(PACK)
-    .IsDependentOn(BUILD)
-    .Does(() =>
-    {
-        var packSettings = new DotNetCorePackSettings
-        {
-            OutputDirectory = outputPackDir,
-            Configuration = configuration,
-            VersionSuffix = revision,
-            ArgumentCustomization = args => args.Append(String.Concat("/p:PackageVersion=",version)),
-            NoBuild = true
-        };
+Task("Package")
+  .IsDependentOn("Build")
+  .Does(() =>
+{
+  Information("Packing...");
+});
 
-        DotNetCorePack(solutionFile, packSettings);
-    });
+Task("Deploy")
+  .WithCriteria(branch == "master")
+  .IsDependentOn("Package")
+  .Does(() =>
+{
+  Information("Deploying...");
+});
 
-Task(DEFAULT)
-    .IsDependentOn(PACK);
+Task("Notify-Slack")
+  .WithCriteria(!string.IsNullOrEmpty(slackApiKey))
+  .IsDependentOn("Deploy")
+  .Does(() =>
+{
+  Information("Notifying Slack...");
+});
+
+Task("Important-Task")
+  .Does(() =>
+{
+  Information("Doing something important...");
+  shouldNotify = true;
+});
+
+Task("Notify")
+   .WithCriteria(() => shouldNotify)
+  .IsDependentOn("Important-Task")
+  .Does(() =>
+{
+  Information("Notifying...");
+});
+
+Task("Default")
+  .IsDependentOn("Notify")
+  .IsDependentOn("Notify-Slack");
 
 RunTarget(target);
 
-private void CleanDirectory(string path)
-{
-    if(DirectoryExists(path))
-    {
-        DeleteDirectory(path, recursive: true);
-    }
-}

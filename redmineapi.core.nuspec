@@ -3,7 +3,7 @@
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>redmine-netcore10-api</id>
     <version>1.0.0</version>
-    <title>RedmineApi.Core</title>
+    <title>Zapadi.Redmine.Api</title>
     <authors>Adrian Popescu</authors>
     <owners>Adrian Popescu</owners>
     <licenseUrl>https://github.com/zapadi/redmine-netcore-api/blob/master/LICENSE</licenseUrl>

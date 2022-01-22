@@ -8,9 +8,9 @@ namespace RedmineApi.Core.UnitTests
         [Fact]
         public void Unprocessable_Entity_Response_with_the_error_messages_in_its_body()
         {
-            const string response = "{\"errors\":[\"First name can't be blank\",\"Email is invalid\"]}";
+           // const string response = "{\"errors\":[\"First name can't be blank\",\"Email is invalid\"]}";
 
-           // var actual = RedmineApi.Core.Serializers.RedmineSerializer.Deserialize<Error>(response, MimeType.Json);
+           // var actual = Zapadi.Redmine.Api.Serializers.RedmineSerializer.Deserialize<Error>(response, MimeType.Json);
         }
     }
 }

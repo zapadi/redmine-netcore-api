@@ -102,7 +102,7 @@ namespace RedmineApi.Core.Internals
         /// <param name="ownerId">The owner identifier.</param>
         /// <returns></returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException"></exception>
-        /// <exception cref="RedmineApi.Core.Exceptions.RedmineException">
+        /// <exception cref="Zapadi.Redmine.Api.Exceptions.RedmineException">
         ///     The owner id(project id) is mandatory!
         ///     or
         ///     The owner id(issue id) is mandatory!
@@ -184,7 +184,7 @@ namespace RedmineApi.Core.Internals
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException"></exception>
-        /// <exception cref="RedmineApi.Core.Exceptions.RedmineException">
+        /// <exception cref="Zapadi.Redmine.Api.Exceptions.RedmineException">
         ///     The project id is mandatory! \nCheck if you have included the parameter project_id to parameters.
         ///     or
         ///     The issue id is mandatory! \nCheck if you have included the parameter issue_id to parameters
